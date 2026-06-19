@@ -5,9 +5,15 @@ addEventListener('fetch', event => {
 async function handleRequest(request) {
   const url = new URL(request.url)
   const targetUrl = 'https://code-verification-suite-1.replit.app/missingcash' + url.pathname + url.search
-  return fetch(targetUrl, {
+
+  const init = {
     method: request.method,
     headers: request.headers,
-    body: request.body
-  })
+  }
+
+  if (request.method !== 'GET' && request.method !== 'HEAD') {
+    init.body = request.body
+  }
+
+  return fetch(targetUrl, init)
 }
