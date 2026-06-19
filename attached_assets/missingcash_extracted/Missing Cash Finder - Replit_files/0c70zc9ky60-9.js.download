@@ -1,0 +1,179 @@
+;!function(){try { var e="undefined"!=typeof globalThis?globalThis:"undefined"!=typeof global?global:"undefined"!=typeof window?window:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&((e._debugIds|| (e._debugIds={}))[n]="02670ff7-174a-40b9-f7a4-f8863a86db36")}catch(e){}}();
+(globalThis.TURBOPACK||(globalThis.TURBOPACK=[])).push(["object"==typeof document?document.currentScript:void 0,525133,e=>{e.v({actions:"TopBanner-module__iKfttq__actions",banner:"TopBanner-module__iKfttq__banner",body:"TopBanner-module__iKfttq__body",content:"TopBanner-module__iKfttq__content",dismiss:"TopBanner-module__iKfttq__dismiss"})},124298,e=>{"use strict";var r=e.i(276385),t=e.i(602686),n=e.i(983420);e.i(459890);var a=e.i(500355),i=e.i(547523);e.i(214847);var s=e.i(864300),o=e.i(919073),l=e.i(643484),u=e.i(419635),d=e.i(488299),c=e.i(8047),g=e.i(61732),m=e.i(525133);e.s(["TopBanner",0,({text:e,iconLeft:p,buttonProps:f,buttonLinkProps:y,colorway:x,onDismiss:b,children:h})=>{let v=(0,s.useIntl)(),B=(0,i.useBreakpoint)("mobileMax"),C=B?"small":"default",_=null;f?_=(0,r.jsx)(l.Button,{...f,size:C}):y&&(_=(0,r.jsx)(u.ButtonLink,{...y,size:C}));let S=b?(0,r.jsx)(d.IconButton,{colorway:x,alt:v.formatMessage({id:"rui.topBannerDismiss",defaultMessage:"Dismiss"}),onClick:b,children:(0,r.jsx)(t.default,{})}):null;return(0,r.jsx)(o.ShadesSurface,{br:"full",border:B?{side:["top","bottom"],strength:"subtle"}:"subtle",colorShade:x,px:6,py:2,shrink:1,clsx:m.default.banner,elevate:"1x",children:(0,r.jsxs)(g.View,{clsx:[m.default.content,a.classes.text],children:[(0,r.jsxs)(g.View,{clsx:m.default.body,children:[(0,r.jsxs)(g.View,{row:!0,grow:!0,shrink:!0,justify:"center",align:"center",gap:4,children:[p&&!B?(0,r.jsx)(g.View,{shrink:0,children:(0,r.jsx)(n.IconProvider,{size:16,children:p})}):null,(0,r.jsx)(c.Text,{multiline:B,showTooltipOnTruncate:!B,textAlign:B?"center":void 0,textWrap:B?"balance":void 0,shrink:!0,children:e})]}),h,_?(0,r.jsx)(g.View,{clsx:m.default.actions,row:!0,align:"center",gap:4,children:_}):null]}),S?(0,r.jsx)(g.View,{clsx:m.default.dismiss,children:S}):null]})})}])},924840,e=>{"use strict";var r=e.i(276385),t=e.i(908796),n=e.i(596139);e.i(214847);var a=e.i(614852),i=e.i(864300),s=e.i(108431),o=e.i(124298);function l(e){if(!e||e.status!==t.DowngradeStatus.Scheduled||new Date(e.scheduledFor).getTime()<=Date.now())return null;let r=(0,n.getCheckoutablePriceByExternalId)(e.targetPriceId)?.planPrefix;return r?{planName:n.individualPlanNameFromPrefix[r],formattedDate:(0,a.formatDate)(e.scheduledFor,{preset:"medium"})}:null}e.s(["ScheduledDowngradeBanner",0,function({scheduledDowngrade:e,variant:t,onDismiss:n}){let a=(0,i.useIntl)(),u=l(e);if(!u)return null;let d=a.formatMessage({id:"billing.scheduledDowngradeBanner",defaultMessage:"Your plan is scheduled to downgrade to {planName} on {date}."},{planName:u.planName,date:u.formattedDate});return"top"===t?(0,r.jsx)(o.TopBanner,{colorway:"themeNotice",text:d,onDismiss:n}):(0,r.jsx)(s.StatusBanner,{colorway:"blue",closable:!!n,closeAction:n,text:d})},"getScheduledDowngradeBannerContent",0,l])},671864,e=>{"use strict";var r=e.i(351623),t=e.i(344480);e.i(975473);let n={},a=r.gql`
+    query CanSeeReferralCtaPersonal {
+  currentUser {
+    ... on CurrentUser {
+      id
+      customer {
+        ... on Customer {
+          id
+          authorizations {
+            enablePromotions {
+              isAuthorized
+              code
+              message
+            }
+          }
+        }
+      }
+    }
+  }
+}
+    `,i=r.gql`
+    query CanSeeReferralCtaOrg($orgId: String, $orgSlug: String) {
+  getOrg(orgId: $orgId, orgSlug: $orgSlug) {
+    ... on Org {
+      id
+      customer {
+        ... on Customer {
+          id
+          authorizations {
+            enablePromotions {
+              isAuthorized
+              code
+              message
+            }
+          }
+        }
+      }
+    }
+  }
+}
+    `;e.s(["useCanSeeReferralCTA",0,function(e){var r,s;let o,l,u,d=(r={skip:"personal"!==e.type},l={...n,...r},t.useQuery(a,l)),c=(s={variables:"org"===e.type?{orgId:e.orgId,orgSlug:e.orgSlug}:{},skip:"org"!==e.type},u={...n,...s},t.useQuery(i,u)),g=c.data?.getOrg?.__typename==="Org"&&"Customer"===c.data.getOrg.customer.__typename?c.data.getOrg.customer.authorizations.enablePromotions:null,m=d.data?.currentUser?.__typename==="CurrentUser"&&"Customer"===d.data.currentUser.customer.__typename?d.data.currentUser.customer.authorizations.enablePromotions:null,p=null;return"personal"===e.type?p=m:"org"===e.type&&(p=g),"personal"===e.type?o=d.error:"org"===e.type&&(o=c.error),{authorization:p,error:o,isAuthorized:p?.isAuthorized??!1,isLoading:"loading"===e.type||("personal"===e.type?d.loading:c.loading)}}],671864)},948176,e=>{"use strict";var r=e.i(55547),t=e.i(151027);e.s(["useReferralCTAWorkspaceContext",0,function(){let e=(0,r.useRouter)(),{orgId:n,orgSlug:a,loading:i}=(0,t.useCurrentUserStoredOrgContext)(),s=function(e){let r=e.split("?")[0];if(r.startsWith("/t/"))return r.split("/")[2]||void 0}(e.asPath);return i?{type:"loading"}:s?{type:"org",orgSlug:s}:n?{type:"org",orgId:n,orgSlug:a}:a?{type:"org",orgSlug:a}:{type:"personal"}}])},789972,e=>{"use strict";var r=e.i(276385);e.i(214847);var t=e.i(864300),n=e.i(124298);e.s(["TeamsToProBanner",0,function({onDismiss:e}){let a=(0,t.useIntl)();return(0,r.jsx)(n.TopBanner,{colorway:"themeWarning",text:a.formatMessage({id:"components.teamsToProBannerText",defaultMessage:"Your Teams plan is moving to Replit Pro."}),buttonLinkProps:{colorway:"warning",text:a.formatMessage({id:"components.teamsToProBannerLearnMore",defaultMessage:"Learn more"}),href:"https://replit.com/blog/pro-plan",target:"_blank",rel:"noopener noreferrer"},onDismiss:e})}])},658862,e=>{"use strict";var r=e.i(389959),t=e.i(351623),n=e.i(846545),a=e.i(344480);e.i(975473);var i=e.i(299020);let s={},o=t.gql`
+    fragment UsageBasedBillingSuspensionNotification on UsageBasedBillingSuspensionStatusNotification {
+  id
+  isDismissed
+  user {
+    id
+  }
+  customer {
+    id
+    name
+  }
+  type
+  suspensionScheduledTime
+}
+    `,l=t.gql`
+    subscription UsageBasedBillingSuspensionNotifications($orgId: String) {
+  usageBasedBillingSuspensionStatusNotifications(orgId: $orgId) {
+    id
+    ...UsageBasedBillingSuspensionNotification
+  }
+}
+    ${o}`,u=t.gql`
+    query UsageBasedBillingSuspensionNotificationsCurrentUser {
+  currentUser {
+    id
+  }
+}
+    `,d=t.gql`
+    mutation DismissUbbSuspensionNotification($input: DismissUbbSuspensionNotificationInput!) {
+  dismissUbbSuspensionNotification(input: $input) {
+    ... on UsageBasedBillingSuspensionStatusNotification {
+      ...UsageBasedBillingSuspensionNotification
+    }
+  }
+}
+    ${o}`;var c=e.i(151027);e.s(["useUBBSuspensionNotifications",0,function({skip:e=!1,overrideOrgId:t}={}){var o,g;let m,p,f,{orgId:y}=(0,c.useCurrentUserStoredOrgContext)(),{data:x,loading:b}=(o={skip:e},m={...s,...o},a.useQuery(u,m)),{data:h,loading:v,error:B}=(g={variables:{orgId:t??y??void 0},skip:e||x?.currentUser?.__typename!=="CurrentUser"||b},p={...s,...g},n.useSubscription(l,p)),[C]=(f={...s,...void 0},i.useMutation(d,f)),[_,S]=(0,r.useState)(null);return{suspensionNotification:h?.usageBasedBillingSuspensionStatusNotifications?.__typename==="UsageBasedBillingSuspensionStatusNotification"&&_!==h.usageBasedBillingSuspensionStatusNotifications.id?h.usageBasedBillingSuspensionStatusNotifications:null,suspensionNotificationsLoading:v,suspensionNotificationsError:B,handleDismissNotification:e=>{S(e),C({variables:{input:{notificationId:e}}})}}}],658862)},228366,e=>{e.v({bannerContainer:"BannerWrapper-module__5c4QIq__bannerContainer",bannerContentContainer:"BannerWrapper-module__5c4QIq__bannerContentContainer"})},544266,e=>{"use strict";var r=e.i(276385),t=e.i(61732),n=e.i(228366);e.s(["BannerWrapper",0,function({children:e,isCollapsedStyle:a=!1}){return(0,r.jsx)(t.View,{clsx:n.default.bannerContainer,pt:8,align:"center",justify:"center",style:a?{minHeight:0,padding:0}:void 0,children:(0,r.jsx)(t.View,{clsx:n.default.bannerContentContainer,shrink:!0,children:e})})}])},487285,e=>{"use strict";var r=e.i(351623),t=e.i(344480);e.i(975473);let n={},a=r.gql`
+    query ReplitStatusBanner {
+  replitStatus {
+    __typename
+    ... on ReplitStatusOutput {
+      status {
+        state
+        stateText
+        url
+      }
+      notices {
+        id
+        type
+        title
+        state
+        content
+        startsAt
+        url
+      }
+      hasActiveIncidents
+    }
+    ... on Error {
+      message
+    }
+  }
+}
+    `;e.s(["useReplitStatusBannerQuery",0,function(e){let r={...n,...e};return t.useQuery(a,r)}])},997066,370211,842588,e=>{"use strict";var r=e.i(351623),t=e.i(180273),n=e.i(344480);e.i(975473);let a={},i=r.gql`
+    query HomeBanner($orgId: String) {
+  currentUser {
+    id
+    isSubscribed
+    org(orgId: $orgId) {
+      ... on Org {
+        id
+        authorizations {
+          editPaymentMethod {
+            isAuthorized
+          }
+          viewSubscription {
+            isAuthorized
+          }
+        }
+        customer {
+          ... on Customer {
+            id
+            overdueFlag {
+              __typename
+              ... on CustomerOverdueFlag {
+                isActive
+                invoiceNumber
+                flagId
+              }
+            }
+          }
+        }
+        ...IsUnifiedPlanEnabledOrg
+      }
+    }
+  }
+}
+    ${t.IsUnifiedPlanEnabledOrgFragmentDoc}`;e.s(["useHomeBannerQuery",0,function(e){let r={...a,...e};return n.useQuery(i,r)}],997066);var s=e.i(276385),o=e.i(416298),l=e.i(644647),u=e.i(955410);e.i(214847);var d=e.i(864300),c=e.i(124298);e.s(["GracePeriodPaymentFailedBanner",0,function({customerId:e,orgId:r}){let t=(0,d.useIntl)(),{trackClick:n}=(0,u.useTrackClick)(),a=(0,l.usePayInvoicesRedirect)(r),i=`/orb-customer-portal/customer/${e}`,g=t.formatMessage({id:"billing.gracePeriodPaymentFailedBannerText",defaultMessage:"Payment failed. Pay your invoice now to keep your published apps live and keep collaborator access."}),m=t.formatMessage({id:"billing.gracePeriodPaymentFailedPayInvoice",defaultMessage:"Pay Invoice"});return a.shouldRedirect?(0,s.jsx)(c.TopBanner,{colorway:"themeError",iconLeft:(0,s.jsx)(o.default,{}),text:g,buttonProps:{text:m,onClick:()=>{n({productArea:"billing",target:"payment_failed_banner_pay_invoice_button"}),a.openBillingTab()}}}):(0,s.jsx)(c.TopBanner,{colorway:"themeError",iconLeft:(0,s.jsx)(o.default,{}),text:g,buttonLinkProps:{text:m,href:i,onClick:()=>n({productArea:"billing",target:"payment_failed_banner_pay_invoice_button"})}})}],370211);var g=e.i(908796),m=e.i(761201);e.s(["TrialOrgBannedBanner",0,function({orgDealType:e,orgContactEmail:r}){let t=(0,d.useIntl)(),n=e===g.OrgDealType.EnterpriseTrial?t.formatMessage({id:"billing.trialOrgBannedDealTypeEnterprise",defaultMessage:"Enterprise"}):t.formatMessage({id:"billing.trialOrgBannedDealTypeTeams",defaultMessage:"Teams"});return(0,s.jsx)(c.TopBanner,{colorway:"themeNotice",text:t.formatMessage({id:"billing.trialOrgBannedBannerText",defaultMessage:"Your Replit {dealTypeText} trial has ended. Contact {email} to resume services."},{dealTypeText:n,email:r??m.SALES_TEAM_CONTACT_EMAIL})})}],842588)},731879,e=>{"use strict";var r=e.i(276385);e.i(214847);var t=e.i(20397),n=e.i(124298);e.s(["LivestreamAnnouncementBanner",0,function({livestream:e,onDismiss:a}){return!function(e){try{let r=new URL(e);return"http:"===r.protocol||"https:"===r.protocol}catch{return!1}}(e)?null:(0,r.jsx)(n.TopBanner,{colorway:"themeNotice",text:"",onDismiss:a,children:(0,r.jsx)("span",{style:{textAlign:"center"},children:(0,r.jsx)(t.FormattedMessage,{id:"components.livestreamAnnouncement",defaultMessage:"We've been cooking something exciting 4 you. Sign up for our <link>Livestream</link> to learn more.",values:{link:t=>(0,r.jsx)("a",{href:e,target:"_blank",rel:"noopener noreferrer",children:t})}})})})}])},164258,154475,e=>{"use strict";var r=e.i(276385),t=e.i(389959),n=e.i(969407),a=e.i(908796),i=e.i(351623),s=e.i(344480);e.i(975473);let o={},l=i.gql`
+    query CurrentUserReferralOrUpgrade {
+  currentUser {
+    id
+    username
+    isSubscribed
+    paidReferralEconomics {
+      pendingVerifiedSignupUpgradeRewardCents
+    }
+    referralsByTarget(input: {status: pending}) {
+      __typename
+      ... on CurrentUserReferralsByTargetResult {
+        referrals {
+          ... on Referrals {
+            id
+            paidConversionRewardCents
+            sourceUser {
+              id
+              username
+            }
+          }
+        }
+      }
+    }
+    referralsBySource {
+      __typename
+      ... on CurrentUserReferralsBySourceResult {
+        referrals {
+          ... on Referrals {
+            id
+            status
+            referralPromoCodeId
+            paidConversionRewardCents
+          }
+        }
+      }
+    }
+  }
+}
+    `;var u=e.i(712903),d=e.i(336187),c=e.i(709485),g=e.i(596139),m=e.i(765826),p=e.i(914359),f=e.i(671864),y=e.i(808620),x=e.i(151027),b=e.i(547523),h=e.i(948176);e.i(214847);var v=e.i(614852),B=e.i(864300),C=e.i(415541),_=e.i(242917),S=e.i(777198),T=e.i(598986);let R="referral-banner-suppress-this-session";function N(){T.default.set(R,!0)}function U(){return!0===T.default.get(R,"boolean")}e.s(["isReferralBannerSuppressedThisSession",0,U,"suppressReferralBannerThisSession",0,N],154475);var D=e.i(124298),M=e.i(61732),E=e.i(3466);function I(){let e=(0,B.useIntl)(),t=e.formatMessage({id:"components.mobileHomeCoreUpgrade",defaultMessage:"Upgrade to Replit {planName}"},{planName:g.corePlanName});return(0,r.jsx)(D.TopBanner,{colorway:"themeNotice",text:e.formatMessage({id:"components.mobileHomeCoreUpgradeBannerText",defaultMessage:"Unlock more credits and unlimited workspaces."}),children:(0,r.jsx)(E.default,{context:"home_page",surface:"mobile_home_page",text:t,colorway:"primary",variant:"default",modalHeadingText:t,redirectPath:"/home"})})}var w=e.i(933302);let A=100*m.REFERRAL_CREDIT_AMOUNT_USD;e.s(["ReferralOrUpgradeBanner",0,function({paidOnly:e=!1,referralCTAContext:i,containerClsx:m}={}){let T,R,E=(0,B.useIntl)(),P=(0,n.useIsSSR)(),j=(0,b.useBreakpoint)("tabletMin"),{orgId:k}=(0,x.useCurrentUserStoredOrgContext)(),O=(0,h.useReferralCTAWorkspaceContext)(),{isAuthorized:L,isLoading:F}=(0,f.useCanSeeReferralCTA)(i??O),{isLoading:q,isDone:$,setAsDone:z}=(0,S.useMemoedDismissibleElement)("referral-program-banner"),{isLoading:W,isDone:G,setAsDone:H}=(0,S.useMemoedDismissibleElement)("referral-pending-banner"),{data:K,loading:Q}=(T={...o,...void 0},s.useQuery(l,T)),V=K?.currentUser?.referralsByTarget?.__typename==="CurrentUserReferralsByTargetResult"?K.currentUser.referralsByTarget.referrals?.[0]:null,Y=!!V,J=((V?.__typename==="Referrals"?V.paidConversionRewardCents:null)??A)/100,X=(K?.currentUser?.referralsBySource?.__typename==="CurrentUserReferralsBySourceResult"&&!!K?.currentUser?.referralsBySource?.referrals&&K?.currentUser?.referralsBySource?.referrals||[]).filter(e=>e.status===a.ReferralsstatusEnumType.ReferrerCreditPending),Z=K?.currentUser?.paidReferralEconomics?.pendingVerifiedSignupUpgradeRewardCents??0,ee=X.length>0||Z>0,er=!!K?.currentUser?.isSubscribed,et=!P&&!Q&&!!K?.currentUser;(0,t.useEffect)(()=>{et&&L&&!er&&N()},[et,L,er]);let en=et&&L&&er&&U(),ea=!P&&!j&&void 0===k&&!er,[ei,es]=(0,t.useState)(!1),{show:eo}=(0,_.useGlobalModal)(),el=null;L&&!P&&!q&&!W&&!Q&&(er?$||en||(el="referral-banner"):e||G||!ee?e||G||!Y||(el="pending-referral-banner"):el="pending-credit-banner");let eu="referral-banner"===el&&(e||!j),ed=(R=(0,w.useGetExperimentParam)("mobile_referral_banner","show_mobile_referral_banner",!1),!!eu&&!0===R());eu&&!ed&&(el=null),(0,y.useLogPaidReferralEconomicsExposure)(!!el),(0,t.useEffect)(()=>{el&&(0,C.track)(c.events.REFERRAL_PROGRAM_USED,{action:"surface_viewed",trackingContext:el})},[el]);let ec=async()=>{await eo("MembershipPurchaseModal",{analyticsContext:{upgrade:{context:"pending_referral_banner",surface:"referral_banner"}},onPurchaseComplete:()=>H()})},eg=async()=>{await eo("MembershipPurchaseModal",{headingText:E.formatMessage({id:"components.referralUpgradeForCredits",defaultMessage:"Upgrade for credits"}),subHeadingText:E.formatMessage({id:"components.referralUpgradeBonusSubheading",defaultMessage:"Upgrade to Replit {planName} to claim your {amount} in referral bonus credits"},{planName:g.corePlanName,amount:(0,v.formatCurrency)(J,{maximumFractionDigits:2,minimumFractionDigits:0})}),analyticsContext:{upgrade:{context:"pending_referral_banner",surface:"referral_banner"}},onPurchaseComplete:()=>H()})};if(P||q||W||F||Q)return null;if(!er){if(e)return null;if(L&&!G&&ee){let e=X.reduce((e,r)=>e+(r.paidConversionRewardCents??A),0)/100+Z/100;return(0,r.jsx)(D.TopBanner,{colorway:"themeNotice",text:E.formatMessage({id:"components.referralPendingCreditBanner",defaultMessage:"Upgrade to {planName} to claim your {amount} in referral bonus credits."},{planName:g.corePlanName,amount:(0,v.formatCurrency)(e,{maximumFractionDigits:2,minimumFractionDigits:0})}),buttonProps:{text:E.formatMessage({id:"components.referralUpgrade",defaultMessage:"Upgrade"}),iconLeft:(0,r.jsx)(u.default,{}),onClick:ec},onDismiss:()=>{(0,C.track)(c.events.REFERRAL_PROGRAM_USED,{action:"banner_dismissed",trackingContext:el??"referral-banner"}),H()}})}return L&&!G&&Y?(0,r.jsx)(D.TopBanner,{colorway:"themeNotice",text:E.formatMessage({id:"components.referralPendingReferralBanner",defaultMessage:"Upgrade to {planName} to claim your {amount} in credits"},{planName:g.corePlanName,amount:(0,v.formatCurrency)(J,{maximumFractionDigits:2,minimumFractionDigits:0})}),buttonProps:{text:E.formatMessage({id:"components.referralUpgrade",defaultMessage:"Upgrade"}),iconLeft:(0,r.jsx)(u.default,{}),onClick:eg},onDismiss:()=>{(0,C.track)(c.events.REFERRAL_PROGRAM_USED,{action:"banner_dismissed",trackingContext:el??"referral-banner"}),H()}}):ea?(0,r.jsx)(I,{}):null}if(!L||$||en||"referral-banner"!==el)return null;let em=(0,r.jsxs)(r.Fragment,{children:[(0,r.jsx)(D.TopBanner,{colorway:"themeNotice",text:E.formatMessage({id:"components.referralNeedMoreCredits",defaultMessage:"Need more credits?"}),buttonProps:{text:E.formatMessage({id:"components.referralReferAFriend",defaultMessage:"Refer a friend"}),iconLeft:(0,r.jsx)(d.default,{}),colorway:"primary",onClick:()=>{(0,C.track)(c.events.REFERRAL_PROGRAM_USED,{action:"banner_cta_clicked",trackingContext:"referral-banner"}),es(!0)}},onDismiss:()=>{(0,C.track)(c.events.REFERRAL_PROGRAM_USED,{action:"banner_dismissed",trackingContext:el??"referral-banner"}),z()}}),(0,r.jsx)(p.ReferralLinkModal,{isOpen:ei,onClose:()=>es(!1),trackingContext:"referral-banner"})]});return m?(0,r.jsx)(M.View,{clsx:m,children:em}):em}],164258)},834515,e=>{e.v({bannerContainer:"HomeBanner-module__viP6eW__bannerContainer"})},685513,e=>{"use strict";e.s(["BannerContainer",()=>A,"HomeBanner",()=>w]);var r=e.i(276385),t=e.i(389959),n=e.i(908796),a=e.i(997066),i=e.i(416298),s=e.i(924840),o=e.i(370211),l=e.i(842588),u=e.i(815598),d=e.i(658862),c=e.i(151027),g=e.i(730497),m=e.i(98649),p=e.i(856010),f=e.i(160344);e.i(214847);var y=e.i(800686),x=e.i(864300),b=e.i(489859),h=e.i(777198),v=e.i(124298),B=e.i(61732),C=e.i(544266),_=e.i(731879),S=e.i(164258),T=e.i(510975),R=e.i(789972),N=e.i(834515);function U(e){let[r,n]=(0,t.useState)({dismissed:!1,hydratedKey:null});(0,t.useEffect)(()=>{n({dismissed:!0===b.default.get(e),hydratedKey:e})},[e]);let a=(0,t.useCallback)(()=>{n({dismissed:!0,hydratedKey:e}),b.default.set(e,!0)},[e]),i=r.hydratedKey===e;return[i&&r.dismissed,a,i]}let D=(0,y.defineMessages)({textWithInvoice:{id:"billing.salesLedOverdueBannerTextWithInvoice",defaultMessage:"Your account has an overdue invoice ({invoiceNumber}). Please contact your account manager to resolve."},text:{id:"billing.salesLedOverdueBannerText",defaultMessage:"Your account has an overdue invoice. Please contact your account manager to resolve."}});function M({customerId:e,invoiceNumber:t,flagId:n}){let a=(0,x.useIntl)(),[s,o,l]=U(`sales-led-overdue-banner-dismissed:${e}:${n}`);if(!l||s)return null;let u=t?a.formatMessage(D.textWithInvoice,{invoiceNumber:t}):a.formatMessage(D.text);return(0,r.jsx)(v.TopBanner,{colorway:"themeWarning",iconLeft:(0,r.jsx)(i.default,{}),text:u,onDismiss:o})}let E=(0,t.memo)(function({orgRole:e,orgDealContext:t,isUBBBanned:a,suspensionNotificationType:i,gracePeriodCustomerId:u,shouldShowTeamsToProBanner:d,isTeamsToProBannerDismissed:c,onDismissTeamsToProBanner:g,overdueFlagActive:m,overdueCustomerId:p,overdueInvoiceNumber:f,overdueFlagId:y,scheduledDowngrade:x,shouldShowScheduledDowngradeBanner:b,onDismissScheduledDowngradeBanner:h}){return e===n.SystemOrgGroupType.SystemAdmins&&(t?.dealType===n.OrgDealType.Trial||t?.dealType===n.OrgDealType.EnterpriseTrial)&&a?(0,r.jsx)(l.TrialOrgBannedBanner,{orgDealType:t?.dealType??n.OrgDealType.Trial,orgContactEmail:t?.salesContactEmail??null}):i===n.Ubb_Suspension_Status_NotificationstypeEnumType.InGracePeriod&&null!=u?(0,r.jsx)(o.GracePeriodPaymentFailedBanner,{customerId:u}):m&&null!=p&&null!=y?(0,r.jsx)(M,{customerId:p,invoiceNumber:f,flagId:y}):d&&!c?(0,r.jsx)(R.TeamsToProBanner,{onDismiss:g}):b?(0,r.jsx)(s.ScheduledDowngradeBanner,{variant:"top",scheduledDowngrade:x,onDismiss:h}):(0,r.jsx)(I,{})});function I(){let e=(0,g.useFlag)({controlName:"flag-livestream-announcment",type:"string",default:""}),[t,n,a]=(0,f.default)(`livestream-banner-dismissed:${e}`,!1);return a?e&&!t?(0,r.jsx)(_.LivestreamAnnouncementBanner,{livestream:e,onDismiss:()=>n(!0)}):(0,r.jsx)(S.ReferralOrUpgradeBanner,{}):null}function w({isCollapsedStyle:e,scheduledDowngrade:t=null}){let{orgId:i,orgRole:o,orgDealContext:l,loading:g}=(0,c.useCurrentUserStoredOrgContext)(),{data:f,loading:y}=(0,a.useHomeBannerQuery)({variables:{orgId:i},skip:!i}),{loading:x,isUBBBanned:b}=(0,u.useIsUBBBanned)({orgId:i}),{suspensionNotification:v,suspensionNotificationsLoading:B}=(0,d.useUBBSuspensionNotifications)(),{isLoading:_,isDone:S,setAsDone:R}=(0,h.useMemoedDismissibleElement)("teams-to-pro-migration-banner"),N=f?.currentUser?.org?.__typename==="Org"?f.currentUser.org:null,D=(0,p.useIsUnifiedPlanEnabled)({org:N}),M=N?.customer.__typename==="Customer"?N.customer:null,I=M?.overdueFlag.__typename==="CustomerOverdueFlag"?M.overdueFlag:null,A=I?.isActive??!1,P=I?.invoiceNumber??null,j=I?.flagId??null,k=M?.id??null,O=(0,m.useIsDowngradeEnabled)(),[L,F,q]=U(`scheduled-downgrade-banner-dismissed:${t?.scheduledFor??""}`),$=O&&q&&!L&&!!(0,s.getScheduledDowngradeBannerContent)(t);if((0,T.useIsReplitStatusBannerActive)())return null;let z=g||B||x||i&&y||_,W=N?.authorizations.viewSubscription.isAuthorized??!1,G=l?.dealType===n.OrgDealType.Enterprise||l?.dealType===n.OrgDealType.EnterpriseTrial;return(0,r.jsx)(C.BannerWrapper,{isCollapsedStyle:e,children:z?null:(0,r.jsx)(E,{orgRole:o,orgDealContext:l,isUBBBanned:b,suspensionNotificationType:v?.type,gracePeriodCustomerId:v?.type===n.Ubb_Suspension_Status_NotificationstypeEnumType.InGracePeriod?v.customer?.id??null:null,shouldShowTeamsToProBanner:W&&!G&&!D,isTeamsToProBannerDismissed:S,onDismissTeamsToProBanner:R,overdueFlagActive:A,overdueCustomerId:k,overdueInvoiceNumber:P,overdueFlagId:j,scheduledDowngrade:t,shouldShowScheduledDowngradeBanner:$,onDismissScheduledDowngradeBanner:F})})}function A(e){return(0,r.jsx)(B.View,{clsx:N.default.bannerContainer,children:e.children})}},914617,e=>{e.v({countdown:"ReplitStatusBanner-module__1Iw-_G__countdown"})},510975,e=>{"use strict";e.s(["ReplitStatusBanner",()=>h,"StatusBannerContent",()=>x,"useIsReplitStatusBannerActive",()=>b]);var r=e.i(276385),t=e.i(55547),n=e.i(389959),a=e.i(487285),i=e.i(416746),s=e.i(813707),o=e.i(416298),l=e.i(569910),u=e.i(160344);e.i(214847);var d=e.i(20397),c=e.i(685513),g=e.i(108431),m=e.i(914617);let p="replit-status-dismissed-notice";function f(e){let r=new Date(e).getTime()-Date.now();if(r<=0)return null;let t=Math.floor(r/6e4),n=Math.floor(t/60);return n>0?`${n}h ${t%60}m`:t>0?`${t}m`:"< 1m"}function y(e,r){let t=e.filter(e=>e.id!==r||"SCHEDULED"!==e.state),n=t.find(e=>"MAINTENANCE"===e.type&&"UNDERWAY"===e.state);if(n)return n;let a=t.find(e=>"INCIDENT"===e.type);if(a)return a;let i=t.find(e=>"MAINTENANCE"===e.type&&"SCHEDULED"===e.state);return i||t[0]}function x({state:e,title:t,titleUrl:n,countdown:a,isDismissible:u,onDismiss:c}){let p=function(e){switch(e){case"CRITICAL":case"MAJOR":return"error";case"MAINTENANCE":return"maintenance";case"OK":case"MINOR":return"warning";default:(0,l.default)(e)}}(e),f=function(e){switch(e){case"error":return"negative";case"maintenance":return"primary";case"warning":return"warning";default:(0,l.default)(e)}}(p),y=n?(0,r.jsx)("a",{href:n,children:t}):t,b=(0,r.jsxs)(r.Fragment,{children:[y,a?(0,r.jsxs)("span",{clsx:m.default.countdown,children:[" · ",(0,r.jsx)(d.FormattedMessage,{id:"components.replitStatusStartsIn",defaultMessage:"Starts in {countdown}",values:{countdown:a}})]}):null]});return(0,r.jsx)(g.StatusBanner,{variant:"flush",centered:!0,colorway:f,icon:function(e){switch(e){case"error":return(0,r.jsx)(o.default,{});case"maintenance":return(0,r.jsx)(s.default,{});case"warning":return(0,r.jsx)(i.default,{});default:(0,l.default)(e)}}(p),text:b,closable:!!(u&&c),closeAction:c})}function b(){(0,t.useRouter)();let[e,,r]=(0,u.default)(p,null),{data:n}=(0,a.useReplitStatusBannerQuery)({skip:!1});if(!r)return!1;let i=n?.replitStatus,s=i&&"ServiceUnavailable"!==i.__typename?i:null;if(!s||0===s.notices.length)return!1;let o=y(s.notices,e);return!!(o&&("OK"!==s.status.state||"MAINTENANCE"===o.type))}function h(){let e;(0,t.useRouter)();let[i,s,o]=(0,u.default)(p,null),{data:l,loading:d}=(0,a.useReplitStatusBannerQuery)({pollInterval:3e5,skip:!1}),g=l?.replitStatus,m=g&&"ServiceUnavailable"!==g.__typename?g:null,b=m?y(m.notices,i):void 0,h=function(e){let[r,t]=(0,n.useState)(()=>e?f(e):null);return(0,n.useEffect)(()=>{if(!e)return void t(null);t(f(e));let r=setInterval(()=>{let n=f(e);t(n),null===n&&clearInterval(r)},6e4);return()=>clearInterval(r)},[e]),r}(b?.startsAt??null),v=(0,n.useCallback)(e=>{s(e)},[s]);if(!o||d&&!l||!m)return null;let{status:B}=m;if(!b||"OK"===B.state&&"MAINTENANCE"!==b.type)return null;let C=b?.title??B.stateText,_=b?.url??B.url,S=m.notices.filter(e=>"INCIDENT"===e.type),T=S.length>0&&S.every(e=>"RECOVERING"===e.state);e=b?.type==="MAINTENANCE"?"MAINTENANCE":T?"MINOR":B.state;let R=b?.type==="MAINTENANCE"&&b?.state==="SCHEDULED"&&function(e){if(!e)return!1;let r=new Date(e).getTime(),t=Date.now();return r>t&&r<=t+216e5}(b?.startsAt),N=b?.type==="MAINTENANCE"&&b?.state==="SCHEDULED";return(0,r.jsx)(c.BannerContainer,{children:(0,r.jsx)(x,{state:e,title:C,titleUrl:_,countdown:N?h:void 0,isDismissible:R,onDismiss:b?.id?()=>v(b.id):void 0})})}}]);
+
+//# debugId=02670ff7-174a-40b9-f7a4-f8863a86db36
+//# sourceMappingURL=0t~j91nib5rqw.js.map

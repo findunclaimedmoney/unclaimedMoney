@@ -1,0 +1,621 @@
+;!function(){try { var e="undefined"!=typeof globalThis?globalThis:"undefined"!=typeof global?global:"undefined"!=typeof window?window:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&((e._debugIds|| (e._debugIds={}))[n]="b3c78e85-8879-16f8-1b37-84525aa5dce5")}catch(e){}}();
+(globalThis.TURBOPACK||(globalThis.TURBOPACK=[])).push(["object"==typeof document?document.currentScript:void 0,521593,e=>{"use strict";let t={EXPIRY_MONTHS:6,PACKS:[{id:"credit_pack_100",credits:100,priceUsd:100},{id:"credit_pack_300",credits:300,priceUsd:290},{id:"credit_pack_500",credits:500,priceUsd:480},{id:"credit_pack_1000",credits:1e3,priceUsd:950},{id:"credit_pack_5",credits:5,priceUsd:5,hiddenFromMainDropdown:!0},{id:"credit_pack_10",credits:10,priceUsd:10,hiddenFromMainDropdown:!0},{id:"credit_pack_25",credits:25,priceUsd:25,hiddenFromMainDropdown:!0}]},i=t.PACKS.map(e=>e.id);e.s(["CREDIT_PACK_CONFIG",0,t,"VALID_PACK_IDS",0,i,"getPackById",0,function(e){return t.PACKS.find(t=>t.id===e)??null},"isPackHiddenFromMainDropdown",0,function(e){return"hiddenFromMainDropdown"in e&&e.hiddenFromMainDropdown},"isValidPackId",0,function(e){return i.includes(e)}])},686337,e=>{e.v({endPlaceholder:"MultiStepDialog-module__Flqloa__endPlaceholder",loadingContainer:"MultiStepDialog-module__Flqloa__loadingContainer",root:"MultiStepDialog-module__Flqloa__root",startPlaceholder:"MultiStepDialog-module__Flqloa__startPlaceholder",stepBubble:"MultiStepDialog-module__Flqloa__stepBubble",stepContainer:"MultiStepDialog-module__Flqloa__stepContainer",stepContainerRoomy:"MultiStepDialog-module__Flqloa__stepContainerRoomy"})},325173,e=>{"use strict";var t=e.i(276385),i=e.i(389959),r=e.i(138716),a=e.i(752539),s=e.i(269848);e.i(214847);var l=e.i(864300),n=e.i(89148),o=e.i(643484),d=e.i(244945),u=e.i(61732),c=e.i(686337);let g=(0,i.createContext)(null);function p({onNextStep:e,nextButtonProps:i,onPrevStep:s,prevButtonProps:n,stepProgress:g,footerLeading:m}){let f=(0,l.useIntl)(),C=f.formatMessage({id:"rui.multiStepDialogBack",defaultMessage:"Back"}),x=f.formatMessage({id:"rui.multiStepDialogContinue",defaultMessage:"Continue"});if(null!=m){let l=g.current>0&&!0!==n.hidden,p=g.current<g.total&&!0!==i.hidden;return(0,t.jsxs)(u.View,{pt:24,row:!0,align:"center",gap:8,children:[(0,t.jsx)(u.View,{grow:!0,shrink:!0,basis:0,row:!0,justify:"start",align:"center",children:l?(0,t.jsx)(d.Tooltip,{isDisabled:!n.disabled||!n.disabledReason,tooltip:n.disabledReason,children:(0,t.jsx)(o.Button,{iconLeft:(0,t.jsx)(r.default,{}),text:C,...n,onClick:e=>{n.onClick?.(e),s()}},"prev-step-button")}):m}),(0,t.jsx)(h,{currentStep:g.current,totalSteps:g.total}),(0,t.jsx)(u.View,{grow:!0,shrink:!0,basis:0,row:!0,justify:"end",align:"center",children:p?(0,t.jsx)(d.Tooltip,{isDisabled:!i.disabled||!i.disabledReason,tooltip:i.disabledReason,children:(0,t.jsx)(o.Button,{iconRight:(0,t.jsx)(a.default,{}),colorway:"primary",type:"submit",text:x,...i,onClick:t=>{i.onClick?.(t),e()}},"next-step-button")}):(0,t.jsx)(u.View,{clsx:c.default.endPlaceholder})})]})}return(0,t.jsxs)(u.View,{pt:16,row:!0,justify:"space-between",children:[0===g.current||n.hidden?(0,t.jsx)(u.View,{clsx:c.default.startPlaceholder}):(0,t.jsx)(d.Tooltip,{isDisabled:!n.disabled||!n.disabledReason,tooltip:n.disabledReason,children:(0,t.jsx)(o.Button,{iconLeft:(0,t.jsx)(r.default,{}),text:C,...n,onClick:e=>{n.onClick?.(e),s()}},"prev-step-button")}),(0,t.jsx)(h,{currentStep:g.current,totalSteps:g.total}),g.current===g.total||i.hidden?(0,t.jsx)(u.View,{clsx:c.default.endPlaceholder}):(0,t.jsx)(d.Tooltip,{isDisabled:!i.disabled||!i.disabledReason,tooltip:i.disabledReason,children:(0,t.jsx)(o.Button,{iconRight:(0,t.jsx)(a.default,{}),colorway:"primary",type:"submit",text:x,...i,onClick:t=>{i.onClick?.(t),e()}},"next-step-button")})]})}let m={backgroundColor:n.tokens.accentPrimaryDefault,filter:`drop-shadow(0px 0px 6px ${n.tokens.accentPrimaryDefault})`};function h({currentStep:e,totalSteps:i}){return(0,t.jsx)(u.View,{row:!0,gap:4,justify:"center",align:"center",children:Array.from({length:i},(i,r)=>(0,t.jsx)(u.View,{clsx:c.default.stepBubble,style:r===e?m:void 0},r))})}e.s(["default",0,function(e){let{children:r,onNextStep:a,onPrevStep:l,stepIndex:n,loading:o,stepProgress:d,nextButtonProps:m,prevButtonProps:h,contentContainerClassName:f,footerLeading:C}=e,x=i.Children.toArray(r),y=d??{current:n,total:x.length},[_,b]=(0,i.useState)({}),[v,B]=(0,i.useState)({}),A={...m,..._},k={...h,...v};function U(){b({}),B({})}let S=(0,i.useMemo)(()=>({setNextButtonProps:b,setPrevButtonProps:B}),[]);if(n<0||n>=x.length)throw Error("Invalid step index");return(0,t.jsx)(g.Provider,{value:S,children:(0,t.jsx)(u.View,{clsx:c.default.root,grow:!0,shrink:!0,children:o?(0,t.jsx)(u.View,{clsx:c.default.loadingContainer,children:(0,t.jsx)(s.default,{})}):(0,t.jsxs)(u.View,{clsx:null!=C?c.default.stepContainerRoomy:c.default.stepContainer,className:f,children:[x[n],(0,t.jsx)(p,{onNextStep:function(){U(),null==A.onClick&&a()},onPrevStep:function(){U(),null==k.onClick&&l()},nextButtonProps:A,prevButtonProps:k,stepProgress:y,footerLeading:C})]})})})},"useDefaultStepNavigation",0,function(){let[e,t]=(0,i.useState)(0);return{stepIndex:e,handleNextStep:(0,i.useCallback)(()=>t(e=>e+1),[]),handlePrevStep:(0,i.useCallback)(()=>t(e=>e-1),[])}},"useDialogStep",0,function({nextButtonProps:e,prevButtonProps:t}){let r=(0,i.useContext)(g);if(null==r)throw Error("useDialogStep must be used within a MultiStepDialog");let{setNextButtonProps:a,setPrevButtonProps:s}=r;(0,i.useEffect)(()=>{null!=e&&a(e)},[a,e]),(0,i.useEffect)(()=>{null!=t&&s(t)},[s,t])}])},276470,e=>{e.v({responsiveCompact:"UBBNotificationModals-module__ERiU_G__responsiveCompact",responsiveWide:"UBBNotificationModals-module__ERiU_G__responsiveWide"})},392806,e=>{e.v({headerGrid:"ReachedMonthlyCreditLimitWithCreditPacks-module__BNrAyq__headerGrid",headline:"ReachedMonthlyCreditLimitWithCreditPacks-module__BNrAyq__headline",heroFrame:"ReachedMonthlyCreditLimitWithCreditPacks-module__BNrAyq__heroFrame",heroImage:"ReachedMonthlyCreditLimitWithCreditPacks-module__BNrAyq__heroImage",heroLoadingOverlay:"ReachedMonthlyCreditLimitWithCreditPacks-module__BNrAyq__heroLoadingOverlay",optionIconWell:"ReachedMonthlyCreditLimitWithCreditPacks-module__BNrAyq__optionIconWell",optionRow:"ReachedMonthlyCreditLimitWithCreditPacks-module__BNrAyq__optionRow",optionRowButton:"ReachedMonthlyCreditLimitWithCreditPacks-module__BNrAyq__optionRowButton",optionRowMain:"ReachedMonthlyCreditLimitWithCreditPacks-module__BNrAyq__optionRowMain",optionRowSelected:"ReachedMonthlyCreditLimitWithCreditPacks-module__BNrAyq__optionRowSelected",paygTitleRow:"ReachedMonthlyCreditLimitWithCreditPacks-module__BNrAyq__paygTitleRow",responsiveCompact:"ReachedMonthlyCreditLimitWithCreditPacks-module__BNrAyq__responsiveCompact",responsiveWide:"ReachedMonthlyCreditLimitWithCreditPacks-module__BNrAyq__responsiveWide"})},194691,e=>{"use strict";var t=e.i(276385),i=e.i(389959),r=e.i(752539),a=e.i(429662),s=e.i(549645),l=e.i(269848),n=e.i(76112),o=e.i(521593),d=e.i(955410);e.i(214847);var u=e.i(800686),c=e.i(614852),g=e.i(864300),p=e.i(415541),m=e.i(709485),h=e.i(89148),f=e.i(919073),C=e.i(585544),x=e.i(325173),y=e.i(744006),_=e.i(19322),b=e.i(8047),v=e.i(61732),B=e.i(392806);let A=(0,u.defineMessages)({headline:{id:"billing.creditsExhaustedHeadline",defaultMessage:"Look at you go! You've used your credits."},chooseOption:{id:"billing.creditsExhaustedChooseOption",defaultMessage:"Choose an option to continue building."},buyCreditPackTitle:{id:"billing.creditsExhaustedBuyCreditPackTitle",defaultMessage:"Buy a credit pack"},buyCreditPackSubtitleWide:{id:"billing.creditsExhaustedBuyCreditPackSubtitleWide",defaultMessage:"One time purchase to top up Replit credits."},buyCreditPackSubtitleCompact:{id:"billing.creditsExhaustedBuyCreditPackSubtitleCompact",defaultMessage:"Top up Replit credits"},packPriceAriaLabel:{id:"billing.creditsExhaustedPackPriceAriaLabel",defaultMessage:"Credit pack price"},payAsYouGoTitleWide:{id:"billing.creditsExhaustedPayAsYouGoTitleWide",defaultMessage:"Or, continue with pay as you go"},payAsYouGoTitleCompact:{id:"billing.creditsExhaustedPayAsYouGoTitleCompact",defaultMessage:"Pay as you go"},payAsYouGoSubtitleWide:{id:"billing.creditsExhaustedPayAsYouGoSubtitleWide",defaultMessage:"Only pay for what you use. Monthly credits reset {resetDate}."},payAsYouGoSubtitleCompact:{id:"billing.creditsExhaustedPayAsYouGoSubtitleCompact",defaultMessage:"Monthly credits reset {resetDate}."},payAsYouGoDefaultPill:{id:"billing.creditsExhaustedPayAsYouGoDefaultPill",defaultMessage:"Default"},nextCtaBuyCreditPackWide:{id:"billing.creditsExhaustedNextCtaBuyCreditPackWide",defaultMessage:"Buy {price} credit pack"},nextCtaBuyCreditPackCompact:{id:"billing.creditsExhaustedNextCtaBuyCreditPackCompact",defaultMessage:"Buy {price} pack"},nextCtaKeepBuilding:{id:"billing.creditsExhaustedNextCtaKeepBuilding",defaultMessage:"Keep building"}});e.s(["ReachedMonthlyCreditLimitWithCreditPacks",0,function({billingPeriodEndDate:e,appPreviewImageUrl:u,appPreviewImageLoading:k=!1,availablePackIds:U,initialPackId:S,selection:j,onSelectionChange:M}){let D=(0,g.useIntl)(),{trackClick:I}=(0,d.useTrackClick)(),P=(0,i.useMemo)(()=>U.map(e=>(0,o.getPackById)(e)).filter(e=>null!==e),[U]),w="pack"===j.kind?j.packId:S,R=P.find(e=>e.id===w)??P[0]??null;(0,i.useEffect)(()=>{(0,p.track)(m.events.CREDIT_PACK,{action:"exhausted_modal_viewed",default_pack_id:S})},[S]);let E=(0,i.useMemo)(()=>(0,c.formatDate)(e,{preset:"medium",locale:D.locale}),[e,D.locale]),N=(0,i.useMemo)(()=>new Intl.DateTimeFormat(D.locale,{month:"short",day:"numeric"}).format(new Date(e)),[e,D.locale]),T=(0,i.useMemo)(()=>{if("pack"===j.kind&&R){let e=(0,c.formatCurrency)(R.priceUsd,{locale:D.locale,maximumFractionDigits:0});return(0,t.jsxs)(t.Fragment,{children:[(0,t.jsx)("span",{className:B.default.responsiveWide,children:D.formatMessage(A.nextCtaBuyCreditPackWide,{price:e})}),(0,t.jsx)("span",{className:B.default.responsiveCompact,children:D.formatMessage(A.nextCtaBuyCreditPackCompact,{price:e})})]})}return D.formatMessage(A.nextCtaKeepBuilding)},[D,j.kind,R]);(0,x.useDialogStep)({nextButtonProps:{text:T,iconRight:(0,t.jsx)(r.default,{})}});let F=!!u,[L,O]=(0,i.useState)(!1),[q,V]=(0,i.useState)(!1);(0,i.useEffect)(()=>{O(!1),V(!1)},[u]);let W=()=>{M({kind:"pack",packId:w})},G=e=>(0,c.formatCurrency)(e,{locale:D.locale,maximumFractionDigits:0});return(0,t.jsxs)(v.View,{gap:24,children:[(0,t.jsxs)(v.View,{clsx:B.default.headerGrid,children:[(0,t.jsx)(v.View,{row:!0,align:"center",children:(0,t.jsx)(n.default,{"aria-hidden":!0,color:h.tokens.foregroundDefault,size:18})}),(0,t.jsx)(b.Text,{clsx:B.default.headline,variant:"subheadDefault",children:D.formatMessage(A.headline)})]}),k||F&&!q?(0,t.jsxs)(f.ShadesSurface,{className:B.default.heroFrame,br:12,elevate:!1,border:"subtle",children:[F&&!q?(0,t.jsx)("img",{alt:"",clsx:B.default.heroImage,decoding:"async",src:u,style:{opacity:+!!L},onError:()=>V(!0),onLoad:()=>O(!0)}):null,k||F&&!q&&!L?(0,t.jsx)(v.View,{clsx:B.default.heroLoadingOverlay,align:"center",justify:"center",children:(0,t.jsx)(l.default,{size:24,color:h.tokens.foregroundDimmer})}):null]}):null,(0,t.jsxs)(v.View,{gap:8,children:[(0,t.jsx)(b.Text,{color:"dimmer",children:D.formatMessage(A.chooseOption)}),(0,t.jsxs)(v.View,{gap:12,children:[(0,t.jsxs)(v.View,{clsx:[B.default.optionRow,"pack"===j.kind?B.default.optionRowSelected:void 0],row:!0,align:"center",gap:12,onClick:e=>{e.target===e.currentTarget&&W()},children:[(0,t.jsxs)(v.View,{tag:"button",type:"button",clsx:B.default.optionRowMain,onClick:W,row:!0,align:"center",gap:12,grow:!0,children:[(0,t.jsx)(v.View,{row:!0,align:"center",justify:"center",shrink:0,clsx:B.default.optionIconWell,children:(0,t.jsx)(s.default,{size:20,color:h.tokens.foregroundDimmer})}),(0,t.jsxs)(v.View,{gap:2,align:"start",grow:!0,children:[(0,t.jsx)(b.Text,{variant:"subheadDefault",children:D.formatMessage(A.buyCreditPackTitle)}),(0,t.jsxs)(b.Text,{color:"dimmer",children:[(0,t.jsx)("span",{className:B.default.responsiveWide,children:D.formatMessage(A.buyCreditPackSubtitleWide)}),(0,t.jsx)("span",{className:B.default.responsiveCompact,children:D.formatMessage(A.buyCreditPackSubtitleCompact)})]})]})]}),(0,t.jsx)(v.View,{shrink:0,children:(0,t.jsx)(_.Select,{compact:!0,"aria-label":D.formatMessage(A.packPriceAriaLabel),selectedKey:"pack"===j.kind?w:null,onSelectionChange:e=>{(0,p.track)(m.events.CREDIT_PACK,{action:"exhausted_modal_pack_selected",pack_id:e}),M({kind:"pack",packId:e})},onOpenChange:e=>{e&&(I({productArea:"billing",target:"exhausted_modal_pack_dropdown"}),(0,p.track)(m.events.CREDIT_PACK,{action:"exhausted_modal_pack_dropdown_opened",default_pack_id:S}))},selectValue:()=>(0,t.jsx)(b.Text,{children:G(R?.priceUsd??10)}),children:P.map(e=>{let i=G(e.priceUsd);return(0,t.jsx)(C.BaseListBoxItem,{id:e.id,textValue:i,children:(0,t.jsx)(b.Text,{children:i})},e.id)})})})]}),(0,t.jsxs)(v.View,{tag:"button",type:"button",clsx:[B.default.optionRow,B.default.optionRowButton,"payg"===j.kind?B.default.optionRowSelected:void 0],row:!0,align:"center",gap:12,onClick:()=>{I({productArea:"billing",target:"exhausted_modal_continue_payg_card"}),M({kind:"payg"})},children:[(0,t.jsx)(v.View,{row:!0,align:"center",justify:"center",shrink:0,clsx:B.default.optionIconWell,children:(0,t.jsx)(a.default,{size:20,color:h.tokens.foregroundDimmer})}),(0,t.jsxs)(v.View,{gap:2,grow:!0,align:"start",children:[(0,t.jsxs)(v.View,{row:!0,align:"center",gap:8,clsx:B.default.paygTitleRow,children:[(0,t.jsxs)(b.Text,{variant:"subheadDefault",children:[(0,t.jsx)("span",{className:B.default.responsiveWide,children:D.formatMessage(A.payAsYouGoTitleWide)}),(0,t.jsx)("span",{className:B.default.responsiveCompact,children:D.formatMessage(A.payAsYouGoTitleCompact)})]}),(0,t.jsx)(y.Pill,{text:D.formatMessage(A.payAsYouGoDefaultPill),colorway:"grey",variant:"muted",compact:!0})]}),(0,t.jsxs)(b.Text,{color:"dimmer",children:[(0,t.jsx)("span",{className:B.default.responsiveWide,children:D.formatMessage(A.payAsYouGoSubtitleWide,{resetDate:E})}),(0,t.jsx)("span",{className:B.default.responsiveCompact,children:D.formatMessage(A.payAsYouGoSubtitleCompact,{resetDate:N})})]})]})]})]})]})]})}])},617299,e=>{e.v({viewUsagePageButton:"ReachedSoftAlertLimit-module__GKWBFq__viewUsagePageButton"})},591082,e=>{"use strict";var t=e.i(276385),i=e.i(76112);e.i(214847);var r=e.i(614852),a=e.i(20397),s=e.i(864300),l=e.i(419635),n=e.i(8047),o=e.i(61732),d=e.i(617299);e.s(["ReachedSoftAlertLimit",0,({orgSlug:e,customerName:u,threshold:c,onDone:g})=>{let p=(0,s.useIntl)(),m=e?`/t/${e}/usage`:"/usage",h=(0,r.formatCurrency)(c,{maximumFractionDigits:2});return(0,t.jsxs)(o.View,{p:16,gap:16,children:[(0,t.jsxs)(o.View,{row:!0,gap:8,align:"center",children:[(0,t.jsx)(i.default,{size:20}),(0,t.jsx)(n.Text,{variant:"subheadDefault",children:(0,t.jsx)(a.FormattedMessage,{id:"billing.usageSoftAlertReachedTitle",defaultMessage:"You've hit your usage alert"})})]}),(0,t.jsxs)(n.Text,{children:[(0,t.jsx)(a.FormattedMessage,{id:"billing.usageSoftAlertReachedDescription",defaultMessage:"Your account, {customerName}, has spent {threshold} beyond its included credits - the alert threshold you set. This is just a notification; your services are still active and you can continue using Replit on a pay-as-you-go basis.",values:{customerName:u,threshold:h}})," "]}),(0,t.jsx)(n.Text,{children:(0,t.jsx)(a.FormattedMessage,{id:"billing.usageSoftAlertReachedAdjustHint",defaultMessage:"To set a hard usage budget or adjust this alert, visit the Usage Page."})}),(0,t.jsx)(l.ButtonLink,{iconLeft:(0,t.jsx)(i.default,{}),text:p.formatMessage({id:"billing.usageViewUsagePageButton",defaultMessage:"View usage page"}),href:m,clsx:d.default.viewUsagePageButton,onClick:g})]})}])},726979,e=>{e.v({bodyText:"ReachedMonthlyCreditLimit-module__RGotgG__bodyText",headerGrid:"ReachedMonthlyCreditLimit-module__RGotgG__headerGrid",headerIconWrap:"ReachedMonthlyCreditLimit-module__RGotgG__headerIconWrap",headline:"ReachedMonthlyCreditLimit-module__RGotgG__headline",heroFrame:"ReachedMonthlyCreditLimit-module__RGotgG__heroFrame",heroImage:"ReachedMonthlyCreditLimit-module__RGotgG__heroImage",heroLoadingOverlay:"ReachedMonthlyCreditLimit-module__RGotgG__heroLoadingOverlay",sublineRow:"ReachedMonthlyCreditLimit-module__RGotgG__sublineRow"})},19138,e=>{"use strict";var t=e.i(276385),i=e.i(389959),r=e.i(370589),a=e.i(752539),s=e.i(269848),l=e.i(76112);e.i(214847);var n=e.i(20397),o=e.i(864300),d=e.i(89148),u=e.i(325173),c=e.i(8047),g=e.i(61732),p=e.i(726979);e.s(["ReachedMonthlyCreditLimit",0,function({billingPeriodEndDate:e,appPreviewImageUrl:m,appPreviewImageLoading:h=!1,customerName:f}){let C=(0,o.useIntl)();(0,u.useDialogStep)({nextButtonProps:{text:C.formatMessage({id:"billing.monthlyCreditLimitKeepBuilding",defaultMessage:"Keep building"}),iconRight:(0,t.jsx)(a.default,{})}});let x=(0,r.default)(new Date(e),"MMM do, hh:mm aaa"),y=!!m,[_,b]=(0,i.useState)(!1),[v,B]=(0,i.useState)(!1);return(0,i.useEffect)(()=>{b(!1),B(!1)},[m]),(0,t.jsxs)(g.View,{gap:20,children:[(0,t.jsxs)(g.View,{clsx:p.default.headerGrid,children:[(0,t.jsx)(g.View,{clsx:p.default.headerIconWrap,children:(0,t.jsx)(l.default,{"aria-hidden":!0,color:d.tokens.foregroundDefault,size:18})}),(0,t.jsx)(c.Text,{clsx:p.default.headline,variant:"subheadDefault",children:(0,t.jsx)(n.FormattedMessage,{id:"billing.monthlyCreditLimitHeadline",defaultMessage:"Look at you go! You've used your credits."})}),(0,t.jsx)(g.View,{clsx:p.default.sublineRow,children:(0,t.jsx)(c.Text,{variant:"text",color:"dimmer",children:(0,t.jsx)(n.FormattedMessage,{id:"billing.monthlyCreditLimitSubline",defaultMessage:"{hasName, select, yes {{customerName} has used its credits. Continue building and only pay for what you use.} other {Continue building and only pay for what you use.}}",values:{hasName:f?"yes":"other",customerName:f}})})})]}),h||y&&!v?(0,t.jsxs)(g.View,{clsx:p.default.heroFrame,br:12,children:[y&&!v?(0,t.jsx)("img",{alt:"",className:p.default.heroImage,decoding:"async",src:m,style:{opacity:+!!_},onError:()=>B(!0),onLoad:()=>b(!0)}):null,h||y&&!v&&!_?(0,t.jsx)(g.View,{clsx:p.default.heroLoadingOverlay,align:"center",justify:"center",children:(0,t.jsx)(s.default,{size:24,color:d.tokens.foregroundDimmer})}):null]}):null,(0,t.jsx)(c.Text,{clsx:p.default.bodyText,color:"dimmer",children:(0,t.jsx)(n.FormattedMessage,{id:"billing.monthlyCreditLimitBody",defaultMessage:"From this point on, all usage will be pay-as-you-go. Monthly credits will be added on {creditsResetLabel}.",values:{creditsResetLabel:x}})})]})}])},662704,e=>{"use strict";var t=e.i(968323);e.s(["isEligibleForUsageExplanationDetail",0,{NEEDS_PAYMENT_METHOD:"A payment method is required. Navigate to Account > Billing to resolve.",NEEDS_SUBSCRIPTION:"A subscription is required. Navigate to Account > Billing to resolve.",NEEDS_SUBSCRIPTION_OR_PAYMENT_METHOD:"Either a subscription or payment method is required. Navigate to Account > Billing to resolve.",NEEDS_SMS_VERIFICATION:"A verified phone number is required. Navigate to Account > Verification to resolve.",NEEDS_UNBANNING:"Your account currently has restrictions in place. Please reach out to support@replit.com for assistance.",INCLUDED_IN_SUBSCRIPTION:"Plan found.",HAS_PAYMENT_METHOD:"Payment method found.",INSUFFICIENT_BUDGET:"You've reached your monthly usage budget. Navigate to Account > Billing to increase your budget.",PAYMENT_DELINQUENT:"Your payment is past due. Please update your payment method to continue using Replit.",ENTERPRISE_EXEMPTION:"Enterprise deal orgs are exempt from suspension, banning, and payment method requirements.",USER_USAGE_ALERT_THRESHOLD_EXCEEDED:"You have reached your team's usage budget. Request a budget increase from your team admin.",GROUP_USAGE_ALERT_THRESHOLD_EXCEEDED:"You have reached your group's usage budget. Request a budget increase from your team admin."},"validateAlertThresholds",0,function(e,i){let r,a;return(null!==e&&e<.01&&(r="Usage alert value must be at least 0.01 or unset."),null!==i&&i<.01&&(a="Usage limit value must be at least 0.01 or unset."),null!==e&&null!==i&&i<=e&&(r=`Usage alert ($${e}) must be less than the usage budget ($${i}).`,a=`Usage budget ($${i}) must be greater than the usage alert ($${e}).`),r||a)?(0,t.Err)({softAlertError:r,hardAlertError:a}):(0,t.Ok)({softAlertValue:e,hardAlertValue:i})}])},730029,e=>{"use strict";var t=e.i(351623);let i=t.gql`
+    fragment CoreSubscriptionPlanStatus on CurrentUser {
+  hasCore: subscriptionIsType(subscriptionType: HACKER_PRO)
+}
+    `;e.s(["CoreSubscriptionPlanStatusFragmentDoc",0,i])},568644,e=>{"use strict";var t=e.i(351623),i=e.i(299020);let r={},a=t.gql`
+    fragment EditUsageBasedBillingAlertsFormOrg on Org {
+  id
+  name
+}
+    `,s=t.gql`
+    fragment EditUsageBasedBillingAlertsFormInitialConfig on CustomerAlerts {
+  hardAlert {
+    id
+    threshold
+  }
+  softAlert {
+    id
+    threshold
+  }
+}
+    `,l=t.gql`
+    fragment EditUsageBasedBillingAlertsFormCustomerAlerts on Customer {
+  id
+  usageInterval {
+    spendingControls {
+      ... on CustomerSpendingControls {
+        alerts {
+          ...EditUsageBasedBillingAlertsFormInitialConfig
+        }
+      }
+    }
+  }
+}
+    ${s}`,n=t.gql`
+    mutation EditUsageBasedBillingAlertsFormOrgUpdateAlerts($input: UpdateCustomerSpendingAlertsInput!) {
+  updateCustomerSpendingAlerts(input: $input) {
+    ... on Customer {
+      id
+      name
+    }
+    ... on Error {
+      message
+    }
+  }
+}
+    `;e.s(["EditUsageBasedBillingAlertsFormCustomerAlertsFragmentDoc",0,l,"EditUsageBasedBillingAlertsFormOrgFragmentDoc",0,a,"useEditUsageBasedBillingAlertsFormOrgUpdateAlertsMutation",0,function(e){let t={...r,...e};return i.useMutation(n,t)}])},599200,e=>{e.v({budgetInput:"BudgetInput-module__VvBYpa__budgetInput",closeButton:"BudgetInput-module__VvBYpa__closeButton",inputContainer:"BudgetInput-module__VvBYpa__inputContainer",inputIcon:"BudgetInput-module__VvBYpa__inputIcon"})},89807,e=>{"use strict";var t=e.i(276385),i=e.i(389959),r=e.i(330666),a=e.i(602686),s=e.i(983420),l=e.i(706323),n=e.i(416298);e.i(214847);var o=e.i(20397),d=e.i(864300),u=e.i(488299),c=e.i(528710),g=e.i(33583),p=e.i(108431),m=e.i(61732),h=e.i(599200);e.s(["BudgetInput",0,({type:e,value:f,label:C,error:x,onChange:y})=>{let _=(0,d.useIntl)(),b=(0,i.useId)(),v=(0,i.useId)(),B=_.formatMessage({id:"billing.budgetInputDollars",defaultMessage:"Dollars"});return(0,t.jsxs)(m.View,{gap:8,children:[C?(0,t.jsx)(g.Label,{color:"dimmer",htmlFor:b,children:C}):null,(0,t.jsxs)(m.View,{clsx:h.default.inputContainer,row:!0,gap:2,children:[(0,t.jsxs)(s.default,{alt:B,clsx:h.default.inputIcon,children:[(0,t.jsx)(l.default,{size:24}),(0,t.jsx)(r.VisuallyHidden,{children:(0,t.jsx)(o.FormattedMessage,{id:"billing.budgetInputDollars",defaultMessage:"Dollars"})})]}),(0,t.jsx)(c.Input,{id:b,type:"number",min:0,value:f,clsx:h.default.budgetInput,"aria-describedby":v,onChange:e=>y(e.target.value)}),f?(0,t.jsx)(u.IconButton,{alt:"hard"===e?_.formatMessage({id:"billing.budgetInputClearHardLimit",defaultMessage:"Clear monthly usage limit"}):_.formatMessage({id:"billing.budgetInputClearSoftAlert",defaultMessage:"Clear monthly usage alert"}),className:h.default.closeButton,size:20,variant:"nofill",tooltipBehavior:"hidden",onClick:()=>y(""),children:(0,t.jsx)(a.default,{})}):null]}),x?(0,t.jsx)(p.StatusBanner,{id:v,icon:(0,t.jsx)(n.default,{}),text:x,colorway:"negative"}):null]})}])},961998,e=>{"use strict";var t=e.i(351623),i=e.i(730029),r=e.i(568644),a=e.i(344480);e.i(975473);let s={},l=t.gql`
+    fragment UsageOverviewCurrentUserPlanStatus on CurrentUser {
+  id
+  ...CoreSubscriptionPlanStatus
+}
+    ${i.CoreSubscriptionPlanStatusFragmentDoc}`,n=t.gql`
+    fragment UsageOverviewCurrentUser on CurrentUser {
+  id
+  ...UsageOverviewCurrentUserPlanStatus
+  customer {
+    ...EditUsageBasedBillingAlertsFormCustomerAlerts
+  }
+  paymentMethod {
+    ... on PaymentMethod {
+      id
+      last4
+      expirationMonth
+      expirationYear
+    }
+  }
+  billingInfo {
+    planInfo {
+      amount
+      interval
+    }
+  }
+  usageBasedBillingBudget {
+    ... on UsageBasedBillingBudget {
+      id
+      hasReachedBudget
+    }
+    ... on UnauthorizedError {
+      message
+    }
+  }
+  usageBasedBilling {
+    __typename
+    ... on UserUsageBasedBillingSummary {
+      capabilities {
+        hasOrbCustomer
+      }
+    }
+  }
+  usageInterval {
+    ... on UsageInterval {
+      __typename
+      startDate
+      endDate
+      totalAmountUsd
+      subtotalAmountUsd
+      planDiscountUsd
+      credits {
+        ... on Credits {
+          availableAdditionalCredits
+          availableSubscriptionCredits
+          totalGrantedAdditionalCredits
+          totalGrantedSubscriptionCredits
+        }
+        ... on Error {
+          message
+        }
+      }
+    }
+  }
+}
+    ${l}
+${r.EditUsageBasedBillingAlertsFormCustomerAlertsFragmentDoc}`,o=t.gql`
+    query UsageOverviewCurrentUser {
+  currentUser {
+    id
+    username
+    timeCreated
+    isSubscribed
+    ...UsageOverviewCurrentUser
+  }
+}
+    ${n}`,d=t.gql`
+    query UserDetailedCredits {
+  currentUser {
+    id
+    usageInterval {
+      ... on UsageInterval {
+        __typename
+        detailedCredits {
+          ... on DetailedCredits {
+            totalRemainingCredits
+            totalUsedCredits
+            remainingCreditsByType {
+              subscription
+              creditPackPurchase
+              referral
+              gift
+              additional
+            }
+            usedCreditsByType {
+              subscription
+              creditPackPurchase
+              referral
+              gift
+              additional
+            }
+            creditBlocksByType {
+              creditPackPurchase {
+                blockId
+                creditType
+                currentBalance
+                effectiveDate
+                expiryDate
+                initialBalance
+              }
+              referral {
+                blockId
+                creditType
+                currentBalance
+                effectiveDate
+                expiryDate
+                initialBalance
+              }
+              gift {
+                blockId
+                creditType
+                currentBalance
+                effectiveDate
+                expiryDate
+                initialBalance
+              }
+            }
+          }
+          ... on Error {
+            message
+          }
+        }
+      }
+    }
+  }
+}
+    `;e.s(["UsageOverviewCurrentUserDocument",0,o,"useUsageOverviewCurrentUserQuery",0,function(e){let t={...s,...e};return a.useQuery(o,t)},"useUserDetailedCreditsQuery",0,function(e){let t={...s,...e};return a.useQuery(d,t)}])},935126,e=>{"use strict";var t=e.i(351623),i=e.i(568644);let r=t.gql`
+    fragment TotalUsageOrg on Org {
+  id
+  ...EditUsageBasedBillingAlertsFormOrg
+  customer {
+    ... on Customer {
+      ...EditUsageBasedBillingAlertsFormCustomerAlerts
+    }
+    ... on Error {
+      message
+    }
+  }
+}
+    ${i.EditUsageBasedBillingAlertsFormOrgFragmentDoc}
+${i.EditUsageBasedBillingAlertsFormCustomerAlertsFragmentDoc}`;var a=e.i(344480);e.i(975473);let s={},l=t.gql`
+    fragment OrgUsageBillingAlertsConfig on UsageBasedBillingAlertsConfig {
+  hardAlert {
+    id
+    threshold
+  }
+  softAlert {
+    id
+    threshold
+  }
+  globalAlert {
+    id
+    threshold
+  }
+  groupAlerts {
+    id
+    groupId
+    threshold
+    group {
+      id
+      name
+    }
+  }
+}
+    `,n=t.gql`
+    fragment OrgIndividualUserAlertsConfig on UsageBasedBillingAlertsConfig {
+  individualUserAlerts {
+    id
+    groupId
+    threshold
+    group {
+      id
+      name
+      type
+      individualMember {
+        user {
+          id
+        }
+      }
+    }
+  }
+}
+    `,o=t.gql`
+    fragment OrgUsagePeriodInformation on UsageInterval {
+  startDate
+  endDate
+  totalAmountUsd
+  subtotalAmountUsd
+  credits {
+    ... on Credits {
+      availableAdditionalCredits
+      availableSubscriptionCredits
+      totalGrantedAdditionalCredits
+      totalGrantedSubscriptionCredits
+    }
+    ... on Error {
+      message
+    }
+  }
+}
+    `,d=t.gql`
+    fragment OrgUsageAuthorizations on OrgAuthorizations {
+  viewSubscription {
+    isAuthorized
+    message
+  }
+  viewUsage {
+    isAuthorized
+    message
+  }
+  viewUsageAlerts {
+    isAuthorized
+    message
+  }
+  editUsageAlerts {
+    isAuthorized
+    message
+  }
+  editUsageLimit {
+    isAuthorized
+    message
+  }
+}
+    `,u=t.gql`
+    fragment OrgUsageBasedBillingBudget on UsageBasedBillingBudget {
+  id
+  hasReachedBudget
+}
+    `,c=t.gql`
+    query OrgUsagePeriodInformation($orgId: String!) {
+  currentUser {
+    id
+    org(orgId: $orgId) {
+      __typename
+      ... on Org {
+        id
+        ...TotalUsageOrg
+        usageInterval {
+          ... on UsageInterval {
+            ...OrgUsagePeriodInformation
+          }
+          ... on Error {
+            message
+          }
+        }
+        paymentMethod {
+          ... on PaymentMethod {
+            __typename
+            id
+          }
+          ... on Error {
+            message
+          }
+        }
+        usageBasedBillingBudget {
+          ... on UsageBasedBillingBudget {
+            ...OrgUsageBasedBillingBudget
+          }
+          ... on Error {
+            message
+          }
+        }
+        usageBasedBillingAlerts {
+          ... on UsageBasedBillingAlertsConfig {
+            ...OrgUsageBillingAlertsConfig
+            ...OrgIndividualUserAlertsConfig
+          }
+          ... on Error {
+            message
+          }
+        }
+        planInfo {
+          __typename
+          ... on OrgPlanInfo {
+            name
+            planId
+            planEndDate
+            planStartDate
+          }
+          ... on Error {
+            message
+          }
+        }
+        authorizations {
+          ...OrgUsageAuthorizations
+        }
+      }
+    }
+  }
+}
+    ${r}
+${o}
+${u}
+${l}
+${n}
+${d}`,g=t.gql`
+    query OrgDetailedCredits($orgId: String!) {
+  currentUser {
+    id
+    org(orgId: $orgId) {
+      __typename
+      ... on Org {
+        id
+        usageInterval {
+          ... on UsageInterval {
+            __typename
+            detailedCredits {
+              ... on DetailedCredits {
+                totalRemainingCredits
+                totalUsedCredits
+                remainingCreditsByType {
+                  subscription
+                  creditPackPurchase
+                  referral
+                  gift
+                  additional
+                }
+                usedCreditsByType {
+                  subscription
+                  creditPackPurchase
+                  referral
+                  gift
+                  additional
+                }
+                creditBlocksByType {
+                  creditPackPurchase {
+                    blockId
+                    creditType
+                    currentBalance
+                    effectiveDate
+                    expiryDate
+                    initialBalance
+                  }
+                  referral {
+                    blockId
+                    creditType
+                    currentBalance
+                    effectiveDate
+                    expiryDate
+                    initialBalance
+                  }
+                  gift {
+                    blockId
+                    creditType
+                    currentBalance
+                    effectiveDate
+                    expiryDate
+                    initialBalance
+                  }
+                }
+              }
+              ... on Error {
+                message
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+    `;e.s(["OrgIndividualUserAlertsConfigFragmentDoc",0,n,"OrgUsageBillingAlertsConfigFragmentDoc",0,l,"OrgUsagePeriodInformationDocument",0,c,"useOrgDetailedCreditsQuery",0,function(e){let t={...s,...e};return a.useQuery(g,t)},"useOrgUsagePeriodInformationQuery",0,function(e){let t={...s,...e};return a.useQuery(c,t)}],935126)},52464,e=>{e.v({budgetForm:"ReachedHardAlertLimit-module__jxr0eq__budgetForm",usageList:"ReachedHardAlertLimit-module__jxr0eq__usageList"})},983217,966081,408699,e=>{"use strict";var t=e.i(276385),i=e.i(261348),r=e.i(336187),a=e.i(76112),s=e.i(89807),l=e.i(389959),n=e.i(961998),o=e.i(351623),d=e.i(299020);let u={},c=o.gql`
+    fragment CustomerSpendingAlertsInitialConfig on CustomerAlerts {
+  softAlert {
+    id
+    threshold
+  }
+  hardAlert {
+    id
+    threshold
+  }
+}
+    `,g=o.gql`
+    mutation EditCustomerSpendingAlerts($input: UpdateCustomerSpendingAlertsInput!) {
+  updateCustomerSpendingAlerts(input: $input) {
+    ... on Customer {
+      id
+      name
+    }
+    ... on Error {
+      message
+    }
+  }
+}
+    `;function p(e){let t={...u,...e};return d.useMutation(g,t)}e.s(["CustomerSpendingAlertsInitialConfigFragmentDoc",0,c,"EditCustomerSpendingAlertsDocument",0,g,"useEditCustomerSpendingAlertsMutation",0,p],966081);var m=e.i(935126),h=e.i(662704),f=e.i(371884),C=e.i(320216);function x(e,t){let i=e.trim(),r=t.trim(),a=""!==i?Number.parseFloat(i):null,s=""!==r?Number.parseFloat(r):null;return null!=a&&Number.isNaN(a)||null!=s&&Number.isNaN(s)?{ok:!1,error:{softAlertError:Number.isNaN(a)?"Please enter a number":void 0,hardAlertError:Number.isNaN(s)?"Please enter a number":void 0}}:(0,h.validateAlertThresholds)(a,s)}function y({customerId:e,initialSettings:t,onDone:i}){let r=t?.softAlert?.threshold.toString()??"",a=t?.hardAlert?.threshold.toString()??"",s=(0,f.useFormField)(r,e=>{let t=x(e,o.value);if(!t.ok&&t.error.softAlertError)return{severity:"error",message:t.error.softAlertError}}),o=(0,f.useFormField)(a,e=>{let t=x(s.value,e);if(!t.ok&&t.error.hardAlertError)return{severity:"error",message:t.error.hardAlertError}}),{showConfirm:d,showError:u}=(0,C.default)(),c=s.validate,g=o.validate;(0,l.useEffect)(()=>{c(),g()},[s.value,o.value,c,g]);let[h,_]=p({onError(e){u(e.message)},onCompleted(e){"Customer"!==e.updateCustomerSpendingAlerts.__typename?u(e.updateCustomerSpendingAlerts.message):(d("Updated usage settings"),i())},refetchQueries:[n.UsageOverviewCurrentUserDocument,m.OrgUsagePeriodInformationDocument]});return{saveAlerts:()=>{if(s.validate()||o.validate())return;let t=x(s.value,o.value);t.ok&&h({variables:{input:{customerId:e,softAlertThreshold:t.value.softAlertValue,hardAlertThreshold:t.value.hardAlertValue}}})},softAlertField:s,hardAlertField:o,loading:_.loading}}e.s(["useEditCustomerSpendingAlertsForm",0,y],408699),e.i(214847);var _=e.i(614852),b=e.i(20397),v=e.i(864300),B=e.i(89148),A=e.i(643484),k=e.i(190545),U=e.i(827320),S=e.i(108431),j=e.i(8047),M=e.i(61732),D=e.i(52464);function I(e){let i=(0,v.useIntl)(),{hardAlertField:r,saveAlerts:a,loading:l}=y(e);return(0,t.jsxs)(k.Form,{clsx:D.default.budgetForm,onSubmit:e=>{e.preventDefault(),a()},children:[(0,t.jsx)(s.BudgetInput,{type:"hard",value:r.value,onChange:r.setValue,error:r.error?.message,label:i.formatMessage({id:"billing.usageBudgetInputLabel",defaultMessage:"Usage budget"})}),(0,t.jsx)(A.Button,{type:"submit",text:i.formatMessage({id:"billing.usageBudgetSaveButton",defaultMessage:"Save"}),colorway:"primary",loading:l})]})}e.s(["ReachedHardBudgetLimit",0,function({billingPeriodEndDate:e,initialSettings:s,customerId:l,customerName:n,totalRemainingCredits:o,onDone:d}){let u=e?(0,i.format)(new Date(e),"MMM do, hh:mm aaa"):void 0;return(0,t.jsxs)(M.View,{p:16,gap:16,children:[(0,t.jsxs)(M.View,{row:!0,gap:8,align:"center",children:[(0,t.jsx)(a.default,{size:20,color:B.tokens.accentNegativeDefault}),(0,t.jsx)(j.Text,{variant:"subheadDefault",children:(0,t.jsx)(b.FormattedMessage,{id:"billing.usageBudgetReachedTitle",defaultMessage:"Usage budget reached"})})]}),(0,t.jsxs)(M.View,{gap:16,children:[(0,t.jsx)(j.Text,{children:(0,t.jsx)(b.FormattedMessage,{id:"billing.usageBudgetReachedDescription",defaultMessage:"Your account, {customerName}, has reached its usage budget. All services have been suspended and will remain unavailable until you increase your budget or usage resets {hasResetDate, select, yes {on {resetDate}} other {when your billing period ends}}.",values:{customerName:n,hasResetDate:u?"yes":"other",resetDate:u}})}),(0,t.jsxs)(U.Prose,{children:[(0,t.jsx)(j.Text,{children:(0,t.jsx)(b.FormattedMessage,{id:"billing.usageBudgetReachedWhatThisMeans",defaultMessage:"What this means:"})}),(0,t.jsxs)("ul",{clsx:D.default.usageList,children:[(0,t.jsx)("li",{children:(0,t.jsx)(b.FormattedMessage,{id:"billing.usageBudgetReachedConsequenceServices",defaultMessage:"Agent access, cloud services and deployments are halted."})}),(0,t.jsx)("li",{children:(0,t.jsx)(b.FormattedMessage,{id:"billing.usageBudgetReachedConsequenceDeployments",defaultMessage:"Active deployments are offline and inaccessible."})})]})]}),(0,t.jsx)(j.Text,{children:(0,t.jsx)(b.FormattedMessage,{id:"billing.usageBudgetReachedRestoreHint",defaultMessage:"Increase your usage budget now to immediately restore services and avoid further disruptions."})}),o>0&&(0,t.jsx)(S.StatusBanner,{icon:(0,t.jsx)(r.default,{size:20}),text:(0,t.jsxs)(M.View,{gap:4,children:[(0,t.jsx)(M.View,{children:(0,t.jsx)(j.Text,{children:(0,t.jsx)(b.FormattedMessage,{id:"billing.usageBudgetReachedUnusedCredits",defaultMessage:"You have {credits} unused free credits available. You can utilize these credits once you increase your budget limit.",values:{credits:(0,_.formatCurrency)(o,{minimumFractionDigits:0,maximumFractionDigits:2})}})})}),(0,t.jsx)(M.View,{children:(0,t.jsx)(j.Text,{variant:"small",color:"dimmer",children:(0,t.jsx)(b.FormattedMessage,{id:"billing.usageBudgetReachedCreditsApply",defaultMessage:"Credits apply immediately when services resume."})})})]})}),(0,t.jsx)(I,{customerId:l,initialSettings:s,onDone:d})]})]})}],983217)},386652,e=>{e.v({headerText:"SetCustomerUsageAlert-module__3oC5ta__headerText"})},184235,702459,e=>{"use strict";var t=e.i(351623),i=e.i(344480);e.i(975473);let r={},a=t.gql`
+    query UBBNotificationWorkspaceRepl($replId: String!) {
+  getRepl(id: $replId) {
+    ... on Repl {
+      id
+      org {
+        id
+        slug
+      }
+    }
+  }
+}
+    `;e.s(["useUbbNotificationWorkspaceReplQuery",0,function(e){let t={...r,...e};return i.useQuery(a,t)}],184235);var s=e.i(276385),l=e.i(269848);e.i(214847);var n=e.i(20397),o=e.i(864300),d=e.i(89807),u=e.i(408699),c=e.i(643484),g=e.i(190545),p=e.i(8047),m=e.i(61732),h=e.i(386652);function f({hasPreviousUsageAlert:e,softAlertField:t,saveAlerts:i,loading:r}){let a=(0,o.useIntl)();return(0,s.jsxs)(g.Form,{gap:8,onSubmit:e=>{e.preventDefault(),i()},children:[(0,s.jsx)(m.View,{row:!0,gap:8,align:"center",children:(0,s.jsx)(p.Text,{variant:"subheadDefault",clsx:h.default.headerText,children:e?(0,s.jsx)(n.FormattedMessage,{id:"billing.usageAlertEditPrompt",defaultMessage:"Would you like to edit your usage alert?"}):(0,s.jsx)(n.FormattedMessage,{id:"billing.usageAlertSetPrompt",defaultMessage:"Would you like to set a usage alert?"})})}),(0,s.jsx)(p.Text,{children:(0,s.jsx)(n.FormattedMessage,{id:"billing.usageAlertSetDescription",defaultMessage:"You can stay on top of your spending by setting a usage alert. Choose an amount, and we'll notify you if your spending reaches it — no interruptions, just a helpful heads-up."})}),(0,s.jsx)(d.BudgetInput,{type:"soft",value:t.value,onChange:t.setValue,error:t.error?.message,label:a.formatMessage({id:"billing.usageAlertInputLabel",defaultMessage:"Usage alert"})}),(0,s.jsx)(m.View,{row:!0,children:(0,s.jsx)(c.Button,{type:"submit",text:a.formatMessage({id:"billing.usageAlertSetButton",defaultMessage:"Set usage alert"}),colorway:"primary",loading:r,iconLeft:r?(0,s.jsx)(l.default,{}):void 0,stretch:!1})})]})}e.s(["SetCustomerUsageAlert",0,function(e){let t=!!e.initialSettings?.softAlert,{softAlertField:i,saveAlerts:r,loading:a}=(0,u.useEditCustomerSpendingAlertsForm)(e);return(0,s.jsx)(f,{hasPreviousUsageAlert:t,softAlertField:i,saveAlerts:r,loading:a})}],702459)},808295,e=>{"use strict";var t=e.i(351623),i=e.i(344480);e.i(975473);let r={},a=t.gql`
+    query LiveReplAppPreviewUrl($replId: String!) {
+  repl(id: $replId) {
+    ... on Repl {
+      id
+      latestAgentScreenshotUrl
+      latestAgentStatus {
+        statusV2
+        appImageUrl
+      }
+      artifacts {
+        artifactId
+        kind
+        latestScreenshotUri
+      }
+    }
+  }
+}
+    `,s=t.gql`
+    query RecentReplAppPreview($count: Int!) {
+  recentRepls(count: $count) {
+    id
+    latestAgentScreenshotUrl
+    latestAgentStatus {
+      statusV2
+      appImageUrl
+    }
+    artifacts {
+      artifactId
+      kind
+      latestScreenshotUri
+    }
+  }
+}
+    `;e.s(["RecentReplAppPreviewDocument",0,s,"useLiveReplAppPreviewUrlQuery",0,function(e){let t={...r,...e};return i.useQuery(a,t)},"useRecentReplAppPreviewQuery",0,function(e){let t={...r,...e};return i.useQuery(s,t)}])},573916,e=>{"use strict";var t=e.i(55547),i=e.i(389959),r=e.i(943427),a=e.i(908796),s=e.i(808295),l=e.i(796424);let n=new Set(["/replEnvironmentDesktop","/replEnvironmentMobile","/replView"]);function o(e){if(null==e||e.latestAgentStatus?.statusV2===a.AgentStatusV2.PausedWithError)return null;let t=(e.artifacts??[]).filter(e=>(0,r.isArtifactKindPreviewable)(e.kind??"web")).map(e=>e.latestScreenshotUri).find(e=>null!=e&&""!==e);if(t)return t;let i=e.latestAgentScreenshotUrl?.trim();return i||(e.latestAgentStatus?.appImageUrl?.trim()??null)}e.s(["pickLiveReplAppPreviewUrl",0,o,"useLiveReplAppPreviewUrl",0,function({skip:e=!1}){let r=function(){let e=(0,i.useContext)(l.default),r=(0,t.useRouter)();if(null!=e)return e;if(!n.has(r.pathname))return null;let a=r.query.replId;return null==a?null:Array.isArray(a)?a[0]??null:String(a)}(),{data:a,loading:d}=(0,s.useRecentReplAppPreviewQuery)({variables:{count:1},skip:e,fetchPolicy:"cache-first",nextFetchPolicy:"cache-first"}),{data:u,loading:c}=(0,s.useLiveReplAppPreviewUrlQuery)({variables:{replId:r??""},skip:e||null==r}),g=(0,i.useMemo)(()=>{if(e)return null;let t=a?.recentRepls?.[0],i=t?o(t):null;if(i)return i;let r=u?.repl;return r?.__typename!=="Repl"?null:o(r)},[e,a?.recentRepls,u?.repl]);return{url:g,loading:null==g&&(d||c),replId:r}}])},902782,362879,e=>{"use strict";var t=e.i(276385),i=e.i(55547),r=e.i(389959),a=e.i(830675),s=e.i(184235),l=e.i(252204),n=e.i(336187),o=e.i(761201),d=e.i(983217),u=e.i(19138),c=e.i(194691),g=e.i(591082),p=e.i(702459),m=e.i(573916),h=e.i(351623),f=e.i(966081),C=e.i(846545),x=e.i(344480);e.i(975473);var y=e.i(299020);let _={},b=h.gql`
+    fragment UsageBasedBillingAlertNotification on UsageBasedBillingAlertNotification {
+  id
+  threshold
+  billingPeriodEnd
+  alert {
+    id
+    threshold
+    alertActionType
+  }
+  customer {
+    id
+    name
+    usageInterval {
+      spendingControls {
+        ... on CustomerSpendingControls {
+          alerts {
+            ...CustomerSpendingAlertsInitialConfig
+          }
+        }
+      }
+      credits {
+        ... on CustomerCredits {
+          totalRemainingCredits
+        }
+      }
+    }
+    orgs {
+      ... on OrgConnection {
+        items {
+          id
+          slug
+        }
+      }
+    }
+  }
+  user {
+    id
+  }
+}
+    ${f.CustomerSpendingAlertsInitialConfigFragmentDoc}`,v=h.gql`
+    subscription UBBAlertNotifications {
+  usageBasedBillingAlertNotifications {
+    id
+    ...UsageBasedBillingAlertNotification
+  }
+}
+    ${b}`,B=h.gql`
+    query UsageBasedBillingAlertCurrentUser {
+  currentUser {
+    ... on CurrentUser {
+      id
+      customer {
+        id
+      }
+    }
+  }
+}
+    `,A=h.gql`
+    mutation DismissUBBAlertNotification($input: UpdateUbbAlertNotificationInput!) {
+  updateUbbAlertNotification(input: $input) {
+    ... on UsageBasedBillingAlertNotification {
+      id
+      isDismissed
+    }
+    ... on Error {
+      message
+    }
+  }
+}
+    `,k={},U=h.gql`
+    fragment UsageBasedBillingCreditBalanceDepletedNotification on UsageBasedBillingCreditBalanceDepletedNotification {
+  id
+  billingPeriodEnd
+  customer {
+    id
+    name
+    authorizations {
+      purchaseCreditPack {
+        isAuthorized
+      }
+    }
+    orgs {
+      ... on OrgConnection {
+        items {
+          id
+          slug
+        }
+      }
+    }
+    usageInterval {
+      spendingControls {
+        ... on CustomerSpendingControls {
+          alerts {
+            ...CustomerSpendingAlertsInitialConfig
+          }
+        }
+      }
+    }
+  }
+}
+    ${f.CustomerSpendingAlertsInitialConfigFragmentDoc}`,S=h.gql`
+    subscription UBBCreditDepletedNotifications {
+  usageBasedBillingCreditBalanceDepletedNotifications {
+    id
+    ...UsageBasedBillingCreditBalanceDepletedNotification
+  }
+}
+    ${U}`,j=h.gql`
+    query UsageBasedBillingCreditBalanceDepletedCurrentUser {
+  currentUser {
+    ... on CurrentUser {
+      id
+      customer {
+        id
+      }
+    }
+  }
+}
+    `,M=h.gql`
+    mutation DismissUBBCreditBalanceDepletedNotification($input: UpdateUbbCreditBalanceDepletedNotificationInput!) {
+  updateUbbCreditBalanceDepletedNotification(input: $input) {
+    ... on UsageBasedBillingCreditBalanceDepletedNotification {
+      id
+      isDismissed
+    }
+    ... on Error {
+      message
+    }
+  }
+}
+    `;var D=e.i(476601);let I=new Set(["/replEnvironmentDesktop","/replEnvironmentMobile"]);function P(e,t,i){return null==t?null:e.find(e=>(function({notification:e,personalCustomerId:t,workspace:i}){let r=e.customer;return r?.id!=null&&("personal"===i.kind?r.id===t:r.orgs?.__typename==="OrgConnection"&&(r.orgs.items??[]).some(e=>e.slug===i.slug))})({notification:e,personalCustomerId:i,workspace:t}))??null}var w=e.i(151027),R=e.i(955410);e.i(214847);var E=e.i(20397),N=e.i(753451);function T(e){if(null==e)return null;let t=e.split("?")[0].split("#")[0];return t.startsWith("/t/")&&t.split("/")[2]||null}e.s(["parseOrgSlugFromPath",0,T],362879);var F=e.i(415541),L=e.i(709485);e.i(450717);var O=e.i(242917),q=e.i(528326),V=e.i(325173),W=e.i(8047),G=e.i(61732),$=e.i(242599),Y=e.i(276470);function z(){return(0,t.jsxs)(G.View,{tag:"a",row:!0,gap:4,align:"center",target:"_blank",rel:"noopener noreferrer",href:o.LINKS_DOCS.AGENT_ASSISTANT_BILLING,color:"accent",children:[(0,t.jsx)("span",{className:Y.default.responsiveWide,children:(0,t.jsx)(E.FormattedMessage,{id:"billing.creditsExhaustedLearnMoreAboutBilling",defaultMessage:"Learn more about billing"})}),(0,t.jsx)("span",{className:Y.default.responsiveCompact,children:(0,t.jsx)(E.FormattedMessage,{id:"billing.creditsExhaustedLearnMoreCompact",defaultMessage:"Learn more"})}),(0,t.jsx)(l.default,{})]})}function K({notification:e,kind:t,dismiss:i}){a.captureMessage(`UBBNotificationModals: ${t} notification missing customerId`,{level:"error",extra:{notificationId:e.id}}),i()}function H(e){let t=e.customer?.usageInterval?.spendingControls;if(t?.__typename==="CustomerSpendingControls")return t.alerts}function Q({notification:e,creditDepletedCustomerId:i,isPersonalCustomer:a,onDismissCreditBalanceDepletedNotifications:s}){let[l,o]=(0,r.useState)(0),{show:d}=(0,O.useGlobalModal)(),{trackClick:g}=(0,R.useTrackClick)(),h=()=>{s(e.id)},f=e.customer?.authorizations?.purchaseCreditPack?.isAuthorized??!1,C=(0,N.useIsInBonsaiWebview)(),x=(0,w.useCurrentUserStoredOrgContext)(),y=a&&!C&&!x.loading&&!x.orgId&&f,_=["credit_pack_5","credit_pack_10","credit_pack_25"],b=_[0],[v,B]=(0,r.useState)({kind:"pack",packId:b}),{url:A,loading:k}=(0,m.useLiveReplAppPreviewUrl)({skip:!a}),U=e=>{if(y&&0===l){if("pack"===v.kind){var t;return void(t=v.packId,g({productArea:"billing",target:"exhausted_modal_buy_credit_pack_button"}),(0,F.track)(L.events.CREDIT_PACK,{action:"exhausted_modal_pack_purchase_clicked",pack_id:t}),h(),d("PurchaseCreditPackModal",{initialPackId:t,initialStep:"confirmation",hideReturnToPackSelection:!0,forcePersonalPurchase:!0}))}(0,F.track)(L.events.CREDIT_PACK,{action:"exhausted_modal_continue_payg_clicked"})}1!==l||a?2===l&&a?e():o(e=>e+1):e()};return(0,t.jsx)(q.Modal,{isOpen:!0,onRequestClose:h,noPadding:!0,maxWidth:"600px",children:(0,t.jsxs)(V.default,{stepIndex:l,onNextStep:()=>U(()=>{h()}),onPrevStep:()=>void o(e=>e-1),footerLeading:(0,t.jsx)(z,{}),children:[y?(0,t.jsx)(c.ReachedMonthlyCreditLimitWithCreditPacks,{appPreviewImageLoading:k,appPreviewImageUrl:A,billingPeriodEndDate:e.billingPeriodEnd,availablePackIds:_,initialPackId:b,selection:v,onSelectionChange:B}):(0,t.jsx)(u.ReachedMonthlyCreditLimit,{appPreviewImageLoading:k,appPreviewImageUrl:A,billingPeriodEndDate:e.billingPeriodEnd,customerName:a?void 0:e.customer?.name??void 0}),(0,t.jsx)(p.SetCustomerUsageAlert,{customerId:i,initialSettings:H(e),onDone:()=>U(()=>{h()})}),a?(0,t.jsxs)(G.View,{gap:16,children:[(0,t.jsxs)(G.View,{row:!0,align:"center",gap:8,children:[(0,t.jsx)(n.default,{size:20}),(0,t.jsx)(W.Text,{variant:"subheadDefault",children:"Refer and earn more credits!"})]}),(0,t.jsx)($.default,{trackingContext:"usage-page-notification-modal"})]}):null]})})}function X({creditBalanceDepletedNotification:e,softAlert:i,hardAlert:r,isPersonalCustomer:a,activeOrgSlug:s,onDismissCreditBalanceDepletedNotifications:l,onDismissAlertNotification:n}){let o=e?.customer?.id,u=r?.customer?.id,c=i?.customer?.id;if(e&&null!=o)return(0,t.jsx)(Q,{notification:e,creditDepletedCustomerId:o,isPersonalCustomer:a,onDismissCreditBalanceDepletedNotifications:l});if(r&&null!=u){let e;return(0,t.jsx)(q.Modal,{isOpen:!0,onRequestClose:()=>{n(r,"hard")},children:(0,t.jsx)(d.ReachedHardBudgetLimit,{billingPeriodEndDate:r.billingPeriodEnd,initialSettings:H(r),customerId:u,customerName:r.customer?.name??"",totalRemainingCredits:(e=r.customer?.usageInterval?.credits,e?.__typename==="CustomerCredits"?e.totalRemainingCredits:0),onDone:()=>{n(r,"hard")}},r.id)})}return i&&null!=c?(0,t.jsx)(q.Modal,{isOpen:!0,onRequestClose:()=>{n(i,"soft")},children:(0,t.jsx)(g.ReachedSoftAlertLimit,{threshold:i.alert.threshold,orgSlug:s,customerName:i.customer?.name??"",onDone:()=>{n(i,"soft")}},i.id)}):null}e.s(["UBBNotificationModals",0,function(){let e=(0,i.useRouter)(),a=(0,D.shouldShowUsageAlert)(e.pathname),l=!a,n=function({pathname:e,replId:t}){return I.has(e)?(Array.isArray(t)?t[0]:t)??null:null}({pathname:e.pathname,replId:e.query.replId}),{data:o,loading:d,error:u}=(0,s.useUbbNotificationWorkspaceReplQuery)({variables:{replId:n??""},skip:l||null==n}),{notifications:c,loading:g,error:p,personalCustomerId:m,onDismiss:h}=function({skip:e=!1}={}){var t,i;let a,s,l,{data:n,loading:o}=(t={skip:e},a={...k,...t},x.useQuery(j,a)),{data:d,loading:u,error:c}=(i={skip:e||n?.currentUser?.__typename!=="CurrentUser"||o},s={...k,...i},C.useSubscription(S,s)),[g]=(l={...k,...void 0},y.useMutation(M,l)),[p,m]=(0,r.useState)(new Set);return{notifications:(d?.usageBasedBillingCreditBalanceDepletedNotifications??[]).filter(({id:e})=>!p.has(e)),loading:u,error:c,personalCustomerId:n?.currentUser?.__typename==="CurrentUser"?n.currentUser.customer.id:void 0,onDismiss:e=>{m(t=>new Set([...t,e])),g({variables:{input:{notificationId:e}}})}}}({skip:l}),{softAlertNotifications:f,hardAlertNotifications:b,loading:U,error:R,onDismiss:E}=function({skip:e=!1}={}){var t,i;let a,s,l,{data:n,loading:o}=(t={skip:e},a={..._,...t},x.useQuery(B,a)),{data:d,loading:u,error:c}=(i={skip:e||n?.currentUser?.__typename!=="CurrentUser"||o},s={..._,...i},C.useSubscription(v,s)),[g]=(l={..._,...void 0},y.useMutation(A,l)),[p,m]=(0,r.useState)(new Set),h=d?.usageBasedBillingAlertNotifications??[],f=e=>h.filter(t=>t.alert.alertActionType===e&&!p.has(t.id)),b=f("soft"),k=f("hard"),U=(e,t)=>{m(t=>new Set([...t,e])),g({variables:{input:{notificationAlertId:e,timeDismissed:t}}})};return{softAlertNotifications:b,hardAlertNotifications:k,loading:u,error:c,onDismiss:(e,t)=>{let i=new Date().toISOString();if(U(e.id,i),"hard"===t){let t=b.find(t=>t.customer?.id===e.customer?.id);t&&U(t.id,i)}}}}({skip:l}),N=(0,w.useCurrentUserStoredOrgContext)();if((0,r.useEffect)(()=>{for(let e of c)e.customer?.id==null&&K({notification:e,kind:"credit depleted",dismiss:()=>h(e.id)})},[c,h]),(0,r.useEffect)(()=>{for(let e of f)e.customer?.id==null&&K({notification:e,kind:"soft alert",dismiss:()=>E(e,"soft")})},[f,E]),(0,r.useEffect)(()=>{for(let e of b)e.customer?.id==null&&K({notification:e,kind:"hard alert",dismiss:()=>E(e,"hard")})},[b,E]),!a||U||R||g||p||d||u)return null;let F=T(e.asPath),L=function({orgContextOrgSlug:e,orgContextIsAuthoritative:t,routeOrgSlug:i,workspaceReplId:r,workspaceReplData:a}){if(i)return{kind:"org",slug:i};if(t)return e?{kind:"org",slug:e}:{kind:"personal"};if(null!=r){var s;return s=a?.getRepl,s?.__typename!=="Repl"?null:s.org?.slug?{kind:"org",slug:s.org.slug}:{kind:"personal"}}return null}({orgContextOrgSlug:N.orgSlug,orgContextIsAuthoritative:N.isAuthoritative,routeOrgSlug:F,workspaceReplId:n,workspaceReplData:o}),O=P(c,L,m),q=P(f,L,m),V=P(b,L,m),W=O?.customer?.id,G=null!=W&&m===W,$=L?.kind==="org"?L.slug:void 0;return(0,t.jsx)(X,{creditBalanceDepletedNotification:O,softAlert:q,hardAlert:V,isPersonalCustomer:G,activeOrgSlug:$,onDismissCreditBalanceDepletedNotifications:h,onDismissAlertNotification:E})},"UBBNotificationView",0,X],902782)}]);
+
+//# debugId=b3c78e85-8879-16f8-1b37-84525aa5dce5
+//# sourceMappingURL=0phzzq9j~5ltr.js.map

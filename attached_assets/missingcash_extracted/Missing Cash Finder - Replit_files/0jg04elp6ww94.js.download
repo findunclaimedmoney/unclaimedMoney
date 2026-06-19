@@ -1,0 +1,129 @@
+;!function(){try { var e="undefined"!=typeof globalThis?globalThis:"undefined"!=typeof global?global:"undefined"!=typeof window?window:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&((e._debugIds|| (e._debugIds={}))[n]="3260872a-bda2-36b6-4318-3ab778b1de61")}catch(e){}}();
+(globalThis.TURBOPACK||(globalThis.TURBOPACK=[])).push(["object"==typeof document?document.currentScript:void 0,246549,e=>{"use strict";var n=e.i(389959),t=e.i(366541),o=e.i(829706),i=e.i(151027);e.s(["useConnectors",0,function(e){let s=e?.skip??!1,{orgId:r}=(0,i.useCurrentUserStoredOrgContext)(),c=e?.orgIdOverride??r,a=!!c,{data:d,loading:l,error:p,refetch:u}=(0,t.useGetConnectorContextQuery)({skip:s||a,ssr:!1}),{data:m,loading:I,error:C,refetch:g}=(0,t.useGetConnectorContextByOrgQuery)({variables:{orgId:c??""},skip:s||!a,ssr:!1}),f=d?.currentUser?.__typename==="CurrentUser"?d?.currentUser?.connectorContext:null,y=m?.currentUser?.__typename==="CurrentUser"&&m?.currentUser?.org?.__typename==="Org"?m?.currentUser?.org?.connectorContext:null,S=a?y:f,h=a?C:p,O=a?I:l,D=a?g:u,[b,{loading:A}]=(0,t.useUseConnectorsCreateConnectionMutation)(),N=(0,n.useCallback)(async e=>b({...e,refetchQueries:a?[{query:t.GetConnectorContextByOrgDocument,variables:{orgId:c??""}}]:[{query:t.GetConnectorContextDocument}]}),[b,a,c]),E=S&&(a?"OrgConnectorContext"===S.__typename:"CurrentUserConnectorContext"===S.__typename),_=a?m?.currentUser?.__typename==="CurrentUser"&&m.currentUser.isSubscribed:d?.currentUser?.__typename==="CurrentUser"&&d.currentUser.isSubscribed,v=(0,n.useMemo)(()=>{if(!E||"CurrentUserConnectorContext"!==S.__typename&&"OrgConnectorContext"!==S.__typename)return[];let e=[],n=S.connectorWhitelist??[],t=S.connections??[],i=S.connectorConfigs??[],s=t.filter(e=>(n.includes(e.connectorName)||o.MCP_CONNECTORS.has(e.connectorName))&&!o.APP_SCOPED_CONNECTORS_UPPER_SNAKE.has(e.connectorName)),r=new Set,c=s.filter(e=>o.MCP_CONNECTORS.has(e.connectorName)?(r.add(e.connectorName),!0):!r.has(e.connectorName)&&(r.add(e.connectorName),!0)),a=new Map;i.forEach(e=>{e.connectorName&&e.webhookEvents&&e.webhookEvents.length>0&&a.set(e.connectorName,e.webhookEvents)});let d=i.filter(e=>e.connectorName&&n.includes(e.connectorName)&&!r.has(e.connectorName)&&"CUSTOM_MCP"!==e.connectorName);return c.forEach(n=>{e.push({id:n.connectionId,displayName:n.displayName,iconPath:n.iconPath,connectorName:n.connectorName,connectorType:"connection",type:n.type,webhookEvents:a.get(n.connectorName)})}),d.forEach(n=>{n.connectorName&&e.push({id:n.id,displayName:n.displayName??"Untitled",iconPath:n.iconPath,connectorName:n.connectorName,connectorType:"connectorConfig",type:n.type,webhookEvents:a.get(n.connectorName)})}),e},[E,S]);return h||!E||"CurrentUserConnectorContext"!==S.__typename&&"OrgConnectorContext"!==S.__typename?{token:null,connections:[],connectorConfigs:[],connectorWhitelist:[],freeTierConnectors:[],slashCommandConnectorItems:[],createConnection:N,loading:O,createConnectionLoading:A,error:h,refetch:D,isSubscribed:_??!1,isOrgContext:a}:{token:S.openIntClientToken,connections:S.connections??[],connectorConfigs:S.connectorConfigs??[],connectorWhitelist:S.connectorWhitelist??[],freeTierConnectors:S.freeTierConnectors??[],slashCommandConnectorItems:v,createConnection:N,loading:O,createConnectionLoading:A,error:h,refetch:D,isSubscribed:_??!1,isOrgContext:a}}])},845415,e=>{"use strict";var n=e.i(276385),t=e.i(389959),o=e.i(624071),i=e.i(756841),s=e.i(248033),r=e.i(932200),c=e.i(379778),a=e.i(8047);let d=(0,t.forwardRef)(function({dataCy:e,...t},o){return(0,n.jsx)(i.TextField,{...(0,c.useView)({gap:4}),...t,"data-cy":e,ref:o})}),l=(0,t.forwardRef)(function({variant:e="small",color:t="dimmer",...i},c){let d=(0,r.useSlottedContext)(s.TextContext,"description");return(0,n.jsx)(a.Text,{...(0,o.mergeProps)(i,{variant:e,color:t},d),ref:c})});e.s(["TextField",0,d,"TextFieldDescription",0,l])},134448,e=>{e.v({closeIcon:"SearchBar-module__1dNpgG__closeIcon",closeIconWrapper:"SearchBar-module__1dNpgG__closeIconWrapper",displayIcon:"SearchBar-module__1dNpgG__displayIcon",iconPosition:"SearchBar-module__1dNpgG__iconPosition",input:"SearchBar-module__1dNpgG__input",root:"SearchBar-module__1dNpgG__root"})},97043,e=>{"use strict";var n=e.i(276385),t=e.i(602686),o=e.i(269848),i=e.i(346781);e.i(214847);var s=e.i(864300),r=e.i(488299),c=e.i(528710),a=e.i(61732),d=e.i(134448);e.s(["SearchBar",0,function(e){let l=(0,s.useIntl)(),p=e.isEmpty??!e.value;return(0,n.jsxs)(a.View,{clsx:d.default.root,style:e.style,children:[(0,n.jsx)(c.Input,{id:e.id,className:e.className,clsx:d.default.input,value:e.value,onChange:e.onChange,placeholder:e.placeholder||l.formatMessage({id:"rui.searchBarPlaceholder",defaultMessage:"Search"}),name:e.name,onFocus:e.onFocus,onBlur:e.onBlur,onKeyDown:e.onKeyDown,disabled:e.disabled,ref:e.inputRef,"aria-busy":e["aria-busy"]??e.loading,autoFocus:e.autoFocus,"data-1p-ignore":!0,"data-lpignore":!0}),e.loading?(0,n.jsx)(a.View,{clsx:[d.default.iconPosition,d.default.displayIcon],children:(0,n.jsx)(o.default,{})}):null,!e.loading&&p?(0,n.jsx)(a.View,{clsx:[d.default.iconPosition,d.default.displayIcon],children:(0,n.jsx)(i.default,{})}):null,e.loading||p?null:(0,n.jsx)(a.View,{clsx:[d.default.iconPosition,d.default.closeIconWrapper],children:(0,n.jsx)(r.IconButton,{alt:l.formatMessage({id:"rui.searchBarClear",defaultMessage:"Clear"}),tooltipBehavior:"hidden",disabled:e.disabled,clsx:d.default.closeIcon,onClick:e.onClear,children:(0,n.jsx)(t.default,{})})})]})}])},917736,e=>{"use strict";var n=e.i(276385),t=e.i(983420);e.s(["default",0,function(e){return(0,n.jsx)(t.default,{...e,children:(0,n.jsx)("path",{fillRule:"evenodd",d:"M12 1.25c2.544 0 4.878.342 6.602.917.857.286 1.606.643 2.155 1.076.54.426.993 1.014.993 1.757v14c0 .718-.428 1.3-.965 1.732-.543.438-1.293.804-2.183 1.101-1.786.595-4.16.917-6.602.917s-4.816-.322-6.602-.917c-.89-.297-1.64-.663-2.183-1.1-.503-.405-.911-.943-.96-1.6L2.25 19V5c0-.743.452-1.33.993-1.757.55-.433 1.298-.79 2.155-1.076C7.122 1.592 9.457 1.25 12 1.25Zm8.25 12.85a8.375 8.375 0 0 1-1.648.733c-1.786.595-4.16.917-6.602.917s-4.816-.322-6.602-.917A8.373 8.373 0 0 1 3.75 14.1V19l.013.08c.03.102.123.267.392.484.353.283.92.58 1.718.846 1.59.53 3.795.84 6.127.84s4.537-.31 6.127-.84c.797-.266 1.365-.563 1.718-.846.27-.218.363-.382.392-.484l.013-.08v-4.9Zm0-7c-.47.282-1.03.527-1.648.733-1.724.575-4.059.917-6.602.917s-4.878-.342-6.602-.917a8.428 8.428 0 0 1-1.648-.732V12c0 .077.046.274.405.563.353.284.92.581 1.718.847 1.59.53 3.795.84 6.127.84s4.537-.31 6.127-.84c.797-.266 1.365-.563 1.718-.847.36-.289.405-.486.405-.563V7.1ZM12 2.75c-2.427 0-4.593.329-6.127.84-.77.257-1.34.546-1.701.83-.37.292-.422.494-.422.58 0 .086.052.288.422.58.361.284.93.573 1.701.83 1.534.511 3.7.84 6.127.84 2.427 0 4.593-.329 6.127-.84.77-.257 1.34-.546 1.701-.83.37-.292.422-.494.422-.58 0-.086-.052-.288-.422-.58-.361-.284-.93-.573-1.701-.83-1.533-.511-3.7-.84-6.127-.84Z",clipRule:"evenodd"})})}])},146432,e=>{"use strict";var n=e.i(276385),t=e.i(983420);e.s(["default",0,function(e){return(0,n.jsxs)(t.default,{...e,children:[(0,n.jsx)("path",{d:"M9.077 13.254A.75.75 0 0 1 9.75 14v3.25H10a.75.75 0 0 1 0 1.5H7a.75.75 0 0 1 0-1.5h1.25v-2.5H7a.75.75 0 0 1 0-1.5h2l.077.004Z"}),(0,n.jsx)("path",{fillRule:"evenodd",d:"M15.5 13.25c1.157 0 2.25.852 2.25 2.083v1.334c0 1.231-1.093 2.083-2.25 2.083-1.085 0-2.113-.75-2.237-1.857l-.013-.226v-1.334c0-1.231 1.093-2.083 2.25-2.083Zm0 1.5c-.5 0-.75.341-.75.583v1.334l.012.094c.054.227.3.489.738.489.5 0 .75-.341.75-.583v-1.334c0-.242-.25-.583-.75-.583ZM8.5 5.25c1.157 0 2.25.852 2.25 2.083v1.334c0 1.231-1.093 2.083-2.25 2.083-1.085 0-2.113-.75-2.237-1.857l-.013-.226V7.333c0-1.231 1.093-2.083 2.25-2.083Zm0 1.5c-.5 0-.75.341-.75.583v1.334l.012.094c.054.227.3.489.738.489.5 0 .75-.341.75-.583V7.333c0-.242-.25-.583-.75-.583Z",clipRule:"evenodd"}),(0,n.jsx)("path",{d:"M16.077 5.254A.75.75 0 0 1 16.75 6v3.25H17a.75.75 0 0 1 0 1.5h-3a.75.75 0 0 1 0-1.5h1.25v-2.5H14a.75.75 0 0 1 0-1.5h2l.077.004Z"}),(0,n.jsx)("path",{fillRule:"evenodd",d:"M16 2.25c1.995 0 3.542.231 4.53 1.22.989.988 1.22 2.535 1.22 4.53v9c0 1.541-.247 2.808-1.095 3.655-.847.848-2.114 1.095-3.655 1.095H7c-1.542 0-2.808-.247-3.655-1.095C2.497 19.808 2.25 18.541 2.25 17V7c0-1.542.247-2.808 1.095-3.655C4.192 2.497 5.458 2.25 7 2.25h9Zm-9 1.5c-1.458 0-2.192.253-2.595.655C4.003 4.808 3.75 5.542 3.75 7v10c0 1.459.253 2.192.655 2.595.403.402 1.137.655 2.595.655h10c1.459 0 2.192-.253 2.595-.655.402-.403.655-1.136.655-2.595V8c0-2.005-.269-2.958-.78-3.47-.512-.511-1.465-.78-3.47-.78H7Z",clipRule:"evenodd"})]})}])},829706,e=>{"use strict";var n=e.i(276385),t=e.i(917736),o=e.i(882848),i=e.i(995691),s=e.i(146432),r=e.i(142643);let c=new Set(["FIGMA","CUSTOM_MCP"]),a=new Set(["BITBUCKET_SOURCE_CONTROL","GITHUB_SOURCE_CONTROL","GITLAB_SOURCE_CONTROL"]),d=new Set(["YOUTUBE"]);var l=e.i(89148);let p=new Set(r.APP_SCOPED_CONNECTORS.map(r.connectorNameToGql)),u=new Set(["disconnected","error"]),m=[{id:"replit-database",displayName:"Replit Database",displayNameIntlId:"connectors.replitDatabaseDisplayName",typeLabel:"PostgreSQL",typeLabelIntlId:"connectors.replitDatabaseTypeLabel",icon:(0,n.jsx)(t.default,{size:16,color:l.tokens.blueStronger}),link:"https://docs.replit.com/cloud-services/storage-and-databases/sql-database",pane:{type:"neon"}},{id:"replit-app-storage",displayName:"Replit App Storage",displayNameIntlId:"connectors.replitAppStorageDisplayName",typeLabel:"Object Storage",typeLabelIntlId:"connectors.replitAppStorageTypeLabel",icon:(0,n.jsx)(s.default,{size:16,color:l.tokens.greenStronger}),link:"https://docs.replit.com/cloud-services/storage-and-databases/object-storage",pane:{type:"objectStorage"}},{id:"replit-auth",displayName:"Replit Auth",displayNameIntlId:"connectors.replitAuthDisplayName",typeLabel:"Authentication",typeLabelIntlId:"connectors.replitAuthTypeLabel",icon:(0,n.jsx)(i.default,{size:16,color:l.tokens.orangeStronger}),link:"https://docs.replit.com/replit-workspace/replit-auth#replit-auth",pane:{type:"replitAuth"}},{id:"replit-domains",displayName:"Replit Domains",displayNameIntlId:"connectors.replitDomainsDisplayName",typeLabel:"Domains",typeLabelIntlId:"connectors.replitDomainsTypeLabel",icon:(0,n.jsx)(o.default,{size:16,color:l.tokens.tealStronger}),link:"https://docs.replit.com/cloud-services/deployments/domain-purchasing",pane:{type:"deployments"}}];m.map(e=>e.id),e.s(["APP_SCOPED_CONNECTORS_UPPER_SNAKE",0,p,"CONNECTOR_DESCRIPTIONS",0,{AGENTMAIL:{description:"Send, receive, and reply to emails using the AgentMail email inbox API.",descriptionIntlId:"connectors.agentmailDescription"},AMPLITUDE:{description:"Query analytics data, manage event taxonomy, and trigger project runs in Amplitude",descriptionIntlId:"connectors.amplitudeDescription"},ASHBY:{description:"Access job postings, candidates, and applications from your Ashby ATS",descriptionIntlId:"connectors.ashbyDescription"},ASANA:{description:"Read tasks and project data from Asana workspaces",descriptionIntlId:"connectors.asanaDescription"},SPROUTSOCIAL:{description:"Manage social media profiles, posts, messages, and cases from Sprout Social",descriptionIntlId:"connectors.sproutsocialDescription"},BITBUCKET:{description:"Access Bitbucket repositories, users, and organizations from Replit",descriptionIntlId:"connectors.bitbucketDescription"},BITBUCKET_SOURCE_CONTROL:{description:"Sync code to Bitbucket repositories from your Replit apps",descriptionIntlId:"connectors.bitbucketSourceControlDescription"},GITHUB_SOURCE_CONTROL:{description:"Sync code to GitHub repositories from your Replit apps",descriptionIntlId:"connectors.githubSourceControlDescription"},GITLAB_SOURCE_CONTROL:{description:"Sync code to GitLab projects from your Replit apps",descriptionIntlId:"connectors.gitlabSourceControlDescription"},DATABRICKS_M2M:{description:"Execute SQL queries and manage data workflows in Databricks using a service account",descriptionIntlId:"connectors.databricksM2mDescription"},BIGQUERY:{description:"Execute SQL queries on Google BigQuery datasets from your Replit apps",descriptionIntlId:"connectors.bigqueryDescription"},BOX:{description:"Access Box files and folders from Replit",descriptionIntlId:"connectors.boxDescription"},CALENDLY:{description:"View Calendly events and event types",descriptionIntlId:"connectors.calendlyDescription"},CONFLUENCE:{description:"Read users and groups, create and edit content in Confluence spaces",descriptionIntlId:"connectors.confluenceDescription"},CLICKUP:{description:"Access tasks, projects, and workflows in ClickUp",descriptionIntlId:"connectors.clickupDescription"},DATABRICKS:{description:"Execute SQL queries and manage data workflows in Databricks",descriptionIntlId:"connectors.databricksDescription"},DISCORD:{description:"Access Discord guild information and user profiles",descriptionIntlId:"connectors.discordDescription"},DROPBOX:{description:"Access Dropbox files, content, and metadata",descriptionIntlId:"connectors.dropboxDescription"},ELEVENLABS:{description:"AI voice generation and text-to-speech",descriptionIntlId:"connectors.elevenlabsDescription"},HEX:{description:"Run data notebooks, manage projects, and trigger Hex project runs via API",descriptionIntlId:"connectors.hexDescription"},OPENAI:{description:"Access your own OpenAI API key instead of default Replit-managed AI integrations",descriptionIntlId:"connectors.openaiDescription"},FACEBOOK:{description:"View Facebook profiles, posts, photos, and manage pages",descriptionIntlId:"connectors.facebookDescription"},GITHUB:{description:"Access GitHub repositories, users, and organizations from your Replit apps",descriptionIntlId:"connectors.githubDescription"},GOOGLE_CALENDAR:{description:"Read and write Google Calendar events and settings",descriptionIntlId:"connectors.googleCalendarDescription"},GOOGLE_DOCS:{description:"Create, read, and edit Google Docs",descriptionIntlId:"connectors.googleDocsDescription"},GOOGLE_DRIVE:{description:"Access and manage Google Drive files and folders",descriptionIntlId:"connectors.googleDriveDescription"},GOOGLE_MAIL:{description:"Send, receive, and manage Gmail messages",descriptionIntlId:"connectors.googleMailDescription"},GOOGLE_SHEET:{description:"Read and write data in Google Sheets",descriptionIntlId:"connectors.googleSheetDescription"},GOOGLE_SLIDES:{description:"Create, read, and edit Google Slides presentations",descriptionIntlId:"connectors.googleSlidesDescription"},HUBSPOT:{description:"Access HubSpot CRM objects, contacts, and deals from Replit",descriptionIntlId:"connectors.hubspotDescription"},INSTAGRAM:{description:"Manage Instagram business content, messages, and insights",descriptionIntlId:"connectors.instagramDescription"},JIRA:{description:"View users and manage Jira work items and issues",descriptionIntlId:"connectors.jiraDescription"},LINEAR:{description:"Create and manage Linear issues, comments, and schedules",descriptionIntlId:"connectors.linearDescription"},MONDAY:{description:"Access Monday.com boards and user information",descriptionIntlId:"connectors.mondayDescription"},MOBILE_MAPS:{description:"Access mobile maps and locations from Replit",descriptionIntlId:"connectors.mobileMapsDescription"},NOTION:{description:"Read and write to Notion workspaces and pages",descriptionIntlId:"connectors.notionDescription"},ONEDRIVE:{description:"Access and manage OneDrive files and folders",descriptionIntlId:"connectors.onedriveDescription"},OUTLOOK:{description:"Send and receive emails, manage Outlook calendar events",descriptionIntlId:"connectors.outlookDescription"},PLAID:{description:"Access Plaid connected bank accounts and transactions",descriptionIntlId:"connectors.plaidDescription"},POSTGRES:{description:"Execute read-only SQL queries on PostgreSQL databases",descriptionIntlId:"connectors.postgresDescription"},RESEND:{description:"Send transactional emails using the Resend API",descriptionIntlId:"connectors.resendDescription"},REVENUECAT:{description:"Monetize your mobile apps built on Replit",descriptionIntlId:"connectors.revenuecatDescription"},SALESFORCE:{description:"Access Salesforce CRM data and perform operations via REST API",descriptionIntlId:"connectors.salesforceDescription"},SEGMENT:{description:"Manage Segment sources, destinations, and tracking plans via the Public API",descriptionIntlId:"connectors.segmentDescription"},SENDGRID:{description:"Send transactional emails using the SendGrid API",descriptionIntlId:"connectors.sendgridDescription"},SHAREPOINT:{description:"Read, write, and manage SharePoint sites and documents",descriptionIntlId:"connectors.sharepointDescription"},SLACK:{description:"Send messages and interact with Slack workspaces",descriptionIntlId:"connectors.slackDescription"},SLACK_AGENT:{description:"Integrate Slack agent capabilities from Replit",descriptionIntlId:"connectors.slackAgentDescription"},SLACK_AGENT_BUILDER:{description:"Build and manage custom Slack agents",descriptionIntlId:"connectors.slackAgentBuilderDescription"},STRIPE:{description:"Connect to Stripe to enable seamless and secure payments for your apps",descriptionIntlId:"connectors.stripeDescription"},SNOWFLAKE:{description:"Execute SQL queries on Snowflake data warehouses",descriptionIntlId:"connectors.snowflakeDescription"},SPOTIFY:{description:"Access and manage Spotify playlists and libraries",descriptionIntlId:"connectors.spotifyDescription"},TODOIST:{description:"Read and write to your Todoist tasks and projects",descriptionIntlId:"connectors.todoistDescription"},TWILIO:{description:"Send SMS messages and make voice calls using the Twilio API",descriptionIntlId:"connectors.twilioDescription"},YOUTUBE:{description:"Upload and manage YouTube videos, channels, and analytics",descriptionIntlId:"connectors.youtubeDescription"},ZENDESK:{description:"Access Zendesk users and support tickets from Replit",descriptionIntlId:"connectors.zendeskDescription"},FIGMA:{description:"Allow Replit Agent to view and rapidly build your designs from Figma",descriptionIntlId:"connectors.figmaDescription"},CUSTOM_MCP:{description:"Allows Replit Agent to access external MCP servers",descriptionIntlId:"connectors.customMcpDescription"},WHOP:{description:"Create payment plans, checkout configurations, and manage subscriptions via Whop",descriptionIntlId:"connectors.whopDescription"},ZOOM:{description:"Access Zoom meetings, users, settings, and webinars with admin privileges",descriptionIntlId:"connectors.zoomDescription"},WORKATO:{description:"Trigger Workato recipes and call Workato APIs",descriptionIntlId:"connectors.workatoDescription"},X:{description:"Access X posts, users, and search using the X API v2 with pay-per-usage pricing",descriptionIntlId:"connectors.xDescription"},MICROSOFT_FABRIC:{description:"Access Microsoft Fabric workspaces and resources",descriptionIntlId:"connectors.microsoftFabricDescription"}},"DISCONNECTED_STATUSES",0,u,"MCP_CONNECTORS",0,c,"REPLIT_MANAGED_SERVICES",0,m,"VERSION_CONTROL_CONNECTORS",0,a,"buildConnectionManagementUrl",0,function(e,n,t){let o=`/integrations/${e.toLowerCase()}/apps/${n}`;return t?`/t/${t}${o}`:o},"isAppScopedConnector",0,e=>p.has(e),"isConnectionHealthy",0,e=>!u.has(e??""),"isHiddenUnlessConnected",0,e=>d.has(e),"isMCPConnector",0,e=>c.has(e),"toConnectorName",0,function(e){if(!e)return null;let n=e.toUpperCase();return/^[A-Z][A-Z0-9_]*$/.test(n)?n:null}],829706)},366541,e=>{"use strict";var n=e.i(351623),t=e.i(299020),o=e.i(344480);e.i(975473);let i={},s=n.gql`
+    fragment ConnectorContextReplInfo on Repl {
+  id
+  title
+  iconUrl
+  url
+  timeCreated
+  user {
+    id
+    username
+    fullName
+    image
+  }
+}
+    `,r=n.gql`
+    fragment ConnectorContextConnectionInfo on OintConnection {
+  connectionId
+  connectorName
+  displayName
+  iconPath
+  status
+  type
+  environment
+  webhookProvider
+  repls {
+    ...ConnectorContextReplInfo
+  }
+  predefinedProvider {
+    id
+    displayName
+    description
+    baseUrl
+    iconPath
+  }
+}
+    ${s}`,c=n.gql`
+    fragment ConnectorContext on CurrentUserConnectorContext {
+  openIntClientToken
+  connectorWhitelist
+  freeTierConnectors
+  connections {
+    ...ConnectorContextConnectionInfo
+  }
+  connectorConfigs {
+    id
+    type
+    connectorName
+    displayName
+    description
+    iconPath
+    webhookEvents {
+      name
+      model
+      description
+    }
+  }
+}
+    ${r}`,a=n.gql`
+    fragment OrgConnectorContext on OrgConnectorContext {
+  openIntClientToken
+  connectorWhitelist
+  freeTierConnectors
+  connections {
+    ...ConnectorContextConnectionInfo
+  }
+  connectorConfigs {
+    id
+    type
+    connectorName
+    displayName
+    description
+    iconPath
+    webhookEvents {
+      name
+      model
+      description
+    }
+  }
+}
+    ${r}`,d=n.gql`
+    mutation UseConnectorsCreateConnection($input: CreateConnectionInput!) {
+  createConnection(input: $input) {
+    ... on CreateConnection {
+      connectionId
+    }
+    ... on Error {
+      message
+    }
+  }
+}
+    `,l=n.gql`
+    query GetConnectorContext {
+  currentUser {
+    ... on CurrentUser {
+      id
+      isSubscribed
+      connectorContext {
+        ...ConnectorContext
+      }
+    }
+  }
+}
+    ${c}`,p=n.gql`
+    query GetConnectorContextByOrg($orgId: String!) {
+  currentUser {
+    ... on CurrentUser {
+      id
+      isSubscribed
+      org(orgId: $orgId) {
+        __typename
+        ... on Org {
+          id
+          connectorContext {
+            ...OrgConnectorContext
+          }
+        }
+        ... on Error {
+          __typename
+          message
+        }
+      }
+    }
+  }
+}
+    ${a}`;e.s(["ConnectorContextConnectionInfoFragmentDoc",0,r,"ConnectorContextFragmentDoc",0,c,"ConnectorContextReplInfoFragmentDoc",0,s,"GetConnectorContextByOrgDocument",0,p,"GetConnectorContextDocument",0,l,"OrgConnectorContextFragmentDoc",0,a,"useGetConnectorContextByOrgQuery",0,function(e){let n={...i,...e};return o.useQuery(p,n)},"useGetConnectorContextQuery",0,function(e){let n={...i,...e};return o.useQuery(l,n)},"useUseConnectorsCreateConnectionMutation",0,function(e){let n={...i,...e};return t.useMutation(d,n)}])},843400,e=>{e.v({modalContent:"EmbedModal-module__oAShma__modalContent",overlay:"EmbedModal-module__oAShma__overlay",overlayTopAligned:"EmbedModal-module__oAShma__overlayTopAligned"})},554370,e=>{"use strict";var n=e.i(276385),t=e.i(389959),o=e.i(486597),i=e.i(624071),s=e.i(342942),r=e.i(739261),c=e.i(969407),a=e.i(918542),d=e.i(691636),l=e.i(61732),p=e.i(843400);e.s(["EmbedModal",0,function({isOpen:e,onRequestClose:u,children:m,maxWidth:I=800,maxHeight:C,centered:g=!0,zIndex:f,className:y,portalContainer:S}){let h=(0,c.useIsSSR)(),O=(0,t.useRef)(null),D=(0,o.useOverlayTriggerState)({isOpen:e,onOpenChange:e=>{e||u()}}),{modalProps:b,underlayProps:A}=(0,a.useModalOverlay)({isDismissable:!0,isKeyboardDismissDisabled:!1,shouldCloseOnInteractOutside:e=>!(e.tagName.toLowerCase().includes("1password")||e.tagName.toLowerCase().includes("com-1password")||e.hasAttribute("data-op-target")||e.hasAttribute("data-op-id")||Array.from(e.attributes).some(e=>e.name.startsWith("data-1p-"))||e.className?.toString().includes("op-")||null!==e.closest('[class*="1password"]')||null!==e.closest('[class*="op-"]')||null!==e.closest("[data-op-target]"))},D,O),{dialogProps:N}=(0,r.useDialog)({"aria-label":"Embed content"},O);return((0,t.useEffect)(()=>{let n=n=>{"Escape"===n.key&&e&&u()};return document.addEventListener("keydown",n),()=>document.removeEventListener("keydown",n)},[e,u]),h||!e)?null:(0,n.jsx)(s.Overlay,{portalContainer:S??document.body,children:(0,n.jsx)("div",{...A,className:g?p.default.overlay:`${p.default.overlay} ${p.default.overlayTopAligned}`,style:{zIndex:f??d.DefaultModalZIndex},children:(0,n.jsx)("div",{...(0,i.mergeProps)(b,N),ref:O,className:`${p.default.modalContent} ${y||""}`,style:{maxWidth:I,maxHeight:C??"calc(100vh - 64px)"},children:(0,n.jsx)(l.View,{children:m})})})})}])},38135,e=>{"use strict";var n=e.i(389959);e.s(["default",0,function(){let[e,t]=(0,n.useState)(null),[o,i]=(0,n.useState)(null),s=(0,n.useCallback)(e=>{t(e?.view??null),i(e?.dom??null)},[]);return(0,n.useMemo)(()=>({ref:s,view:e,dom:o}),[s,e,o])}])},880132,e=>{"use strict";var n=e.i(276385),t=e.i(602686),o=e.i(436298);e.i(214847);var i=e.i(864300),s=e.i(66742);e.s(["NewArtifactRequestAttachment",0,function({kind:e,onRemove:r}){let c=(0,i.useIntl)(),a=(0,o.getOutputKindConfig)(e),d=(0,o.getOutputKindLabel)(c,e);return(0,n.jsx)(s.PillButton,{variant:"muted",colorway:"blue",text:d,iconLeft:(0,n.jsx)(a.Icon,{}),iconRight:(0,n.jsx)(t.default,{size:12}),onClick:r,"aria-label":c.formatMessage({id:"workspace.newArtifactRequestAttachmentRemoveAria",defaultMessage:"Remove {label} request"},{label:d}),"data-testid":"artifact-request-attachment"})}])},775954,e=>{"use strict";let n=(0,e.i(467662).createMotionComponent)("div",void 0);e.s(["div",0,n],775954)}]);
+
+//# debugId=3260872a-bda2-36b6-4318-3ab778b1de61
+//# sourceMappingURL=0ka-j~~va71m-.js.map

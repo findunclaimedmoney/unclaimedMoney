@@ -1,0 +1,495 @@
+;!function(){try { var e="undefined"!=typeof globalThis?globalThis:"undefined"!=typeof global?global:"undefined"!=typeof window?window:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&((e._debugIds|| (e._debugIds={}))[n]="6d09c802-c4e1-ef7d-b787-4ede3564c012")}catch(e){}}();
+(globalThis.TURBOPACK||(globalThis.TURBOPACK=[])).push(["object"==typeof document?document.currentScript:void 0,228290,e=>{e.v({container:"index-module__z1kyYa__container",menu:"index-module__z1kyYa__menu",notificationIndicator:"index-module__z1kyYa__notificationIndicator",popover:"index-module__z1kyYa__popover"})},237671,980224,e=>{"use strict";var t=e.i(276385),i=e.i(389959),a=e.i(532764);e.i(214847);var n=e.i(864300),o=e.i(351623),r=e.i(344480);e.i(975473);var s=e.i(846545);let l={},c=o.gql`
+    query notificationCount {
+  currentUser {
+    id
+    notificationCount
+  }
+}
+    `,u=o.gql`
+    subscription notificationCountChanges {
+  notificationCount
+}
+    `;function d(){var e;let t,a,{data:n,refetch:o,client:d}=(t={...l,...void 0},r.useQuery(c,t)),m=(0,i.useCallback)(e=>{n?.currentUser&&d.writeQuery({query:c,data:{...n,currentUser:{...n.currentUser,notificationCount:e}}})},[n?.currentUser?.id]);return e={onData:({data:{data:e}})=>{"number"==typeof e?.notificationCount&&m(e.notificationCount)}},a={...l,...e},s.useSubscription(u,a),{count:Math.max(0,n?.currentUser?.notificationCount||0),refetch:o,setUnreadCount:m}}e.s(["default",0,d],980224);var m=e.i(488299),f=e.i(773222),p=e.i(61732),g=e.i(228290);e.s(["NavMenu",0,function(e){let o=(0,n.useIntl)(),[r,s]=(0,i.useState)(!1),{count:l}=d(),c=o.formatMessage({id:"components.navMenuLabel",defaultMessage:"Menu"});return(0,t.jsxs)(p.View,{clsx:g.default.container,children:[(0,t.jsxs)(f.PopoverTrigger,{isOpen:r,onOpenChange:t=>{s(t),e.onOpenChange?.(t)},label:c,placement:"bottom start",clsx:g.default.popover,offset:2,containerPadding:2,children:[(0,t.jsx)(m.IconButton,{alt:c,size:28,tooltipBehavior:"hidden",children:(0,t.jsx)(a.default,{})}),(0,t.jsx)(p.View,{p:4,clsx:g.default.menu,br:6,children:"function"==typeof e.children?e.children(()=>s(!1)):e.children})]}),l>0?(0,t.jsx)(p.View,{clsx:g.default.notificationIndicator}):null]})}],237671)},795968,e=>{e.v({content:"NotificationCard-module__5qO-ya__content",indicator:"NotificationCard-module__5qO-ya__indicator",indicatorLink:"NotificationCard-module__5qO-ya__indicatorLink",notificationLink:"NotificationCard-module__5qO-ya__notificationLink",notificationLinkWrapper:"NotificationCard-module__5qO-ya__notificationLinkWrapper",root:"NotificationCard-module__5qO-ya__root"})},377498,e=>{"use strict";var t=e.i(276385),i=e.i(638424),a=e.i(389959),n=e.i(927600),o=e.i(415541),r=e.i(709485),s=e.i(89148),l=e.i(795968);let c=({condition:e,children:t,wrap:i})=>e?(0,a.cloneElement)(i(t)):t;e.s(["default",0,function({children:e,seen:a,href:u,as:d,isLastItem:m=!1}){let f=!!(u||d);return(0,t.jsx)(c,{condition:f,wrap:e=>(0,t.jsxs)("div",{clsx:l.default.notificationLinkWrapper,children:[d&&u?(0,t.jsx)(i.default,{as:d,href:u,clsx:l.default.notificationLink,children:e}):null,!d&&u&&"object"==typeof u?(0,t.jsx)(i.default,{href:u,clsx:l.default.notificationLink,children:e}):null,d||"string"!=typeof u?null:(0,t.jsx)("a",{clsx:l.default.notificationLink,href:u,children:e})]}),children:(0,t.jsxs)("div",{onClick:()=>{f&&(0,o.track)(r.events.NOTIFICATION_ITEM_CLICKED,{seen:a})},clsx:l.default.root,"data-has-link":f,"data-last-item":m,children:[(0,t.jsx)("div",{clsx:l.default.content,children:e}),f?(0,t.jsxs)("div",{clsx:l.default.indicatorLink,children:[!a&&(0,t.jsx)("div",{clsx:l.default.indicator}),(0,t.jsx)(n.default,{color:s.tokens.foregroundDimmest})]}):null]})})}])},841114,e=>{"use strict";var t=e.i(351623),i=e.i(344480);e.i(975473);var a=e.i(299020);let n={},o=t.gql`
+    query ThemePreferenceCurrentUser {
+  currentUser {
+    id
+    workspacePreferences
+  }
+}
+    `,r=t.gql`
+    mutation ThemePreferenceUpdate($input: JSON!) {
+  updateWorkspacePreferences(input: $input) {
+    id
+    workspacePreferences
+  }
+}
+    `;var s=e.i(320216);e.s(["useThemePreference",0,function(){var e;let t,l,{showError:c}=(0,s.default)(),{data:u}=(e={ssr:!0},t={...n,...e},i.useQuery(o,t)),d=u?.currentUser?.__typename==="CurrentUser"?u.currentUser:null,m=d?.workspacePreferences.theme,f=null==m,[p]=(l={...n,...void 0},a.useMutation(r,l)),g=async e=>{if(!d)return;let t="system"===e?null:e;null===t&&f||(t!==m||f)&&await p({variables:{input:{theme:t}},optimisticResponse:{__typename:"RootMutationType",updateWorkspacePreferences:{__typename:"CurrentUser",id:d.id,workspacePreferences:{...d.workspacePreferences,theme:t}}},onError:()=>c("Something went wrong setting the active theme - please try again.")})};return{isSystemTheme:f,setActiveTheme:g}}],841114)},316431,e=>{"use strict";var t=e.i(276385),i=e.i(389959),a=e.i(295798),n=e.i(585544),o=e.i(19322),r=e.i(8047),s=e.i(61732);e.s(["Select",0,function({id:e,items:l,"aria-label":c,initialSelectedItem:u,selectedItem:d,onChange:m,placeholder:f,dataCy:p,disabled:g,className:h}){let x,M=(0,a.default)(m),N=l.map(e=>({...e,id:e.title}));d?x=d.title:u&&(x=u.title);let j=u?u.title:void 0;return(0,t.jsx)(o.Select,{id:e,"aria-label":c,items:N,selectedKey:x,defaultSelectedKey:j,onSelectionChange:e=>{let t=l.find(t=>t.title===e);t&&M.current(t)},placeholder:f,dataCy:p,isDisabled:g,className:h,selectValue:e=>e.selectedItem?(0,t.jsxs)(s.View,{row:!0,grow:!0,shrink:!0,gap:8,align:"center",children:[e.selectedItem.icon?(0,i.cloneElement)(e.selectedItem.icon,{size:16}):null,(0,t.jsx)(r.Text,{multiline:!1,children:e.selectedItem.title})]}):(0,t.jsx)(s.View,{row:!0,grow:!0,shrink:!0,gap:8,align:"center",children:(0,t.jsx)(r.Text,{color:"dimmer",multiline:!1,children:f})}),children:e=>(0,t.jsx)(n.ListBoxItem,{id:e.title,label:e.title,description:e.subtitle,icon:e.icon,dataCy:e.dataCy},e.title)})}])},636562,e=>{e.v({flexButtons:"index-module__LUcORa__flexButtons",frontFormSection:"index-module__LUcORa__frontFormSection",subcategorySection:"index-module__LUcORa__subcategorySection"})},64017,e=>{"use strict";var t=e.i(276385),i=e.i(389959),a=e.i(351623),n=e.i(344480);e.i(975473);let o={},r=a.gql`
+    query currentUser {
+  currentUser {
+    __typename
+    id
+    username
+    isSubscribed
+    isMemberOfAnyOrg
+  }
+}
+    `;var s=e.i(787527),l=e.i(252204),c=e.i(295652),u=e.i(612343),d=e.i(596139),m=e.i(3466);e.i(214847);var f=e.i(20397),p=e.i(864300),g=e.i(316431),h=e.i(419635),x=e.i(108431),M=e.i(8047),N=e.i(61732),j=e.i(908796);let v=[{value:"billing-issue",title:"Billing",showFrontForm:!0},{value:"account-issue",title:"Account",showFrontForm:!0},{value:"technical-issue",title:"Technical",showFrontForm:!0}];var y=e.i(299020);let C={},I=a.gql`
+    mutation frontSupportRequest($input: FrontSupportRequestInput!) {
+  frontSupportRequest(input: $input) {
+    ... on UserError {
+      message
+    }
+    ... on TooManyRequestsError {
+      message
+    }
+    ... on UnauthorizedError {
+      message
+    }
+    ... on FrontSupportRequestSuccess {
+      success
+    }
+    __typename
+  }
+}
+    `;var _=j,w=e.i(269848),b=e.i(320216),S=e.i(415541),T=e.i(709485),k=e.i(643484),R=e.i(528710);let L={},A=a.gql`
+    fragment ReplSelectorRepl on Repl {
+  id
+  title
+  timeUpdated
+  url
+  slug
+  owner {
+    ... on User {
+      id
+      username
+      image
+      fullName
+    }
+    ... on Team {
+      id
+      username
+      image
+    }
+  }
+  iconUrl
+  templateLabel
+  publishedAs
+}
+    `,q=a.gql`
+    query ReplSelector($search: String!, $excludePrivate: Boolean, $excludeMultiplayer: Boolean) {
+  currentUser {
+    id
+    replSearch(
+      search: $search
+      excludePrivate: $excludePrivate
+      excludeMultiplayer: $excludeMultiplayer
+    ) {
+      id
+      ...ReplSelectorRepl
+    }
+  }
+}
+    ${A}`;var O=e.i(602686),P=e.i(619158),F=e.i(89148),U=e.i(760982),$=e.i(585544),V=e.i(365757);let B="__not_app_specific__";function D(e){return e.owner?`${e.owner.username}/${e.title}`:e.title}function E({onSelect:e}){var a;let o,r=(0,p.useIntl)(),s=r.formatMessage({id:"home.supportNotAppSpecific",defaultMessage:"Not related to a specific app"}),l=r.formatMessage({id:"home.supportSelectAnApp",defaultMessage:"Select an app"}),[c,u]=(0,i.useState)(""),[d,m]=(0,i.useState)(null),f=(0,i.useRef)([]),g=(0,P.default)(c,150),h=f.current.find(e=>e.id===d),x=""===c?"":g,{data:j,loading:v}=(a={variables:{search:d&&h&&x===D(h)?"":x,excludeMultiplayer:!1}},o={...L,...a},n.useQuery(q,o)),y=j?.currentUser?.replSearch??[];return f.current=y,(0,t.jsxs)(U.ComboBox,{"aria-label":l,placeholder:l,menuTrigger:"focus",style:{width:"100%"},selectedKey:d,inputValue:c,onInputChange:t=>{if(u(t),d&&d!==B){let i=f.current.find(e=>e.id===d);i&&t===D(i)||(m(null),e(null))}else d===B&&t!==s&&(m(null),e(null))},triggerIcon:d?(0,t.jsx)(O.default,{}):void 0,triggerButtonProps:d?{onClick:()=>{m(null),u(""),e(null)}}:void 0,isLoading:v&&0===y.length,emptyMessage:r.formatMessage({id:"home.supportNoAppsFound",defaultMessage:"No apps found"}),maxHeight:240,onSelectionChange:t=>{if(m(t),null===t)return void e(null);if(t===B){e("none"),u(s);return}let i=f.current.find(e=>e.id===t);i&&(e(i),u(D(i)))},children:[(0,t.jsx)($.BaseListBoxItem,{id:B,textValue:s,children:(0,t.jsx)(M.Text,{color:"dimmer",multiline:!1,children:s})},B),y.map(e=>(0,t.jsx)($.BaseListBoxItem,{id:e.id,textValue:D(e),children:(0,t.jsxs)(N.View,{row:!0,gap:8,align:"center",children:[e.iconUrl?(0,t.jsx)(V.default,{alt:e.title,iconUrl:e.iconUrl,size:16}):null,(0,t.jsx)(N.View,{row:!0,align:"center",children:e.owner?(0,t.jsxs)(t.Fragment,{children:[(0,t.jsxs)("span",{style:{color:F.tokens.greyDimmer},children:[e.owner.username,"/"]}),(0,t.jsx)("span",{children:e.title})]}):(0,t.jsx)("span",{children:e.title})})]})},e.id))]})}let z=({onDone:e,type:a,subcategory:n,config:o,categoryType:r=_.SupportCategoryType.AccountBilling})=>{var s;let l,c=r===_.SupportCategoryType.Technical,u=(0,p.useIntl)(),{showError:d,showConfirm:m}=(0,b.default)(),[f,g]=(0,i.useState)(""),[h,x]=(0,i.useState)(""),[j,v]=(0,i.useState)(null),L=o??{titleField:u.formatMessage({id:"home.supportFormSubjectLabel",defaultMessage:"Subject"}),titleDescription:u.formatMessage({id:"home.supportFormSubjectDescription",defaultMessage:"Briefly describe what's going on"}),titlePlaceholder:u.formatMessage({id:"home.supportFormSubjectPlaceholder",defaultMessage:"I am unable to..."}),bodyField:u.formatMessage({id:"home.supportFormDescriptionLabel",defaultMessage:"Description"}),bodyDescription:u.formatMessage({id:"home.supportFormDescriptionHelp",defaultMessage:"Please detail what you're experiencing, and any additional information that can help us help you."}),bodyPlaceholder:u.formatMessage({id:"home.supportFormDescriptionPlaceholder",defaultMessage:"I am currently experiencing..."}),allowAttachments:!0};(0,i.useEffect)(()=>{v(null)},[r]);let[A,{loading:q}]=(s={onError:e=>{d(e.toString())},onCompleted:t=>{e(),"FrontSupportRequestSuccess"===t.frontSupportRequest.__typename?m(u.formatMessage({id:"home.supportFormSubmitSuccess",defaultMessage:"Your message was successfully sent. We will be in touch via email shortly."})):d(t.frontSupportRequest.message)}},l={...C,...s},y.useMutation(I,l));return(0,t.jsxs)(N.View,{gap:16,style:{minWidth:0},children:[c?(0,t.jsxs)(N.View,{gap:8,children:[(0,t.jsx)(M.Text,{variant:"subheadDefault",multiline:!1,children:u.formatMessage({id:"home.supportFormAppNameLabel",defaultMessage:"App name"})}),(0,t.jsx)(E,{onSelect:v})]}):null,L.titleField?(0,t.jsxs)(N.View,{gap:8,children:[(0,t.jsx)(M.Text,{variant:"subheadDefault",multiline:!1,children:L.titleField}),(0,t.jsx)(R.Input,{value:f,onChange:e=>g(e.target.value),placeholder:L.titleDescription??L.titlePlaceholder})]}):null,(0,t.jsxs)(N.View,{gap:8,children:[L.bodyField?(0,t.jsx)(M.Text,{variant:"subheadDefault",multiline:!1,children:L.bodyField}):null,(0,t.jsx)(R.MultiLineInput,{style:{width:"100%",boxSizing:"border-box"},value:h,onChange:e=>x(e.target.value),placeholder:c?u.formatMessage({id:"home.supportFormTechnicalPlaceholder",defaultMessage:"What's happening? Include steps to reproduce and any error messages you're seeing.\n\n1. Go to...\n2. Click on...\n3. See error..."}):L.bodyDescription??L.bodyPlaceholder,rows:6})]}),(0,t.jsxs)(N.View,{row:!0,gap:4,justify:"end",children:[(0,t.jsx)(k.Button,{text:u.formatMessage({id:"home.cancel",defaultMessage:"Cancel"}),onClick:e}),(0,t.jsx)(k.Button,{text:u.formatMessage({id:"home.submit",defaultMessage:"Submit"}),onClick:()=>{let e=L.titleField&&f.length>3,t=h.length>20,i=!c||null!==j,o="none"!==j?j:null;if(!e||!t||!i){let a=[];i||a.push(u.formatMessage({id:"home.supportFormSelectApp",defaultMessage:"Please select an app"})),e||a.push(u.formatMessage({id:"home.supportFormSubjectMinLength",defaultMessage:"Subject must be at least {min, plural, one {# character} other {# characters}}"},{min:3})),t||a.push(u.formatMessage({id:"home.supportFormDescriptionMinLength",defaultMessage:"Description must be at least {min, plural, one {# character} other {# characters}}"},{min:20})),d(a.join(". ")+".");return}let s=o?.title,l=o?.id;A({variables:{input:{title:f,body:[h,c&&s?`
+
+App Name: ${s}`:""].join(""),type:r,replId:c?l||"N/A":void 0,clientInformation:{pageUrl:location.href,browser:window.navigator.userAgent}}}}),(0,S.track)(T.events.HELP_FORM_SUBMITTED,{category:a,subcategory:n})},colorway:"primary",loading:q,iconLeft:q?(0,t.jsx)(w.default,{}):void 0})]})]})};var W=e.i(636562);e.s(["default",0,({onRequestClose:e,items:a,initialOptionPlaceholder:y,formConfig:C})=>{let I,_=(0,p.useIntl)(),[w,b]=(0,i.useState)(null),[S,T]=(0,i.useState)(null),{data:k,loading:R}=(I={...o,...void 0},n.useQuery(r,I)),L=y??_.formatMessage({id:"home.supportChooseAnOption",defaultMessage:"Choose an option"}),A=k?.currentUser?.isSubscribed,q=k?.currentUser?.isMemberOfAnyOrg;(0,i.useEffect)(()=>{w?.subcategories&&T(w.subcategories[0])},[w]);let O=(0,i.useMemo)(()=>a||(A||q?v:[]),[a,A,q]),P=!!w&&(w.showFrontForm||!!S?.showFrontForm),F=16*!!P;return(0,t.jsxs)(N.View,{gap:16,children:[O.length>0?(0,t.jsxs)(t.Fragment,{children:[(0,t.jsx)(M.Text,{variant:"subheadDefault",multiline:!1,children:(0,t.jsx)(f.FormattedMessage,{id:"home.getHelp",defaultMessage:"Get help"})}),(0,t.jsx)(x.StatusBanner,{colorway:"primary",text:_.formatMessage({id:"home.supportGreeting",defaultMessage:"{hasUsername, select, yes {Hi there, {username}! How can we help?} other {Hi there, How can we help?}}"},{hasUsername:R||!k?.currentUser?.username?"no":"yes",username:k?.currentUser?.username??""})}),(0,t.jsx)(g.Select,{"aria-label":_.formatMessage({id:"home.selectSupportCategory",defaultMessage:"Select support category"}),items:O,selectedItem:w,onChange:e=>b(e),placeholder:L}),null!==w?(0,t.jsxs)(N.View,{children:[(0,t.jsx)(N.View,{pb:F,gap:8}),w.subcategories?.length&&S?(0,t.jsx)(N.View,{clsx:W.default.subcategorySection,pb:F,pt:16,gap:8,children:(0,t.jsx)(g.Select,{"aria-label":_.formatMessage({id:"home.selectSubcategory",defaultMessage:"Select subcategory"}),items:w.subcategories,selectedItem:S,onChange:e=>T(e)})}):null,P?(0,t.jsx)(N.View,{clsx:W.default.frontFormSection,pt:16,children:(0,t.jsx)(z,{onDone:e,type:w.value,config:C,categoryType:function(e){switch(e){case"billing-issue":return j.SupportCategoryType.Billing;case"account-issue":return j.SupportCategoryType.Account;case"technical-issue":return j.SupportCategoryType.Technical;default:return}}(w.value)})}):null]}):null]}):(0,t.jsxs)(t.Fragment,{children:[(0,t.jsx)(M.Text,{variant:"subheadBig",multiline:!1,children:(0,t.jsx)(f.FormattedMessage,{id:"home.supportRequiresSubscription",defaultMessage:"Subscription is required for Support"})}),(0,t.jsx)(m.default,{context:"support_dialog",text:_.formatMessage({id:"home.upgradeToReplitPlan",defaultMessage:"Upgrade to Replit {planName}"},{planName:d.corePlanName}),colorway:"primary"})]}),(0,t.jsxs)(N.View,{clsx:W.default.flexButtons,pt:16,row:!0,gap:8,children:[(0,t.jsx)(h.ButtonLink,{href:"https://docs.replit.com/legal-and-security-info/abuse-report",target:"_blank",text:_.formatMessage({id:"home.supportReportAbuse",defaultMessage:"Report abuse"}),iconRight:(0,t.jsx)(l.default,{}),iconLeft:(0,t.jsx)(c.default,{}),size:"small"}),(0,t.jsx)(h.ButtonLink,{href:"https://docs.replit.com",target:"_blank",text:_.formatMessage({id:"home.supportReadDocs",defaultMessage:"Read the docs"}),iconRight:(0,t.jsx)(l.default,{}),iconLeft:(0,t.jsx)(s.default,{}),size:"small"}),(0,t.jsx)(h.ButtonLink,{href:"https://replit.com/community",target:"_blank",text:_.formatMessage({id:"home.supportCheckCommunity",defaultMessage:"Check the community"}),iconRight:(0,t.jsx)(l.default,{}),iconLeft:(0,t.jsx)(u.default,{}),size:"small"})]})]})}],64017)},987987,e=>{e.v({content:"Item-module__2hGgkG__content",contentContainer:"Item-module__2hGgkG__contentContainer",itemText:"Item-module__2hGgkG__itemText",itemTextNewFollowerWrapper:"Item-module__2hGgkG__itemTextNewFollowerWrapper",userAvatarLink:"Item-module__2hGgkG__userAvatarLink",usernameLink:"Item-module__2hGgkG__usernameLink"})},413325,e=>{e.v({buttonGroupContainer:"List-module__a4KWka__buttonGroupContainer",compact:"List-module__a4KWka__compact",emptyState:"List-module__a4KWka__emptyState",emptyStateContainer:"List-module__a4KWka__emptyStateContainer",list:"List-module__a4KWka__list",loadMoreContainer:"List-module__a4KWka__loadMoreContainer",textCenter:"List-module__a4KWka__textCenter"})},638046,e=>{e.v({count:"NotificationsItem-module__00pi2G__count"})},286093,765185,736372,556278,566032,e=>{"use strict";var t=e.i(276385),i=e.i(389959),a=e.i(351623);let n=a.gql`
+    fragment NotificationItemCreator on User {
+  id
+  image
+  username
+  fullName
+  url
+}
+    `,o=a.gql`
+    fragment NotificationItemRepliedToPostNotification on RepliedToPostNotification {
+  id
+  text
+  url
+  timeCreated
+  seen
+  creator {
+    id
+    ...NotificationItemCreator
+  }
+}
+    ${n}`,r=a.gql`
+    fragment NotificationItemRepliedToCommentNotification on RepliedToCommentNotification {
+  id
+  text
+  url
+  timeCreated
+  seen
+  creator {
+    id
+    ...NotificationItemCreator
+  }
+}
+    ${n}`,s=a.gql`
+    fragment NotificationItemMentionedInPostNotification on MentionedInPostNotification {
+  id
+  text
+  url
+  timeCreated
+  seen
+  creator {
+    id
+    ...NotificationItemCreator
+  }
+}
+    ${n}`,l=a.gql`
+    fragment NotificationItemMentionedInCommentNotification on MentionedInCommentNotification {
+  id
+  text
+  url
+  timeCreated
+  seen
+  creator {
+    id
+    ...NotificationItemCreator
+  }
+}
+    ${n}`,c=a.gql`
+    fragment NotificationItemAnswerAcceptedNotification on AnswerAcceptedNotification {
+  id
+  text
+  url
+  timeCreated
+  seen
+  creator {
+    id
+    ...NotificationItemCreator
+  }
+}
+    ${n}`,u=a.gql`
+    fragment NotificationItemMultiplayerJoinedEmailNotification on MultiplayerJoinedEmailNotification {
+  id
+  text
+  url
+  timeCreated
+  seen
+  creator {
+    id
+    ...NotificationItemCreator
+  }
+}
+    ${n}`,d=a.gql`
+    fragment NotificationItemMultiplayerJoinedLinkNotification on MultiplayerJoinedLinkNotification {
+  id
+  text
+  url
+  timeCreated
+  seen
+  creator {
+    id
+    ...NotificationItemCreator
+  }
+}
+    ${n}`,m=a.gql`
+    fragment NotificationItemMultiplayerInvitedNotification on MultiplayerInvitedNotification {
+  id
+  text
+  url
+  timeCreated
+  seen
+  creator {
+    id
+    ...NotificationItemCreator
+  }
+}
+    ${n}`,f=a.gql`
+    fragment NotificationItemMultiplayerOverlimitNotification on MultiplayerOverlimitNotification {
+  id
+  text
+  url
+  timeCreated
+  seen
+  creator {
+    id
+    ...NotificationItemCreator
+  }
+}
+    ${n}`,p=a.gql`
+    fragment NotificationItemWarningNotification on WarningNotification {
+  id
+  text
+  url
+  timeCreated
+  seen
+}
+    `,g=a.gql`
+    fragment NotificationItemTeamInvite on TeamInvite {
+  id
+  team {
+    id
+    displayName
+    username
+  }
+}
+    `,h=a.gql`
+    fragment NotificationItemTeamInviteNotification on TeamInviteNotification {
+  id
+  text
+  url
+  timeCreated
+  seen
+  invite {
+    id
+    ...NotificationItemTeamInvite
+  }
+}
+    ${g}`,x=a.gql`
+    fragment NotificationItemTeamOrganizationInvite on TeamOrganizationInvite {
+  id
+  organization {
+    id
+    name
+  }
+}
+    `,M=a.gql`
+    fragment NotificationItemTeamOrganizationInviteNotification on TeamOrganizationInviteNotification {
+  id
+  text
+  url
+  timeCreated
+  seen
+  invite {
+    id
+    ...NotificationItemTeamOrganizationInvite
+  }
+}
+    ${x}`,N=a.gql`
+    fragment NotificationTeamTemplateSubmittedNotification on TeamTemplateSubmittedNotification {
+  id
+  text
+  url
+  timeCreated
+  seen
+  repl {
+    id
+    url
+  }
+}
+    `,j=a.gql`
+    fragment NotificationTeamTemplateReviewedStatusNotification on TeamTemplateReviewedStatusNotification {
+  id
+  text
+  url
+  timeCreated
+  seen
+  repl {
+    id
+    url
+  }
+}
+    `,v=a.gql`
+    fragment NotificationReplCommentCreatedNotification on ReplCommentCreatedNotification {
+  id
+  url
+  timeCreated
+  seen
+  creator {
+    id
+    ...NotificationItemCreator
+  }
+}
+    ${n}`,y=a.gql`
+    fragment NotificationReplCommentReplyCreatedNotification on ReplCommentReplyCreatedNotification {
+  id
+  timeCreated
+  seen
+  creator {
+    id
+    ...NotificationItemCreator
+  }
+}
+    ${n}`,C=a.gql`
+    fragment NotificationReplCommentMentionNotification on ReplCommentMentionNotification {
+  id
+  timeCreated
+  seen
+  creator {
+    id
+    ...NotificationItemCreator
+  }
+}
+    ${n}`,I=a.gql`
+    fragment NotificationItemNewFollower on NewFollowerNotification {
+  id
+  timeCreated
+  seen
+  url
+  creator {
+    ...NotificationItemCreator
+  }
+}
+    ${n}`,_=a.gql`
+    fragment BasicNotificationItemNotification on BasicNotification {
+  id
+  text
+  url
+  timeCreated
+  seen
+  context
+}
+    `,w=a.gql`
+    fragment NotificationItemEgressLimitNotification on EgressLimitNotification {
+  id
+  url
+  timeCreated
+  seen
+  variant
+  limitGib
+  percentage
+}
+    `,b=a.gql`
+    fragment NotificationItemOrgUpgradeRequestReviewedNotification on OrgUpgradeRequestReviewedNotification {
+  id
+  timeCreated
+  seen
+  url
+  creator {
+    ...NotificationItemCreator
+  }
+  isAccepted
+  orgId
+}
+    ${n}`;var S=e.i(344480);e.i(975473);let T={},k=a.gql`
+    fragment NotificationItems on Notification {
+  ... on BasicNotification {
+    id
+    ...BasicNotificationItemNotification
+  }
+  ... on MentionedInPostNotification {
+    id
+    ...NotificationItemMentionedInPostNotification
+  }
+  ... on RepliedToPostNotification {
+    id
+    ...NotificationItemRepliedToPostNotification
+  }
+  ... on MentionedInCommentNotification {
+    id
+    ...NotificationItemMentionedInCommentNotification
+  }
+  ... on RepliedToCommentNotification {
+    id
+    ...NotificationItemRepliedToCommentNotification
+  }
+  ... on AnswerAcceptedNotification {
+    id
+    ...NotificationItemAnswerAcceptedNotification
+  }
+  ... on MultiplayerInvitedNotification {
+    id
+    ...NotificationItemMultiplayerInvitedNotification
+  }
+  ... on MultiplayerJoinedEmailNotification {
+    id
+    ...NotificationItemMultiplayerJoinedEmailNotification
+  }
+  ... on MultiplayerJoinedLinkNotification {
+    id
+    ...NotificationItemMultiplayerJoinedLinkNotification
+  }
+  ... on MultiplayerOverlimitNotification {
+    id
+    ...NotificationItemMultiplayerOverlimitNotification
+  }
+  ... on WarningNotification {
+    id
+    ...NotificationItemWarningNotification
+  }
+  ... on TeamInviteNotification {
+    id
+    ...NotificationItemTeamInviteNotification
+  }
+  ... on TeamOrganizationInviteNotification {
+    id
+    ...NotificationItemTeamOrganizationInviteNotification
+  }
+  ... on TeamTemplateSubmittedNotification {
+    id
+    ...NotificationTeamTemplateSubmittedNotification
+  }
+  ... on TeamTemplateReviewedStatusNotification {
+    id
+    ...NotificationTeamTemplateReviewedStatusNotification
+  }
+  ... on ReplCommentCreatedNotification {
+    id
+    ...NotificationReplCommentCreatedNotification
+  }
+  ... on ReplCommentReplyCreatedNotification {
+    id
+    ...NotificationReplCommentReplyCreatedNotification
+  }
+  ... on ReplCommentMentionNotification {
+    id
+    ...NotificationReplCommentMentionNotification
+  }
+  ... on NewFollowerNotification {
+    id
+    ...NotificationItemNewFollower
+  }
+  ... on OrgUpgradeRequestReviewedNotification {
+    id
+    ...NotificationItemOrgUpgradeRequestReviewedNotification
+  }
+  ... on EgressLimitNotification {
+    id
+    ...NotificationItemEgressLimitNotification
+  }
+  ... on OrgUpgradeRequestReviewedNotification {
+    id
+    ...NotificationItemOrgUpgradeRequestReviewedNotification
+  }
+}
+    ${_}
+${s}
+${o}
+${l}
+${r}
+${c}
+${m}
+${u}
+${d}
+${f}
+${p}
+${h}
+${M}
+${N}
+${j}
+${v}
+${y}
+${C}
+${I}
+${b}
+${w}`,R=a.gql`
+    query notifications($after: String, $count: Int, $seen: Boolean) {
+  currentUser {
+    id
+  }
+  notifications(after: $after, count: $count, seen: $seen) {
+    items {
+      ...NotificationItems
+    }
+    pageInfo {
+      nextCursor
+    }
+  }
+}
+    ${k}`;var L=e.i(299020);let A={},q=a.gql`
+    mutation MarkAllNotificationsAsSeen {
+  markAllNotificationsAsSeen {
+    id
+    notificationCount
+  }
+}
+    `;var O=e.i(183035),P=e.i(269848);e.i(214847);var F=e.i(864300),U=e.i(638424),$=e.i(20397),V=e.i(377498),B=e.i(192915),D=e.i(825419),E=e.i(8047),z=e.i(472499),W=e.i(61732),G=e.i(987987);let H=({seen:e,url:i,as:a,href:n,text:o,timeCreated:r,creator:s,invite:l,orgInvite:c,isLastItem:u=!1,...d})=>{let m,f;return i&&((m=new URL("/"===i[0]?`https://replit.com${i}`:i)).searchParams.set("from","notifications"),f=(i.startsWith("http")&&"https:"===m.protocol?m.protocol+"//"+m.hostname:"")+m.pathname+m.search+m.hash),(0,t.jsx)(V.default,{seen:e,compact:d.compact,isLastItem:u,as:a,href:n||f,children:(0,t.jsxs)("div",{clsx:G.default.contentContainer,children:[s?(0,t.jsx)(U.default,{...(0,B.userLinkProps)(s),clsx:G.default.userAvatarLink,children:(0,t.jsx)(D.Avatar,{size:32,src:s.image,username:s.username,fullName:s.fullName})}):null,(0,t.jsxs)(W.View,{shrink:!0,children:[(0,t.jsxs)("div",{clsx:G.default.itemText,children:[s?(0,t.jsx)(U.default,{...(0,B.userLinkProps)(s),clsx:G.default.usernameLink,children:s.username}):null," ",o,l?(0,t.jsx)($.FormattedMessage,{id:"notifications.inviteSuffix",defaultMessage:" {teamName}. Click here to join",values:{teamName:l.team.displayName}}):null,c?(0,t.jsx)($.FormattedMessage,{id:"notifications.orgInviteSuffix",defaultMessage:" the {orgName} workspace. Click here to join",values:{orgName:c.organization.name}}):null]}),(0,t.jsx)(E.Text,{variant:"small",color:"dimmer",multiline:!1,children:(0,t.jsx)(z.Timestamp,{date:r})})]})]})})},K=({notification:e,isLastItem:i,setAsSeen:a,...n})=>{let o=(0,F.useIntl)();if("ReplCommentCreatedNotification"===e.__typename||"ReplCommentReplyCreatedNotification"===e.__typename||"ReplCommentMentionNotification"===e.__typename){let r={ReplCommentCreatedNotification:o.formatMessage({id:"notifications.commentedOnRepl",defaultMessage:"commented on your repl"}),ReplCommentReplyCreatedNotification:o.formatMessage({id:"notifications.repliedToCommentOnRepl",defaultMessage:"replied to your comment on your repl"}),ReplCommentMentionNotification:o.formatMessage({id:"notifications.mentionedInRepl",defaultMessage:"mentioned you in your repl"})}[e.__typename];return(0,t.jsx)(H,{isLastItem:i,text:r||void 0,seen:a||e.seen,compact:n.compact,timeCreated:e.timeCreated,creator:e.creator||void 0})}if("BasicNotification"===e.__typename)return(0,t.jsx)(H,{isLastItem:i,text:e.text||void 0,seen:a||e.seen,compact:n.compact,timeCreated:e.timeCreated,url:e.url});if("MentionedInPostNotification"===e.__typename)return(0,t.jsx)(H,{isLastItem:i,text:o.formatMessage({id:"notifications.mentionedInPost",defaultMessage:"mentioned you in their post"}),creator:e.creator||void 0,seen:a||e.seen,compact:n.compact,timeCreated:e.timeCreated,url:e.url});if("MentionedInCommentNotification"===e.__typename)return(0,t.jsx)(H,{isLastItem:i,text:o.formatMessage({id:"notifications.mentionedInComment",defaultMessage:"mentioned you in their comment"}),creator:e.creator||void 0,seen:a||e.seen,compact:n.compact,timeCreated:e.timeCreated,url:e.url});if("RepliedToPostNotification"===e.__typename)return(0,t.jsx)(H,{isLastItem:i,text:o.formatMessage({id:"notifications.repliedToPost",defaultMessage:"replied to your post"}),creator:e.creator||void 0,seen:a||e.seen,compact:n.compact,timeCreated:e.timeCreated,url:e.url});if("RepliedToCommentNotification"===e.__typename)return(0,t.jsx)(H,{isLastItem:i,text:o.formatMessage({id:"notifications.repliedToComment",defaultMessage:"replied to your comment"}),creator:e.creator||void 0,seen:a||e.seen,compact:n.compact,timeCreated:e.timeCreated,url:e.url});if("AnswerAcceptedNotification"===e.__typename)return(0,t.jsx)(H,{isLastItem:i,text:o.formatMessage({id:"notifications.answerAccepted",defaultMessage:"accepted your answer (you earned 5 cycles!)"}),creator:e.creator||void 0,seen:a||e.seen,compact:n.compact,timeCreated:e.timeCreated,url:e.url});if("WarningNotification"===e.__typename)return(0,t.jsx)(H,{isLastItem:i,text:o.formatMessage({id:"notifications.warning",defaultMessage:"You have been warned by a moderator.  Click here to learn more."}),seen:a||e.seen,compact:n.compact,timeCreated:e.timeCreated,url:e.url});if("TeamInviteNotification"===e.__typename)return(0,t.jsx)(H,{isLastItem:i,text:o.formatMessage({id:"notifications.invitedToJoin",defaultMessage:"You have been invited to join"}),invite:e.invite||void 0,seen:a||e.seen,compact:n.compact,timeCreated:e.timeCreated,url:e.url});if("TeamOrganizationInviteNotification"===e.__typename)return(0,t.jsx)(H,{isLastItem:i,text:o.formatMessage({id:"notifications.invitedToJoin",defaultMessage:"You have been invited to join"}),orgInvite:e.invite||void 0,seen:a||e.seen,compact:n.compact,timeCreated:e.timeCreated,url:e.url});if("MultiplayerJoinedEmailNotification"===e.__typename||"MultiplayerJoinedLinkNotification"===e.__typename||"MultiplayerInvitedNotification"===e.__typename||"MultiplayerOverlimitNotification"===e.__typename)return(0,t.jsx)(H,{isLastItem:i,text:e.text?e.text.split(" ").slice(1).join(" "):"",creator:e.creator||void 0,seen:a||e.seen,compact:n.compact,timeCreated:e.timeCreated,url:e.url});if("TeamTemplateSubmittedNotification"===e.__typename||"TeamTemplateReviewedStatusNotification"===e.__typename)return(0,t.jsx)(H,{isLastItem:i,text:e.text,seen:a||e.seen,compact:n.compact,timeCreated:e.timeCreated,url:e.repl?.url||e.url});if("NewFollowerNotification"===e.__typename){let r=e.creator?(0,B.userLinkProps)(e.creator):null;return(0,t.jsx)(V.default,{seen:a||e.seen,compact:n.compact,as:r?.as,href:r?.href,isLastItem:i,children:(0,t.jsxs)("div",{clsx:G.default.contentContainer,children:[(0,t.jsx)(D.Avatar,{size:32,src:e.creator?.image??null,username:e.creator?.username??"",fullName:e.creator?.fullName}),(0,t.jsx)("div",{clsx:G.default.content,children:(0,t.jsx)("div",{clsx:G.default.itemTextNewFollowerWrapper,children:(0,t.jsxs)("div",{clsx:G.default.itemText,children:[(0,t.jsxs)("div",{children:[e.creator?(0,t.jsx)(U.default,{...(0,B.userLinkProps)(e.creator),children:e.creator.username}):o.formatMessage({id:"notifications.deletedUser",defaultMessage:"[deleted]"})," ",(0,t.jsx)($.FormattedMessage,{id:"notifications.startedFollowing",defaultMessage:"started following you"})]}),(0,t.jsx)(E.Text,{variant:"small",color:"dimmer",multiline:!1,children:(0,t.jsx)(z.Timestamp,{date:e.timeCreated})})]})})})]})})}return"OrgUpgradeRequestReviewedNotification"===e.__typename?(0,t.jsx)(H,{creator:e.creator||void 0,isLastItem:i,text:e.isAccepted?o.formatMessage({id:"notifications.upgradeRequestApproved",defaultMessage:"approved your request to join the workspace"}):o.formatMessage({id:"notifications.upgradeRequestRejected",defaultMessage:"rejected your request to join the workspace"}),seen:a||e.seen,compact:n.compact,timeCreated:e.timeCreated,url:e.url}):"EgressLimitNotification"===e.__typename?(0,t.jsx)(H,{creator:void 0,isLastItem:i,text:"egress_reached_limit"===e.variant?o.formatMessage({id:"notifications.egressReachedLimit",defaultMessage:"You have reached your data transfer limit for the month. Your Apps' data transfer is being throttled, and will be shut off. Upgrade your plan or purchase additional data transfer with Cycles to resume normal speeds."}):o.formatMessage({id:"notifications.egressApproachingLimit",defaultMessage:"You have used {percentage}% of your monthly data transfer limit. If you reach the limit, your Apps data transfer will be throttled and eventually shut off. Upgrade your plan or purchase additional data transfer with Cycles to prevent disruptions to your Apps."},{percentage:e.percentage}),seen:a||e.seen,compact:n.compact,timeCreated:e.timeCreated,url:e.url}):null},J={},Y=a.gql`
+    mutation MarkNotificationsAsSeen($ids: [Int!]) {
+  markNotificationsAsSeen(ids: $ids)
+}
+    `;var Q=e.i(980224);let X=e=>{var t;let a,[n,o]=(0,i.useState)([]),{count:r,setUnreadCount:s}=(0,Q.default)(),l=e.notificationIds.filter(e=>-1===n.indexOf(e)),[c,{data:u}]=(t={variables:{ids:l}},a={...J,...t},L.useMutation(Y,a));return(0,i.useEffect)(()=>{0!==l.length&&(o([...n,...l]),c({variables:{ids:l}}))},[l,c]),(0,i.useEffect)(()=>{u?.markNotificationsAsSeen&&s(Math.max(0,r-u.markNotificationsAsSeen))},[u,s]),null};var Z=e.i(766299),ee=e.i(643484),et=e.i(449525),ei=e.i(413325);e.s(["default",0,e=>{var a,n;let o,r,s=(0,F.useIntl)(),[l,c]=(0,i.useState)(!0),{count:u}=(0,Q.default)(),[d,m]=(0,i.useState)(!1),{data:f,loading:p,fetchMore:g}=(a={fetchPolicy:"cache-and-network",ssr:!1,notifyOnNetworkStatusChange:!0,variables:{...e.count?{count:e.count}:{},...l?{seen:!1}:{}}},o={...T,...a},S.useQuery(R,o)),h=(f?.notifications?.items??[]).filter(e=>"AnnotationNotification"!==e.__typename&&"ThreadNotification"!==e.__typename),[x]=(n={onCompleted(){m(!1)},optimisticResponse:{__typename:"RootMutationType",markAllNotificationsAsSeen:{__typename:"CurrentUser",id:f?.currentUser?.id,notificationCount:0}}},r={...A,...n},L.useMutation(q,r)),M=(0,Z.useIdSeed)();return(0,t.jsxs)(t.Fragment,{children:[(0,t.jsxs)(W.View,{row:!0,gap:16,justify:"space-between",clsx:[ei.default.list,{[ei.default.compact]:e.compact}],children:[(0,t.jsx)("div",{clsx:[ei.default.buttonGroupContainer,{[ei.default.compact]:e.compact&&u>0}],children:(0,t.jsxs)(et.ButtonGroup,{name:M("visibility"),value:l.toString(),onChange:()=>c(!l),row:!0,stretch:!0,children:[(0,t.jsx)(et.ButtonGroupItem,{id:M("true"),value:"true",text:s.formatMessage({id:"notifications.unread",defaultMessage:"Unread"})}),(0,t.jsx)(et.ButtonGroupItem,{id:M("false"),value:"false",text:s.formatMessage({id:"notifications.all",defaultMessage:"All"})})]})}),u>0&&(0,t.jsx)(ee.Button,{text:d?s.formatMessage({id:"notifications.markingAll",defaultMessage:"Marking all..."}):s.formatMessage({id:"notifications.markAsRead",defaultMessage:"Mark as read"}),disabled:p,iconLeft:(0,t.jsx)(O.default,{}),stretch:!0,onClick:()=>{m(!0),x()}})]}),(0,t.jsxs)(W.View,{children:[!p||f&&f.notifications?null:(0,t.jsx)(W.View,{p:64,align:"center",children:(0,t.jsx)(P.default,{})}),0===h.length&&(0,t.jsx)("div",{clsx:[ei.default.emptyStateContainer,{[ei.default.compact]:e.compact}],children:(0,t.jsx)(W.View,{clsx:[ei.default.emptyState,{[ei.default.compact]:e.compact}],children:(0,t.jsx)(E.Text,{variant:"text",color:"dimmer",multiline:!1,clsx:ei.default.textCenter,children:l?s.formatMessage({id:"notifications.allCaughtUp",defaultMessage:"You're all caught up!"}):s.formatMessage({id:"notifications.noNotifications",defaultMessage:"No notifications"})})})}),h.length?(0,t.jsxs)(t.Fragment,{children:[h.map((i,a)=>(0,t.jsx)(K,{compact:e.compact,notification:i,isLastItem:a===h.length-1,setAsSeen:!0},i.id)),e.markAsSeen&&(0,t.jsx)(X,{notificationIds:h.filter(e=>"seen"in e&&!e.seen).map(e=>e.id)})]}):null,e.loadMore&&f?.notifications.pageInfo.nextCursor?(0,t.jsx)("div",{clsx:[ei.default.loadMoreContainer,{[ei.default.compact]:e.compact}],children:(0,t.jsx)(ee.Button,{text:p?s.formatMessage({id:"notifications.loading",defaultMessage:"Loading..."}):s.formatMessage({id:"notifications.loadMore",defaultMessage:"Load more"}),onClick:()=>{p||g({variables:{after:f&&f.notifications&&!l?f.notifications.pageInfo.nextCursor:null},updateQuery:(e,t)=>{if(!t||!t.fetchMoreResult)return e;let{fetchMoreResult:i}=t,a=e?e.notifications.items:[],n={...i};return n.notifications.items=[...a,...i.notifications.items],n}})},disabled:p})}):null]})]})}],286093);var ea=e.i(55547),en=e.i(908796),eo=e.i(712903),er=e.i(255701),es=e.i(195206),el=e.i(334028),ec=e.i(177037),eu=e.i(596139),ed=e.i(294827),em=e.i(776065),ef=e.i(926233),ep=e.i(983420),eg=e.i(295231);function eh({right:e,label:i,...a}){return(0,t.jsxs)(eg.BaseMenuItem,{textValue:i,...a,children:[(0,t.jsxs)(W.View,{gap:6,pl:2,row:!0,align:"center",grow:!0,shrink:!0,children:[(0,t.jsx)(ep.IconProvider,{size:16,children:a.icon}),(0,t.jsx)(eg.MenuItemLabel,{children:i})]}),e??null]})}e.s(["MenuItemWithRightContent",0,eh],765185);var ex=e.i(648880),eM=e.i(919073),eN=e.i(638046);function ej({count:e,onAction:i}){let a=(0,F.useIntl)().formatMessage({id:"components.navMenuNotifications",defaultMessage:"Notifications"});return(0,t.jsx)(eg.BaseMenuItem,{textValue:a,onAction:i,children:(0,t.jsxs)(W.View,{align:"center",row:!0,gap:6,justify:"space-between",grow:!0,shrink:!0,children:[(0,t.jsxs)(W.View,{align:"center",grow:!0,shrink:!0,row:!0,gap:6,children:[(0,t.jsx)(ex.default,{}),(0,t.jsx)(E.Text,{children:(0,t.jsx)($.FormattedMessage,{id:"components.navMenuNotifications",defaultMessage:"Notifications"})})]}),e?(0,t.jsx)(eM.ShadesSurface,{clsx:eN.default.count,colorShade:"themeError",align:"center",justify:"center",children:(0,t.jsx)(E.Text,{variant:"small",children:e})}):null]})})}e.s(["AccountItems",0,function({currentUser:e,setActiveModal:i,notificationCount:a,isUnifiedPlanEnabled:n,hideClui:o,onClose:r}){let s=(0,F.useIntl)(),l=(0,ea.useRouter)(),c=(0,B.userLinkProps)(e),{shouldHidePersonalWorkspace:u}=(0,ed.usePersonalWorkspacesDisabled)();return(0,t.jsxs)(t.Fragment,{children:[n?(0,t.jsx)(eg.MenuItem,{label:s.formatMessage({id:"components.navMenuSettings",defaultMessage:"Settings"}),icon:(0,t.jsx)(er.default,{}),onAction:()=>{(0,em.updatePathWithQueryParams)({router:l,params:[{mode:"add",key:ef.SETTINGS_SHOW_PARAM,value:"true"}]}),r?.()}}):(0,t.jsx)(eh,{label:s.formatMessage({id:"components.navMenuAccount",defaultMessage:"Account"}),as:"/account",href:"/account",dataCy:"avatar-dropdown-account-link",icon:e.isMemberOfAnyOrg?(0,t.jsx)(er.default,{}):(0,t.jsx)(D.Avatar,{size:16,src:e.image,username:e.username,fullName:e.fullName}),right:e.userSubscriptionType===en.UserSubscriptionTypeEnum.HackerPro?(0,t.jsxs)(W.View,{row:!0,align:"center",gap:4,children:[(0,t.jsx)(eo.default,{size:12,color:ec.brandOrange}),(0,t.jsx)(E.Text,{variant:"small",color:"dimmer",translate:"no",children:eu.corePlanName})]}):null}),u||n?null:(0,t.jsx)(eg.MenuItem,{label:s.formatMessage({id:"components.navMenuProfile",defaultMessage:"Profile"}),as:c.as,href:c.href,dataCy:"avatar-dropdown-account-link",icon:(0,t.jsx)(el.default,{})}),(0,t.jsx)(ej,{count:a,onAction:()=>{i("notifications")}}),(0,t.jsx)(eg.Separator,{}),o?null:(0,t.jsxs)(t.Fragment,{children:[(0,t.jsx)(eg.MenuItem,{label:"CLUI",as:"/~/cli",href:"/~/cli",icon:(0,t.jsx)(es.default,{})}),(0,t.jsx)(eg.Separator,{})]})]})}],736372),e.i(183940);var ev=e.i(320216);e.s(["DevCopyUsernameItem",0,function({currentUser:e}){(0,F.useIntl)();let{showConfirm:i}=(0,ev.default)();return(0,t.jsx)(t.Fragment,{children:null})}],556278);var ey=e.i(625251),eC=e.i(787527),eI=e.i(927600),e_=e.i(399245),ew=e.i(222878),eb=e.i(735362),eS=e.i(761201),eT=e.i(709485),ek=e.i(415541),eR=e.i(519979);function eL(){let e=(0,F.useIntl)();return(0,t.jsx)(eg.MenuItem,{icon:(0,t.jsx)(eR.default,{}),label:e.formatMessage({id:"components.navMenuStatus",defaultMessage:"Status"}),href:"https://status.replit.com"})}var eA=e.i(773222);e.s(["HelpItem",0,function({setActiveModal:e,children:i}){let a=(0,F.useIntl)(),n=a.formatMessage({id:"components.navMenuHelp",defaultMessage:"Help"});return(0,t.jsx)(t.Fragment,{children:(0,t.jsxs)(ey.SubmenuTrigger,{children:[(0,t.jsx)(eg.BaseMenuItem,{textValue:n,children:(0,t.jsxs)(W.View,{align:"center",row:!0,gap:6,justify:"space-between",grow:!0,shrink:!0,children:[(0,t.jsxs)(W.View,{align:"center",grow:!0,shrink:!0,row:!0,gap:6,children:[(0,t.jsx)(ew.default,{}),(0,t.jsx)(E.Text,{children:(0,t.jsx)($.FormattedMessage,{id:"components.navMenuHelp",defaultMessage:"Help"})})]}),(0,t.jsx)(eI.default,{size:12})]})}),(0,t.jsx)(eA.RawPopover,{offset:4,children:(0,t.jsx)(W.View,{p:4,children:(0,t.jsxs)(eg.Menu,{"aria-label":n,children:[(0,t.jsx)(eL,{}),(0,t.jsx)(eg.MenuItem,{label:a.formatMessage({id:"components.navMenuGetHelp",defaultMessage:"Get help"}),icon:(0,t.jsx)(ew.default,{size:16}),onAction:()=>{e("support"),(0,ek.track)(eT.events.HELP_FORM_OPENED,{type:"New Help Form"})}}),(0,t.jsx)(eg.MenuItem,{icon:(0,t.jsx)(e_.default,{}),label:a.formatMessage({id:"components.navMenuCommunityHub",defaultMessage:"Community Hub"}),href:eS.COMMUNITY_URL}),(0,t.jsx)(eg.MenuItem,{icon:(0,t.jsx)(eb.default,{}),label:a.formatMessage({id:"components.navMenuViewUpdates",defaultMessage:"View updates"}),href:eS.LINKS_DOCS.CHANGELOG,onAction:()=>{(0,ek.track)(eT.events.CHANGELOG_OPENED)}}),(0,t.jsx)(eg.MenuItem,{icon:(0,t.jsx)(eC.default,{}),label:a.formatMessage({id:"components.navMenuReadTheDocs",defaultMessage:"Read the docs"}),href:eS.LINKS_DOCS.HOME,onAction:()=>{(0,ek.track)(eT.events.DOCS_OPENED,{source:"help_menu"})}}),i]})})})]})})}],566032)},70219,e=>{"use strict";var t=e.i(276385),i=e.i(408116),a=e.i(98346),n=e.i(443197),o=e.i(554493),r=e.i(632350);e.i(214847);var s=e.i(864300),l=e.i(295231);e.s(["LogoutItem",0,function(){let e=(0,s.useIntl)(),c=(0,i.useApolloClient)(),u=(0,r.default)();return(0,t.jsx)(l.MenuItem,{label:e.formatMessage({id:"components.navMenuLogOut",defaultMessage:"Log out"}),icon:(0,t.jsx)(a.default,{}),onAction:async()=>{u?o.desktopAppApi.logout():(await (0,n.signOut)(c),window.location.href="/logout")}})}])},246613,e=>{"use strict";var t=e.i(276385),i=e.i(55547),a=e.i(625251),n=e.i(908796),o=e.i(183035),r=e.i(151027),s=e.i(320216),l=e.i(20295),c=e.i(294827);e.i(214847);var u=e.i(864300),d=e.i(448942),m=e.i(276887),f=e.i(765185),p=e.i(825419),g=e.i(295231),h=e.i(8047),x=e.i(61732);e.s(["TeamsItem",0,function({currentUser:e}){let M=(0,u.useIntl)(),N=(0,r.useCurrentUserStoredOrgContext)(),{loading:j}=N,v=(0,l.useOrgSwitcher)(),{shouldHidePersonalWorkspace:y}=(0,c.usePersonalWorkspacesDisabled)(),C="CurrentUserOrganizationConnection"===e.orgs.__typename?e.orgs.items:null,{showError:I}=(0,s.default)(),_=(0,i.useRouter)();return!C?.length||j?null:(0,t.jsxs)(a.MenuSection,{children:[(0,t.jsx)(g.MenuHeader,{text:M.formatMessage({id:"components.navMenuSwitchWorkspace",defaultMessage:"Switch Workspace"})}),y?null:(0,t.jsx)(f.MenuItemWithRightContent,{icon:(0,t.jsx)(p.Avatar,{size:16,src:e.image,username:e.username,fullName:e.fullName}),label:M.formatMessage({id:"components.navMenuPersonal",defaultMessage:"Personal"}),onAction:()=>{v({type:n.OrgType.Personal}),_.push("/home","/~",{shallow:!1})},right:void 0===N.orgId?(0,t.jsx)(o.default,{}):void 0,selected:void 0===N.orgId}),C.map(({org:e,type:i})=>(0,t.jsxs)(g.BaseMenuItem,{textValue:e.name,onAction:()=>(e=>{if(!e.currentUserRole)return void I(M.formatMessage({id:"components.navMenuTeamsSwitchError",defaultMessage:"Something went wrong, please try again."}));v({type:n.OrgType.Team,id:e.id,slug:e.slug,orgRole:e.currentUserRole,orgDealContext:e.dealContext});let{home:t}=(0,d.orgLinks)({slug:e.slug});_.push(t.href,t.as)})(e),children:[(0,t.jsxs)(x.View,{grow:!0,shrink:!0,row:!0,gap:6,align:"center",children:[(0,t.jsx)(p.Avatar,{size:16,src:e.image??null,username:e.name,fullName:e.name}),(0,t.jsx)(h.Text,{translate:"no",children:e.name}),i?(0,t.jsx)(h.Text,{variant:"small",color:"dimmest",children:(0,m.orgGroupToDisplayName)(i)}):null]}),e.id===N.orgId?(0,t.jsx)(o.default,{}):null]},e.id)),(0,t.jsx)(g.Separator,{})]})}])},13465,e=>{"use strict";var t=e.i(276385),i=e.i(625251),a=e.i(927600),n=e.i(155119),o=e.i(759317),r=e.i(393428),s=e.i(308521),l=e.i(632350);e.i(214847);var c=e.i(20397),u=e.i(864300),d=e.i(401036),m=e.i(841114),f=e.i(295231),p=e.i(773222),g=e.i(8047),h=e.i(61732);e.s(["ThemeItem",0,function(){let e=(0,u.useIntl)(),x=(0,l.default)(),{currentTheme:M}=(0,d.useTheme)(),{setActiveTheme:N,isSystemTheme:j}=(0,m.useThemePreference)();if(x)return null;let v=e.formatMessage({id:"components.navMenuTheme",defaultMessage:"Theme"}),y=e.formatMessage({id:"components.navMenuThemeLight",defaultMessage:"Light"}),C=e.formatMessage({id:"components.navMenuThemeDark",defaultMessage:"Dark"}),I=e.formatMessage({id:"components.navMenuThemeSystem",defaultMessage:"System"}),_=e.formatMessage({id:"components.navMenuThemeCustom",defaultMessage:"Custom"});return j?_=I:"replitDark"===M.id?_=C:"replitLight"===M.id&&(_=y),(0,t.jsxs)(i.SubmenuTrigger,{children:[(0,t.jsx)(f.BaseMenuItem,{textValue:v,children:(0,t.jsxs)(h.View,{align:"center",row:!0,gap:6,justify:"space-between",grow:!0,shrink:!0,children:[(0,t.jsxs)(h.View,{align:"center",grow:!0,shrink:!0,row:!0,gap:6,children:[(0,t.jsx)(r.default,{}),(0,t.jsx)(g.Text,{multiline:!1,children:(0,t.jsx)(c.FormattedMessage,{id:"components.navMenuTheme",defaultMessage:"Theme"})})]}),(0,t.jsxs)(h.View,{row:!0,gap:4,align:"center",children:[(0,t.jsx)(g.Text,{color:"dimmer",children:_}),(0,t.jsx)(a.default,{size:12})]})]})}),(0,t.jsx)(p.RawPopover,{offset:4,children:(0,t.jsx)(h.View,{p:4,children:(0,t.jsxs)(f.Menu,{"aria-label":v,children:[(0,t.jsx)(f.MenuItem,{label:y,icon:(0,t.jsx)(s.default,{size:16}),onAction:()=>N("replitLight")}),(0,t.jsx)(f.MenuItem,{label:C,icon:(0,t.jsx)(o.default,{size:16}),onAction:()=>N("replitDark")}),(0,t.jsx)(f.MenuItem,{label:I,icon:(0,t.jsx)(n.default,{size:16}),onAction:()=>N("system")})]})})})]})}])}]);
+
+//# debugId=6d09c802-c4e1-ef7d-b787-4ede3564c012
+//# sourceMappingURL=0n5b7b38u0x_y.js.map

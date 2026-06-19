@@ -1,0 +1,200 @@
+;!function(){try { var e="undefined"!=typeof globalThis?globalThis:"undefined"!=typeof global?global:"undefined"!=typeof window?window:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&((e._debugIds|| (e._debugIds={}))[n]="0ada8947-9b51-d6b1-0faa-94f44217d2ed")}catch(e){}}();
+(globalThis.TURBOPACK||(globalThis.TURBOPACK=[])).push(["object"==typeof document?document.currentScript:void 0,127384,e=>{"use strict";e.s(["APP_HEADER_HEIGHT",0,40,"COLLAPSED_TASK_SIDEBAR_WIDTH",0,44,"HEADER_HEIGHT",0,48,"HEADER_Z_INDEX",0,1002,"SIDEBAR_OVERLAY_Z_INDEX",0,1e3,"SIDEBAR_WIDTH",0,240,"SIDEBAR_Z_INDEX",0,1001])},192915,e=>{"use strict";var t=e.i(276385),i=e.i(638424);let l=e=>({href:{pathname:"/profile",query:{username:"string"==typeof e?e:e.username}},as:"string"==typeof e?`/@${e}`:e.url});e.s(["UserLink",0,({user:e,children:r})=>(0,t.jsx)(i.default,{...l(e),prefetch:!1,children:r}),"userLinkProps",0,l])},182697,e=>{"use strict";var t=e.i(351623),i=e.i(344480);e.i(975473);var l=e.i(299020);let r={},a=t.gql`
+    query MultiplayerInviteUrl($replId: String!) {
+  getRepl(id: $replId) {
+    ... on Repl {
+      id
+      inviteUrl
+      owner {
+        ... on User {
+          id
+        }
+        ... on Team {
+          id
+          capabilities {
+            isBusinessPlan
+            hasValidSubscription
+          }
+        }
+      }
+    }
+  }
+}
+    `,n=t.gql`
+    mutation MultiplayerRefreshInviteUrl($replId: String!) {
+  refreshMultiplayerInviteLink(replId: $replId) {
+    id
+    ... on Repl {
+      id
+      inviteUrl
+    }
+  }
+}
+    `,s=t.gql`
+    mutation DeleteMultiplayerInviteUrl($replId: String!) {
+  deleteMultiplayerInviteLink(replId: $replId) {
+    ... on Repl {
+      id
+      inviteUrl
+    }
+    ... on UserError {
+      message
+    }
+  }
+}
+    `;e.s(["MultiplayerInviteUrlDocument",0,a,"useDeleteMultiplayerInviteUrlMutation",0,function(e){let t={...r,...e};return l.useMutation(s,t)},"useMultiplayerInviteUrlQuery",0,function(e){let t={...r,...e};return i.useQuery(a,t)},"useMultiplayerRefreshInviteUrlMutation",0,function(e){let t={...r,...e};return l.useMutation(n,t)}])},879513,e=>{e.v({copyToClipboard:"JoinLinkV2-module__Bungra__copyToClipboard",input:"JoinLinkV2-module__Bungra__input",inviteUrlContainer:"JoinLinkV2-module__Bungra__inviteUrlContainer",linkIconContainer:"JoinLinkV2-module__Bungra__linkIconContainer",textAlignLeft:"JoinLinkV2-module__Bungra__textAlignLeft",title:"JoinLinkV2-module__Bungra__title"})},206406,e=>{"use strict";var t=e.i(276385),i=e.i(389959),l=e.i(182697),r=e.i(882848),a=e.i(269848),n=e.i(820228),s=e.i(416298),u=e.i(320216);e.i(214847);var o=e.i(20397),d=e.i(864300),p=e.i(20639),m=e.i(415541),c=e.i(709485),g=e.i(89148),f=e.i(919073),y=e.i(643484),h=e.i(580519),M=e.i(488299),v=e.i(528710),_=e.i(528326),x=e.i(145315),I=e.i(327391),b=e.i(8047),w=e.i(61732),j=e.i(879513);let C=()=>(0,t.jsxs)(w.View,{row:!0,gap:8,align:"start",grow:!0,shrink:!0,children:[(0,t.jsx)(f.ShadesSurface,{elevate:"2x",align:"center",justify:"center",background:!0,clsx:j.default.linkIconContainer,children:(0,t.jsx)(r.default,{size:16})}),(0,t.jsxs)(w.View,{gap:0,grow:!0,shrink:!0,children:[(0,t.jsx)(b.Text,{clsx:j.default.title,id:"link-switch-label",multiline:!1,children:(0,t.jsx)(o.FormattedMessage,{id:"multiplayer.privateJoinLink",defaultMessage:"Private join link"})}),(0,t.jsx)(b.Text,{variant:"small",color:"dimmest",multiline:!1,children:(0,t.jsx)(o.FormattedMessage,{id:"multiplayer.anyoneWithALinkWillHaveEditAccess",defaultMessage:"Anyone with a link will have edit access"})})]})]});function k({isOpen:e,onClose:i,onConfirm:l,isLoading:r}){let a=(0,d.useIntl)();return(0,t.jsx)(_.Modal,{isOpen:e,onRequestClose:i,hideCloseButton:!0,centered:!0,maxWidth:424,children:(0,t.jsxs)(w.View,{gap:8,p:4,children:[(0,t.jsx)(b.Text,{variant:"subheadDefault",multiline:!1,children:(0,t.jsx)(o.FormattedMessage,{id:"multiplayer.regenerateJoinLink",defaultMessage:"Regenerate join link"})}),(0,t.jsx)(b.Text,{color:"dimmest",children:(0,t.jsx)(o.FormattedMessage,{id:"multiplayer.regenerateJoinLinkBody",defaultMessage:"The previous join link will no longer be accessible to anyone attempting to join."})}),(0,t.jsxs)(w.View,{row:!0,gap:8,justify:"end",pt:8,children:[(0,t.jsx)(w.View,{grow:!0,justify:"end",row:!0,children:(0,t.jsx)(y.Button,{text:a.formatMessage({id:"multiplayer.cancel",defaultMessage:"Cancel"}),onClick:i,size:"small"})}),(0,t.jsx)(y.Button,{colorway:"primary",text:a.formatMessage({id:"multiplayer.confirm",defaultMessage:"Confirm"}),onClick:l,disabled:r,size:"small"})]})]})})}e.s(["default",0,function({replId:e,alwaysOn:_=!1,lazyMintOnCopy:L=!1,copySource:R}){let U=(0,d.useIntl)(),{showConfirm:E,showError:T}=(0,u.default)(),[S,D]=(0,i.useState)(!1),{data:A,loading:V,error:B,refetch:O}=(0,l.useMultiplayerInviteUrlQuery)({variables:{replId:e},fetchPolicy:L?"network-only":void 0}),P=(0,i.useRef)(!1),$=(0,i.useRef)(!0);(0,i.useEffect)(()=>($.current=!0,()=>{$.current=!1}),[]);let[F,N]=(0,l.useMultiplayerRefreshInviteUrlMutation)({variables:{replId:e},onError:e=>{P.current=!1,T(e.message)},onCompleted:e=>{if(P.current){if(P.current=!1,!$.current)return;let t=W(e.refreshMultiplayerInviteLink.inviteUrl);t&&K(t,!0);return}E(U.formatMessage({id:"multiplayer.joinLinkCreated",defaultMessage:"Join link created"})),D(!1)},optimisticResponse:{__typename:"RootMutationType",refreshMultiplayerInviteLink:{__typename:"Repl",id:e,inviteUrl:"/__optimistic__"}},awaitRefetchQueries:!0,refetchQueries:[l.MultiplayerInviteUrlDocument]}),[q,z]=(0,l.useDeleteMultiplayerInviteUrlMutation)({variables:{replId:e},onError:e=>T(e.message),onCompleted:e=>{"UserError"===e.deleteMultiplayerInviteLink.__typename?T(e.deleteMultiplayerInviteLink.message):"Repl"===e.deleteMultiplayerInviteLink.__typename&&E(U.formatMessage({id:"multiplayer.joinLinkDeleted",defaultMessage:"Join link deleted"}))},optimisticResponse:{__typename:"RootMutationType",deleteMultiplayerInviteLink:{__typename:"Repl",id:e,inviteUrl:null}},awaitRefetchQueries:!0,refetchQueries:[l.MultiplayerInviteUrlDocument]}),G=A?.getRepl?.__typename==="Repl"?A.getRepl:null,H=N.loading||z.loading,Q=A?.getRepl?.__typename==="Repl"&&G?.owner?.__typename==="Team",J=A?.getRepl?.__typename==="Repl"&&G?.owner?.__typename==="Team"&&G?.owner.capabilities?.isBusinessPlan&&G?.owner.capabilities?.hasValidSubscription,Y=W(G?.inviteUrl);function W(e){return e&&1?window.location.origin+e:null}function K(e,t){(0,p.default)(e),(0,m.track)(c.events.JOIN_LINK_COPIED,{replId:G?.id,isTeamRepl:Q,source:R??(_?"homeSidebar":"replEnvironment"),minted:t}),E(U.formatMessage({id:"multiplayer.linkCopied",defaultMessage:"Link copied"}))}let X=async()=>{let t;if(Y)return void K(Y,!1);if(!L||V||H||P.current)return;P.current=!0;try{({data:t}=await O({replId:e}))}catch{P.current=!1;return}if(!$.current)return;let i=t?.getRepl?.__typename==="Repl"?t.getRepl:null,l=W(i?.inviteUrl);if(l){P.current=!1,K(l,!1);return}F({variables:{replId:e}})};if(V&&!A&&!_||Q&&!J)return null;if(B)return(0,t.jsxs)(w.View,{gap:12,px:12,children:[(0,t.jsxs)(w.View,{row:!0,justify:"space-between",children:[(0,t.jsx)(C,{}),_?null:(0,t.jsx)(I.Switch,{isSelected:!1,isDisabled:!0,"aria-labelledby":"link-switch-label"})]}),(0,t.jsx)(x.StatusBannerButton,{clsx:j.default.textAlignLeft,iconLeft:(0,t.jsx)(s.default,{color:g.tokens.accentNegativeStrongest}),colorway:"negative",text:U.formatMessage({id:"multiplayer.errorLoadingJoinLink",defaultMessage:"Error loading join link. Click here to try again, or contact support."}),onClick:()=>O({replId:e})})]});let Z=U.formatMessage({id:"multiplayer.copyLink",defaultMessage:"Copy link"}),ee=V||H?U.formatMessage({id:"multiplayer.loading",defaultMessage:"Loading..."}):Y??(L?U.formatMessage({id:"multiplayer.joinLinkEmptyHint",defaultMessage:"Click Copy to create link"}):""),et=L?(0,t.jsx)(y.Button,{text:Z,onClick:X,iconLeft:(0,t.jsx)(r.default,{}),clsx:j.default.copyToClipboard,colorway:"primary",size:"small",disabled:V||H}):(0,t.jsx)(h.CopyButton,{textToCopy:Y??"",onClick:X,tooltipSuccessText:U.formatMessage({id:"multiplayer.copiedToClipboard",defaultMessage:"Copied to clipboard"}),text:Z,iconLeft:(0,t.jsx)(r.default,{}),clsx:j.default.copyToClipboard,colorway:"primary",size:"small",disabled:H||!Y}),ei=_?null:(0,t.jsx)(I.Switch,{isSelected:!!Y,isDisabled:H,onChange:t=>{H||(t?F({variables:{replId:e}}):q({variables:{replId:e}}))},"aria-labelledby":"link-switch-label"});return(0,t.jsxs)(w.View,{gap:8,px:12,children:[(0,t.jsxs)(w.View,{row:!0,justify:"space-between",align:"center",children:[(0,t.jsx)(C,{}),(0,t.jsxs)(w.View,{row:!0,gap:8,align:"center",shrink:!1,children:[Y?(0,t.jsx)(M.IconButton,{alt:U.formatMessage({id:"multiplayer.regenerateJoinLink",defaultMessage:"Regenerate join link"}),onClick:()=>D(!0),disabled:H,size:24,children:(0,t.jsx)(n.default,{size:16})}):null,V&&!_?(0,t.jsxs)(w.View,{row:!0,gap:4,align:"center",children:[(0,t.jsx)(a.default,{color:g.tokens.foregroundDimmer}),(0,t.jsx)(b.Text,{color:"dimmer",multiline:!1,children:(0,t.jsx)(o.FormattedMessage,{id:"multiplayer.loading",defaultMessage:"Loading..."})})]}):ei]})]}),!V&&Y||_||L?(0,t.jsxs)(f.ShadesSurface,{clsx:_?void 0:j.default.inviteUrlContainer,elevate:!1,br:8,row:!0,children:[(0,t.jsx)(v.Input,{type:"url",readOnly:!0,disabled:!0,value:ee,clsx:j.default.input}),et]}):null,(0,t.jsx)(k,{isOpen:S,onClose:()=>D(!1),onConfirm:()=>F({variables:{replId:e}}),isLoading:H})]})}])},309169,e=>{"use strict";var t=e.i(351623),i=e.i(299020);let l={},r=t.gql`
+    fragment MultiplayerUser on User {
+  id
+  image
+  username
+  fullName
+  url
+}
+    `,a=t.gql`
+    fragment MultiplayerRepl on Repl {
+  id
+  collaborators {
+    type
+    permission
+    user {
+      ...MultiplayerUser
+    }
+  }
+  multiplayerInvites {
+    email
+    type
+  }
+}
+    ${r}`,n=t.gql`
+    fragment MultiplayerReplInvite on MultiplayerInvite {
+  email
+  repl {
+    ...MultiplayerRepl
+  }
+  invitePermissionType: type
+}
+    ${a}`,s=t.gql`
+    mutation AddOrInviteReplMultiplayer($input: AddOrInviteReplMultiplayerInput!) {
+  addOrInviteReplMultiplayer(input: $input) {
+    __typename
+    ... on AddOrInviteReplMultiplayerOuput {
+      result {
+        ... on MultiplayerInvite {
+          ...MultiplayerReplInvite
+        }
+        ... on ReplPermission {
+          id
+          repl {
+            ...MultiplayerRepl
+          }
+          user {
+            ...MultiplayerUser
+          }
+          replPermissionType: type
+        }
+      }
+    }
+    ... on UnauthorizedError {
+      message
+    }
+    ... on NotFoundError {
+      message
+    }
+    ... on UserError {
+      message
+    }
+  }
+}
+    ${n}
+${a}
+${r}`;e.s(["MultiplayerUserFragmentDoc",0,r,"useAddOrInviteReplMultiplayerMutation",0,function(e){let t={...l,...e};return i.useMutation(s,t)}])},54731,e=>{"use strict";var t=e.i(351623),i=e.i(309169),l=e.i(820669),r=e.i(576954),a=e.i(344480);e.i(975473);let n={},s=t.gql`
+    query MultiplayerManager($replId: String!) {
+  getRepl(id: $replId) {
+    ... on Repl {
+      id
+      isOwner
+      collaborators {
+        user {
+          ...MultiplayerUser
+        }
+      }
+      authorizations {
+        editPermissions {
+          isAuthorized
+        }
+      }
+      multiplayerInvites {
+        email
+        type
+      }
+    }
+  }
+  currentUser {
+    id
+    username
+    fullName
+    image
+    url
+    isSubscribed
+    customer {
+      ...CollaboratorCountV2Customer
+      ...InvitePromotionsCustomer
+    }
+  }
+}
+    ${i.MultiplayerUserFragmentDoc}
+${l.CollaboratorCountV2CustomerFragmentDoc}
+${r.InvitePromotionsCustomerFragmentDoc}`;e.s(["MultiplayerManagerDocument",0,s,"useMultiplayerManagerQuery",0,function(e){let t={...n,...e};return a.useQuery(s,t)}])},979900,e=>{e.v({chip:"inviteChipInput-module__MbDLfG__chip",chipContainer:"inviteChipInput-module__MbDLfG__chipContainer",chipContainerWithTrailing:"inviteChipInput-module__MbDLfG__chipContainerWithTrailing",chipDanger:"inviteChipInput-module__MbDLfG__chipDanger",chipInput:"inviteChipInput-module__MbDLfG__chipInput",chipInputCell:"inviteChipInput-module__MbDLfG__chipInputCell",chipLabel:"inviteChipInput-module__MbDLfG__chipLabel",chipRemove:"inviteChipInput-module__MbDLfG__chipRemove",trailingSlot:"inviteChipInput-module__MbDLfG__trailingSlot"})},363,e=>{e.v({avatarLink:"MultiplayerManagerListItemV2-module__lOYcnG__avatarLink",pendingAvatar:"MultiplayerManagerListItemV2-module__lOYcnG__pendingAvatar",root:"MultiplayerManagerListItemV2-module__lOYcnG__root",user:"MultiplayerManagerListItemV2-module__lOYcnG__user",userLink:"MultiplayerManagerListItemV2-module__lOYcnG__userLink"})},982312,e=>{e.v({accessLabel:"MultiplayerManagerV2-module__UkbNfq__accessLabel",emptyContainer:"MultiplayerManagerV2-module__UkbNfq__emptyContainer",headerMobile:"MultiplayerManagerV2-module__UkbNfq__headerMobile",measureBar:"MultiplayerManagerV2-module__UkbNfq__measureBar",root:"MultiplayerManagerV2-module__UkbNfq__root",searchContainer:"MultiplayerManagerV2-module__UkbNfq__searchContainer",userGroupTitle:"MultiplayerManagerV2-module__UkbNfq__userGroupTitle",userList:"MultiplayerManagerV2-module__UkbNfq__userList"})},29685,43506,658351,703929,e=>{"use strict";var t=e.i(276385),i=e.i(55547),l=e.i(908796),r=e.i(54731);e.i(486898),e.i(416746);var a=e.i(269848),n=e.i(810394),s=e.i(3466),u=e.i(664239),o=e.i(784763),d=e.i(955410);e.i(214847);var p=e.i(20397),m=e.i(864300),c=e.i(753451),g=e.i(389959),f=e.i(84466),y=e.i(602686),h=e.i(766299),M=e.i(643484),v=e.i(190545),_=e.i(488299),x=e.i(528710),I=e.i(8047),b=e.i(61732),w=e.i(979900);let j=({label:e,isInvalid:i,removeLabel:l,onRemove:r,disabled:a})=>(0,t.jsxs)(b.View,{tag:"li",row:!0,align:"center",gap:2,pl:6,pr:2,br:4,clsx:i?w.default.chipDanger:w.default.chip,children:[(0,t.jsx)(I.Text,{variant:"small",clsx:w.default.chipLabel,multiline:!1,children:e}),(0,t.jsx)(_.IconButton,{alt:l,tooltipBehavior:"hidden",clsx:w.default.chipRemove,disabled:a,onClick:r,children:(0,t.jsx)(y.default,{size:12})})]});function C({onSubmit:e,onSubmitMany:i,onChange:l,isDisabled:r,placeholder:a,multi:n=!1,trailingSlot:s}){let u=(0,m.useIntl)(),[o,d]=(0,g.useState)(""),[p,c]=(0,g.useState)([]),[y,_]=(0,g.useState)(),I=(0,h.useIdSeed)()("invitee-email"),k=(0,g.useRef)(null),L=(0,g.useRef)(null);(0,g.useEffect)(()=>{let e=L.current;e&&(e.scrollTop=e.scrollHeight)},[p.length]);let R=o.trim(),U=R.length>0&&(0,f.default)(R),E=()=>{let e=o.split(/[,;\s]+/).map(e=>e.trim()).filter(e=>e.length>0);0!==e.length&&(c(t=>{let i=new Set(t.map(e=>e.toLowerCase())),l=[...t];for(let t of e)i.has(t.toLowerCase())||(i.add(t.toLowerCase()),l.push(t));return l}),d(""),l?.(""))},T=e=>{c(t=>t.filter(t=>t!==e))},S=async t=>{t.preventDefault();let r=p,a=o.trim();a.length>0&&(new Set(p.map(e=>e.toLowerCase())).has(a.toLowerCase())||(r=p.concat([a])));let n=r.filter(e=>(0,f.default)(e)),s=r.filter(e=>!(0,f.default)(e));if(0===n.length)return;d(""),l?.("");let u=[];if(i){let e=await i(n);Array.isArray(e)&&(u=e.filter(e=>n.includes(e)))}else for(let t of n)e(t);c([...s,...u])},D=e=>{d(e.currentTarget.value),l?.(e.currentTarget.value)},A=p.length>0,V=p.some(e=>(0,f.default)(e))||U,B=a??u.formatMessage({id:"multiplayer.enterEmailAddress",defaultMessage:"Enter email address"}),O=u.formatMessage({id:"multiplayer.invite",defaultMessage:"Invite"});return n?(0,t.jsxs)(v.Form,{onSubmit:S,row:!0,gap:8,align:"start",grow:!0,children:[(0,t.jsxs)(b.View,{tag:"ul",innerRef:L,row:!0,align:"center",gap:2,pl:4,pr:s?96:4,br:4,grow:!0,shrink:!0,clsx:[w.default.chipContainer,s?w.default.chipContainerWithTrailing:null],children:[p.map(e=>(0,t.jsx)(j,{label:e,isInvalid:!(0,f.default)(e),removeLabel:u.formatMessage({id:"multiplayer.removeInviteRecipient",defaultMessage:"Remove {email}"},{email:e}),onRemove:()=>T(e),disabled:r},e)),(0,t.jsx)(b.View,{tag:"li",row:!0,align:"center",grow:!0,shrink:!0,clsx:w.default.chipInputCell,children:(0,t.jsx)("input",{id:I,name:I,ref:k,type:"text",value:o,onChange:D,onKeyDown:e=>{if(","===e.key||";"===e.key||"Enter"===e.key||" "===e.key){o.trim().length>0?(e.preventDefault(),E()):(","===e.key||";"===e.key||" "===e.key)&&e.preventDefault(),_(e.key);return}if(0===o.length&&"Backspace"===e.key&&"Backspace"===y&&p.length>0){let e=p[p.length-1];e&&(T(e),d(e),l?.(e))}_(e.key)},onPaste:e=>{let t=e.clipboardData.getData("text");if(!t||!/[,;\s]/.test(t))return;e.preventDefault();let i=t.split(/[,;\s]+/).map(e=>e.trim()).filter(e=>e.length>0);if(0===i.length)return;let r=o.trim(),a=i;r.length>0&&(a=/^[,;\s]/.test(t)?[r,...i]:[r+i[0],...i.slice(1)]),c(e=>{let t=new Set(e.map(e=>e.toLowerCase())),i=[...e];for(let e of a)t.has(e.toLowerCase())||(t.add(e.toLowerCase()),i.push(e));return i}),d(""),l?.("")},onBlur:()=>{o.trim().length>0&&E(),_(void 0)},placeholder:A?"":B,"aria-label":B,autoComplete:"off",disabled:r,className:w.default.chipInput,"data-1p-ignore":!0,"data-lpignore":"true","data-protonpass-ignore":"true"})}),s?(0,t.jsx)(b.View,{tag:"li",row:!0,align:"center",clsx:w.default.trailingSlot,children:s}):null]}),(0,t.jsx)(M.Button,{colorway:V?"primary":void 0,type:"submit",disabled:r||!V,text:O})]}):(0,t.jsxs)(v.Form,{onSubmit:t=>{t.preventDefault(),U&&(e(R),d(""))},row:!0,gap:8,align:"start",grow:!0,children:[(0,t.jsx)(b.View,{grow:!0,children:(0,t.jsx)(x.Input,{id:I,name:I,type:"email",value:o,onChange:D,placeholder:B,autoComplete:"off",disabled:r,"data-1p-ignore":!0,"data-lpignore":"true","data-protonpass-ignore":"true"})}),(0,t.jsx)(M.Button,{colorway:U?"primary":void 0,type:"submit",disabled:r||!U,text:O})]})}e.s(["default",0,C],43506);var k=e.i(444229),L=e.i(469593),R=e.i(638424),U=e.i(334028),E=e.i(830675),T=e.i(351623),S=e.i(309169),D=e.i(299020);let A={},V=T.gql`
+    mutation RemoveMultiplayerUser($replId: String!, $username: String!) {
+  removeMultiplayerUser(replId: $replId, username: $username) {
+    id
+    user {
+      id
+      ...MultiplayerUser
+    }
+    repl {
+      id
+      collaborators {
+        type
+        permission
+        user {
+          ...MultiplayerUser
+        }
+      }
+      multiplayerInvites {
+        email
+        type
+      }
+    }
+  }
+}
+    ${S.MultiplayerUserFragmentDoc}`,B=T.gql`
+    mutation DeleteMultiplayerInvite($replId: String!, $email: String!) {
+  deleteMultiplayerInvite(replId: $replId, email: $email) {
+    ... on MultiplayerInvite {
+      email
+      type
+      repl {
+        id
+        collaborators {
+          type
+          permission
+          user {
+            ...MultiplayerUser
+          }
+        }
+        multiplayerInvites {
+          email
+          type
+        }
+      }
+    }
+    ... on UserError {
+      message
+    }
+  }
+}
+    ${S.MultiplayerUserFragmentDoc}`;var O=e.i(320216);let P=(e={})=>{var t,i;let l,r,a=(0,m.useIntl)(),{showConfirm:n,showError:s}=(0,O.default)(),u=(0,o.useCollaboratorLimit)(),d=(e,t)=>{E.addBreadcrumb({message:t}),E.captureException(Error(e.message)),s(a.formatMessage({id:"multiplayer.somethingUnexpectedHappened",defaultMessage:"Something unexpected happened, please try again."}))},[p,{loading:c}]=(t={awaitRefetchQueries:!0,refetchQueries:["MultiplayerManager"],onError:e=>d(e,"useRemoveMultiplayerUser"),onCompleted:e=>{let t=e.removeMultiplayerUser.user?.username;t?n(a.formatMessage({id:"multiplayer.usernameRemoved",defaultMessage:"@{username} removed"},{username:t})):n(a.formatMessage({id:"multiplayer.userRemoved",defaultMessage:"User removed"})),"data"===u.type&&u.refetch()}},l={...A,...t},D.useMutation(V,l)),[g,{loading:f}]=(i={awaitRefetchQueries:!0,refetchQueries:["MultiplayerManager"],onError:e=>d(e,"useDeleteMultiplayerInviteMutation"),onCompleted:e=>{if("UserError"===e.deleteMultiplayerInvite.__typename)return void s(e.deleteMultiplayerInvite.message);if("MultiplayerInvite"===e.deleteMultiplayerInvite.__typename){let{email:t}=e.deleteMultiplayerInvite;n(a.formatMessage({id:"multiplayer.inviteCanceledForEmail",defaultMessage:"Invite canceled for {email}"},{email:t}))}"data"===u.type&&u.refetch()}},r={...A,...i},D.useMutation(B,r));return{removeMultiplayerUser:p,loadingRemoveUser:c,deleteMultiplayerInvite:g,loadingDeleteInvite:f}};e.s(["default",0,P],658351);var $=e.i(192915),F=e.i(89148),N=e.i(825419),q=e.i(363);let z=e=>{let i=(0,m.useIntl)(),{isPendingInvitation:l,canEditMultiplayers:r,replId:a,isCurrentUser:n,isOwner:s}=e,{removeMultiplayerUser:u,loadingRemoveUser:o,deleteMultiplayerInvite:d,loadingDeleteInvite:p}=P(),c=!l;return(0,t.jsxs)(b.View,{clsx:q.default.root,row:!0,gap:12,align:"center",justify:"space-between",children:[(0,t.jsxs)(b.View,{row:!0,gap:12,align:"center",grow:!0,shrink:!0,clsx:q.default.user,children:[c?(0,t.jsx)(R.default,{...(0,$.userLinkProps)(e.user),clsx:q.default.avatarLink,children:(0,t.jsx)(N.Avatar,{username:e.user.username,src:e.user.image??null,fullName:e.user.fullName,size:32,layout:"intrinsic"})}):(0,t.jsx)("div",{clsx:q.default.pendingAvatar,children:(0,t.jsx)(U.default,{color:F.tokens.foregroundDimmer,size:16})}),(0,t.jsxs)(b.View,{row:!0,gap:4,align:"center",shrink:!0,children:[c?(0,t.jsx)(R.default,{...(0,$.userLinkProps)(e.user),clsx:q.default.userLink,children:(0,t.jsx)(I.Text,{multiline:!1,translate:"no",children:e.user.fullName||e.user.username})}):(0,t.jsx)(I.Text,{color:"dimmest",multiline:!1,children:e.email}),n?(0,t.jsx)(I.Text,{color:"dimmest",variant:"small",multiline:!1,children:i.formatMessage({id:"multiplayer.you",defaultMessage:"(You)"})}):null]})]}),(0,t.jsxs)(b.View,{row:!0,gap:8,align:"center",children:[(0,t.jsx)(I.Text,{color:"dimmest",variant:"small",multiline:!1,children:s?i.formatMessage({id:"multiplayer.owner",defaultMessage:"Owner"}):l?i.formatMessage({id:"multiplayer.invited",defaultMessage:"Invited"}):i.formatMessage({id:"multiplayer.editor",defaultMessage:"Editor"})}),!r||n||s?null:(0,t.jsx)(_.IconButton,{alt:c?i.formatMessage({id:"multiplayer.removeMember",defaultMessage:"Remove member"}):i.formatMessage({id:"multiplayer.cancelInvitation",defaultMessage:"Cancel invitation"}),onClick:()=>{!r||o||p||(c?u({variables:{replId:a,username:e.user.username}}):d({variables:{replId:a,email:e.email}}))},children:(0,t.jsx)(y.default,{size:12})})]})]})},G=({isMobileApp:e,isTeam:t,handleUpgradeTriggered:i,showErrorToast:l=!0})=>{let r=(0,m.useIntl)(),{showError:a,showConfirm:n}=(0,O.default)(),s=(0,o.useCollaboratorLimit)(),[u,d]=(0,g.useState)(null),p=(0,g.useCallback)(()=>{d(null)},[]);(0,g.useEffect)(()=>{u&&l&&a(u)},[u,l,a]);let[c,{loading:f}]=(0,S.useAddOrInviteReplMultiplayerMutation)({awaitRefetchQueries:!0,refetchQueries:["MultiplayerManager"],onError:e=>{E.addBreadcrumb({message:"useAddOrInviteReplMultiplayerMutation"}),E.captureException(Error(e.message)),d(r.formatMessage({id:"multiplayer.somethingUnexpectedHappened",defaultMessage:"Something unexpected happened, please try again."}))},onCompleted:l=>{let a,u=l.addOrInviteReplMultiplayer;switch(u.__typename){case"NotFoundError":case"UnauthorizedError":d(u.message);return;case"UserError":d(u.message),u.message.includes("reached the limit")&&(e&&!t?d(r.formatMessage({id:"multiplayer.reachedInviteLimitFreeAccount",defaultMessage:"You have reached the invite limit for a free account. Please upgrade to add more collaborators."})):!e&&i&&i(!0));return;case"AddOrInviteReplMultiplayerOuput":a="MultiplayerInvite"===u.result.__typename?u.result.email:u.result.user?.username?`@${u.result.user.username}`:"user"}d(null),"data"===s.type&&s.refetch(),n(r.formatMessage({id:"multiplayer.addedTarget",defaultMessage:"Added {target}"},{target:a}))}});return{addOrInviteReplMultiplayer:c,loadingAddMutation:f,inviteError:u,setInviteError:d,clearInviteError:p}};e.s(["default",0,G],703929);var H=e.i(356440),Q=e.i(919073),J=e.i(201894);e.i(244945);var Y=e.i(982312);e.s(["MultiplayerManagerV2",0,({replId:e,handleUpgradeTriggered:g,hideHeader:f=!1,privateLinkFirst:y=!1})=>{let h=(0,m.useIntl)(),M=(0,i.useRouter)(),v=(0,c.isInBonsaiWebview)(M),_=(0,o.useCollaboratorLimit)(),{addOrInviteReplMultiplayer:x,loadingAddMutation:w,inviteError:j,setInviteError:R,clearInviteError:U}=G({isMobileApp:v,isTeam:!1,handleUpgradeTriggered:g,showErrorToast:!1}),{trackClick:E}=(0,d.useTrackClick)(),{data:T,loading:S}=(0,r.useMultiplayerManagerQuery)({variables:{replId:e},pollInterval:8e3}),D=T?.getRepl.__typename==="Repl"?T.getRepl:null,A=T?.currentUser,V=(D?.collaborators??[]).reduce((e,{user:t})=>[...e,t.username],[]),B=D?.authorizations.editPermissions.isAuthorized||!1,O=A?.customer.seats.__typename==="CustomerSeats"?A.customer.seats:null,{show:P,currentUser:$,remainingSeatCount:N}=(0,H.useInviteFreeBanner)({currentUser:A,canEditMultiplayers:B,replHasNoCollaboratorsOrInvites:!D?.multiplayerInvites.length,promotionsAuthorized:(0,L.isInvitePromotionsAuthorized)(A?.customer),customerSeats:O}),q=!!(D&&!V.length&&!D.multiplayerInvites.length&&!(D.isOwner&&A?.username)),W=D?.collaborators.map(({user:e})=>e)??[],K=W.find(e=>e.id===A?.id),X=W.filter(e=>e.id!==A?.id),Z=X.length,ee=async t=>{try{let i=await x({variables:{input:{replId:e,target:{method:l.MultiplayerInviteMethod.Email,value:t},level:l.ReplPermissionLevel.Rw}}}),r=i.data?.addOrInviteReplMultiplayer,a=r?.__typename==="UserError"||r?.__typename==="UnauthorizedError"||r?.__typename==="NotFoundError"?r.message:null;return{ok:r?.__typename==="AddOrInviteReplMultiplayerOuput",actionableMessage:a}}catch{return{ok:!1,actionableMessage:null}}},et=async e=>{if(U(),S&&!A?.isSubscribed)return e;E({productArea:"multiplayer",target:"invite_modal_invite_button",properties:{inviteMethod:"email",batchSize:e.length}});let t=[],i=null;for(let l of e){let e=await ee(l);e.ok||(t.push(l),i=i??e.actionableMessage)}return t.length>0&&R(i??h.formatMessage({id:"multiplayer.batchInviteFailed",defaultMessage:"Could not invite: {emails}"},{emails:t.join(", ")})),t},ei=null!==Z&&!A?.isSubscribed&&!y,el=!S&&!A?.isSubscribed&&!v,er=ei||el,ea=er?(0,t.jsxs)(t.Fragment,{children:[ei?(0,t.jsxs)(t.Fragment,{children:[(0,t.jsxs)(I.Text,{variant:"small",color:"dimmest","aria-hidden":!0,multiline:!1,children:[Z," / ",n.LEGACY_STARTER_MULTIPLAYER_LIMIT]}),(0,t.jsx)(J.MeasureBar,{clsx:Y.default.measureBar,total:n.LEGACY_STARTER_MULTIPLAYER_LIMIT,current:Z,tooltip:h.formatMessage({id:"multiplayer.freeEditorsRemaining",defaultMessage:"{count, plural, one {# free editor remaining} other {# free editors remaining}}"},{count:n.LEGACY_STARTER_MULTIPLAYER_LIMIT-Z})})]}):null,el?(0,t.jsx)(s.default,{size:"small",context:"workspace_multiplayer_header",onClickCallback:()=>{g&&g(!0)},onCancel:()=>{g&&g(!1)}}):null]}):null;return(0,t.jsx)(Q.ShadesSurface,{clsx:Y.default.root,elevate:!1,gap:12,align:"stretch",grow:!0,shrink:!0,px:12,children:(0,t.jsxs)(t.Fragment,{children:[f?null:(0,t.jsxs)(b.View,{row:!0,justify:"space-between",align:"center",clsx:{[Y.default.headerMobile]:v},children:[(0,t.jsx)(I.Text,{variant:"subheadDefault",multiline:!1,children:(0,t.jsx)(p.FormattedMessage,{id:"multiplayer.invite",defaultMessage:"Invite"})}),(0,t.jsxs)(b.View,{row:!0,gap:8,align:"center",children:[S?(0,t.jsxs)(b.View,{row:!0,gap:4,align:"center",grow:!0,justify:"center",children:[(0,t.jsx)(a.default,{color:F.tokens.foregroundDimmer}),(0,t.jsx)(I.Text,{color:"dimmer",multiline:!1,children:(0,t.jsx)(p.FormattedMessage,{id:"multiplayer.loading",defaultMessage:"Loading..."})})]}):null,"data"===_.type&&!_.shouldEnforceMultiplayerLimit&&er?ea:(0,t.jsx)(u.CollaboratorCountV2,{customer:A?.customer,isAdmin:D?.isOwner??!1,enterpriseContactContext:"collaborator_limit_workspace_multiplayer",upgradeContext:"workspace_multiplayer_header"})]})]}),P&&$?(0,t.jsx)(k.InviteFreeBanner,{currentUser:$,remainingSeatCount:N}):null,B&&D?(0,t.jsxs)(b.View,{gap:12,children:[(0,t.jsx)(b.View,{clsx:Y.default.searchContainer,children:(0,t.jsx)(C,{multi:!0,onSubmit:e=>{U(),S&&!A?.isSubscribed||w||(E({productArea:"multiplayer",target:"invite_modal_invite_button",properties:{invitee:e,inviteMethod:"email"}}),ee(e))},onSubmitMany:et,onChange:e=>{e||U()},isDisabled:w})}),j?(0,t.jsx)(u.InviteErrorBanner,{customer:A?.customer,isAdmin:D?.isOwner??!1,errorMessage:j,enterpriseContactContext:"collaborator_limit_workspace_multiplayer",upgradeContext:"workspace_multiplayer_header"}):null]}):null,q?(0,t.jsx)(b.View,{clsx:Y.default.emptyContainer,gap:16,py:16,justify:"start",children:(0,t.jsx)(I.Text,{color:"dimmest",multiline:!1,children:(0,t.jsx)(p.FormattedMessage,{id:"multiplayer.noOneElseIsHere",defaultMessage:"No one else is here"})})}):(0,t.jsxs)(b.View,{gap:12,children:[(0,t.jsx)(I.Text,{variant:"small",multiline:!1,clsx:Y.default.accessLabel,children:(0,t.jsx)(p.FormattedMessage,{id:"multiplayer.access",defaultMessage:"Access"})}),(0,t.jsxs)(b.View,{gap:8,clsx:Y.default.userList,children:[D?.isOwner&&!K&&A?.username?(0,t.jsx)(z,{isPendingInvitation:!1,replId:e,canEditMultiplayers:B,user:{id:A.id,username:A.username,fullName:A.fullName,image:A.image,url:A.url},isCurrentUser:!0,isOwner:!0}):null,K?(0,t.jsx)(z,{isPendingInvitation:!1,replId:e,canEditMultiplayers:B,user:K,isCurrentUser:!0,isOwner:D?.isOwner||!1},K.id):null,X.map(i=>i?(0,t.jsx)(z,{isPendingInvitation:!1,replId:e,canEditMultiplayers:B,user:i},i.id):null),D?.multiplayerInvites.map(i=>(0,t.jsx)(z,{canEditMultiplayers:B,replId:e,isPendingInvitation:!0,email:i.email},i.email))]})]})]})})}],29685)}]);
+
+//# debugId=0ada8947-9b51-d6b1-0faa-94f44217d2ed
+//# sourceMappingURL=00~lhkgo-pj2t.js.map

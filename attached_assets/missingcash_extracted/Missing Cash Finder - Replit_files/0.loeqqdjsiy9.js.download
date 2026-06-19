@@ -1,0 +1,561 @@
+;!function(){try { var e="undefined"!=typeof globalThis?globalThis:"undefined"!=typeof global?global:"undefined"!=typeof window?window:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&((e._debugIds|| (e._debugIds={}))[n]="5c4e191d-c313-cb3c-9951-56b437d27db3")}catch(e){}}();
+(globalThis.TURBOPACK||(globalThis.TURBOPACK=[])).push(["object"==typeof document?document.currentScript:void 0,76298,e=>{e.v({pill:"navItems-module__vGHY-a__pill"})},477814,e=>{"use strict";var t=e.i(276385),r=e.i(182409),a=e.i(953436),i=e.i(943172);let n={self:e.i(76298).default.pill},l={as:"/~",href:"/home",icon:(0,t.jsx)(a.default,{})},s={href:"/repls",icon:(0,t.jsx)(i.default,{})},o={href:"/my-published-apps",icon:(0,t.jsx)(r.default,{})};e.s(["deploymentsItem",0,o,"homeItem",0,l,"navItemPillCss",0,n,"replsItem",0,s])},14154,428807,e=>{"use strict";var t=e.i(351623),r=e.i(762288);let a=t.gql`
+    fragment AccountItemCurrentUser on CurrentUser {
+  id
+  username
+  fullName
+  image
+  userSubscriptionType
+  customer {
+    ... on Customer {
+      id
+      isUnifiedPlanEnabled
+    }
+  }
+  isMemberOfAnyOrg
+  ...UserLinkCurrentUser
+}
+    ${r.UserLinkCurrentUserFragmentDoc}`;var i=e.i(590911);let n=t.gql`
+    fragment TeamsItemOrg on Org {
+  id
+  name
+  type
+  slug
+  currentUserRole
+  image
+  dealContext {
+    dealType
+    salesContactEmail
+  }
+}
+    `,l=t.gql`
+    fragment TeamsItemCurrentUser on CurrentUser {
+  id
+  image
+  username
+  fullName
+  orgs(count: 50) {
+    __typename
+    ... on CurrentUserOrganizationConnection {
+      items {
+        type
+        org {
+          ...TeamsItemOrg
+        }
+      }
+    }
+    ... on Error {
+      message
+    }
+    ... on NotFoundError {
+      message
+    }
+    ... on UserError {
+      message
+    }
+  }
+}
+    ${n}`;var s=e.i(180273);let o=t.gql`
+    fragment GloablHeaderCurrentUser on CurrentUser {
+  id
+  isMemberOfAnyOrg
+  customer {
+    ... on Customer {
+      id
+      isUnifiedPlanEnabled
+    }
+  }
+  ...AccountItemCurrentUser
+  ...DevCopyUsernameItemCurrentUser
+  ...TeamsItemCurrentUser
+  ...IsUnifiedPlanEnabledForAnyOrg
+}
+    ${a}
+${i.DevCopyUsernameItemCurrentUserFragmentDoc}
+${l}
+${s.IsUnifiedPlanEnabledForAnyOrgFragmentDoc}`;e.s(["GloablHeaderCurrentUserFragmentDoc",0,o],428807);var u=e.i(481963),d=e.i(344480);e.i(975473);let c={},p=t.gql`
+    fragment LayoutSidebarCurrentUser on CurrentUser {
+  id
+  firstName
+  isStaff: hasRole(role: REPLIT_STAFF)
+  isExplorer: hasRole(role: EXPLORER)
+  ...GloablHeaderCurrentUser
+  ...UserPlanStateCurrentUser
+  ...IsUnifiedPlanEnabledPersonalWorkspaceCurrentUser
+  ...IsUnifiedPlanEnabledForAnyOrg
+}
+    ${o}
+${u.UserPlanStateCurrentUserFragmentDoc}
+${s.IsUnifiedPlanEnabledPersonalWorkspaceCurrentUserFragmentDoc}
+${s.IsUnifiedPlanEnabledForAnyOrgFragmentDoc}`,m=t.gql`
+    fragment LayoutSidebarOrg on Org {
+  id
+  name
+  slug
+  image
+  ...IsUnifiedPlanEnabledOrg
+  authorizations {
+    viewUsage {
+      isAuthorized
+    }
+    viewOrgAnalytics {
+      isAuthorized
+    }
+    viewOrgSecurity {
+      isAuthorized
+    }
+    viewSubscription {
+      isAuthorized
+    }
+    addMember {
+      isAuthorized
+      code
+    }
+  }
+}
+    ${s.IsUnifiedPlanEnabledOrgFragmentDoc}`,g=t.gql`
+    query LayoutSidebarGetOrg($orgId: String!) {
+  getOrg(orgId: $orgId) {
+    __typename
+    ... on Org {
+      ...LayoutSidebarOrg
+    }
+    ... on NotFoundError {
+      message
+    }
+  }
+}
+    ${m}`;e.s(["LayoutSidebarCurrentUserFragmentDoc",0,p,"useLayoutSidebarGetOrgQuery",0,function(e){let t={...c,...e};return d.useQuery(g,t)}],14154)},437497,e=>{"use strict";var t=e.i(351623),r=e.i(344480);e.i(975473);let a={},i=t.gql`
+    query UsageActionRequired {
+  currentUser {
+    __typename
+    id
+    usageBasedBillingBudget {
+      ... on UsageBasedBillingBudget {
+        id
+        hasReachedBudget
+      }
+      ... on UnauthorizedError {
+        message
+      }
+    }
+    storageInfo {
+      __typename
+      storageQuotaStatus2 {
+        __typename
+        ... on StorageQuotaStatus {
+          status
+        }
+        ... on ServiceUnavailable {
+          message
+        }
+      }
+    }
+  }
+}
+    `,n=t.gql`
+    query OrgUsageActionRequired($orgId: String!) {
+  currentUser {
+    __typename
+    id
+    org(orgId: $orgId) {
+      __typename
+      ... on Org {
+        id
+        usageBasedBillingBudget {
+          __typename
+          ... on UsageBasedBillingBudget {
+            id
+            hasReachedBudget
+          }
+          ... on Error {
+            message
+          }
+        }
+      }
+      ... on Error {
+        message
+      }
+    }
+  }
+}
+    `;e.s(["UsageActionRequiredDocument",0,i,"useOrgUsageActionRequiredQuery",0,function(e){let t={...a,...e};return r.useQuery(n,t)},"useUsageActionRequiredQuery",0,function(e){let t={...a,...e};return r.useQuery(i,t)}])},445807,289038,650401,e=>{"use strict";var t=e.i(437497),r=e.i(908796);e.s(["useUsageActionRequired",0,e=>{let{loading:a,data:i}=(0,t.useUsageActionRequiredQuery)({ssr:!1,context:{noBatch:!0},skip:void 0!==e}),{loading:n,data:l}=(0,t.useOrgUsageActionRequiredQuery)({variables:{orgId:e??""},ssr:!1,context:{noBatch:!0},skip:!e});if(e)return{loading:n,actionRequired:l?.currentUser?.org.__typename==="Org"&&l.currentUser.org.usageBasedBillingBudget?.__typename==="UsageBasedBillingBudget"&&!!l.currentUser.org.usageBasedBillingBudget.hasReachedBudget};{if(!i||i.currentUser?.__typename!=="CurrentUser"||i.currentUser.storageInfo?.__typename!=="StorageInfo"||"StorageQuotaStatus"!==i.currentUser.storageInfo.storageQuotaStatus2.__typename)return{loading:a,actionRequired:!1};let{storageInfo:{storageQuotaStatus2:{status:e}},usageBasedBillingBudget:t}=i.currentUser;return{loading:a,actionRequired:t?.__typename==="UsageBasedBillingBudget"&&t.hasReachedBudget||e===r.StorageQuotaEnum.ExceedingQuota||e===r.StorageQuotaEnum.ApproachingQuota}}}],445807);var a=e.i(276385),i=e.i(138716),n=e.i(995691),l=e.i(255701),s=e.i(612343);e.i(214847);var o=e.i(864300),u=e.i(776065),d=e.i(448942);let c=e=>t=>t.pathname===e;e.s(["useOrgGroupNavItems",0,function({orgSlug:e}){let t=(0,o.useIntl)(),r=(0,u.useQueryParam)("groupId","string"),p=(0,u.useQueryParam)("groupSlug","string");if(!e||!r||!p)return[];let m=(0,d.orgLinks)({slug:e}),g=(0,d.orgGroupLinks)({orgSlug:e,groupId:r,groupSlug:p});return[{label:t.formatMessage({id:"orgs.groupSidebarBack",defaultMessage:"Back"}),href:m.groups.href.toString(),icon:(0,a.jsx)(i.default,{}),active:c(m.groups.routerPath)},{label:t.formatMessage({id:"orgs.groupSidebarMembers",defaultMessage:"Members"}),href:g.members.href.toString(),icon:(0,a.jsx)(s.default,{}),active:c(g.members.routerPath)},{label:t.formatMessage({id:"orgs.groupSidebarPermissions",defaultMessage:"Permissions"}),href:g.permissions.href.toString(),icon:(0,a.jsx)(n.default,{}),active:c(g.permissions.routerPath)},{label:t.formatMessage({id:"orgs.groupSidebarSettings",defaultMessage:"Group settings"}),href:g.settings.href.toString(),icon:(0,a.jsx)(l.default,{}),active:c(g.settings.routerPath)}]}],289038);var p=e.i(351623),m=e.i(319801);let g=p.gql`
+    fragment GlobalSearchReplResult on Repl {
+  id
+  title
+  iconUrl
+  ...ReplLinkRepl
+}
+    ${m.ReplLinkReplFragmentDoc}`;var h=e.i(344480),f=e.i(975473);let x={},y=p.gql`
+    fragment GlobalSearchRepl on Repl {
+  id
+  ...GlobalSearchReplResult
+}
+    ${g}`,v=p.gql`
+    query GlobalPersonalRecentRepls($count: Int!) {
+  currentUser {
+    id
+    isStaff: hasRole(role: REPLIT_STAFF)
+    clui
+  }
+  recentRepls(count: $count) {
+    id
+    ...GlobalSearchRepl
+  }
+}
+    ${y}`,b=p.gql`
+    query GlobalPersonalSearch($search: String!) {
+  currentUser {
+    id
+    replSearch(search: $search) {
+      id
+      ...GlobalSearchRepl
+    }
+  }
+}
+    ${y}`,j=p.gql`
+    query GlobalOrgRecentRepls($count: Int!, $orgId: String!) {
+  currentUser {
+    id
+    isStaff: hasRole(role: REPLIT_STAFF)
+    clui
+    org(orgId: $orgId) {
+      ... on Org {
+        id
+        name
+        recentRepls(input: {count: $count}) {
+          ... on ReplConnection {
+            items {
+              ...GlobalSearchRepl
+            }
+          }
+        }
+      }
+    }
+  }
+}
+    ${y}`,T=p.gql`
+    query GlobalOrgSearch($orgId: String!, $replsInput: OrgReplsInput!) {
+  currentUser {
+    id
+    org(orgId: $orgId) {
+      ... on Org {
+        id
+        repls(input: $replsInput) {
+          ... on ReplConnection {
+            items {
+              ...GlobalSearchRepl
+            }
+          }
+        }
+      }
+    }
+  }
+}
+    ${y}`;e.s(["useGlobalOrgRecentReplsQuery",0,function(e){let t={...x,...e};return h.useQuery(j,t)},"useGlobalOrgSearchLazyQuery",0,function(e){let t={...x,...e};return f.useLazyQuery(T,t)},"useGlobalPersonalRecentReplsQuery",0,function(e){let t={...x,...e};return h.useQuery(v,t)},"useGlobalPersonalSearchLazyQuery",0,function(e){let t={...x,...e};return f.useLazyQuery(b,t)}],650401)},810277,e=>{e.v({checkboxInput:"Form-module__Qa3YCq__checkboxInput",cliForm:"Form-module__Qa3YCq__cliForm",selectInput:"Form-module__Qa3YCq__selectInput"})},983894,e=>{e.v({container:"index-module__ycHd5G__container",inputDescription:"index-module__ycHd5G__inputDescription",label:"index-module__ycHd5G__label",submitButton:"index-module__ycHd5G__submitButton"})},941706,e=>{e.v({accentPrimary:"index-module__BB7faG__accentPrimary",templateRow:"index-module__BB7faG__templateRow"})},964228,e=>{e.v({header:"index-module__HPzRfq__header",paginationContainer:"index-module__HPzRfq__paginationContainer",tableRow:"index-module__HPzRfq__tableRow"})},908267,e=>{e.v({cell:"Table-module__sOrhQq__cell",pageIndicator:"Table-module__sOrhQq__pageIndicator",pagination:"Table-module__sOrhQq__pagination",root:"Table-module__sOrhQq__root",table:"Table-module__sOrhQq__table",toolbar:"Table-module__sOrhQq__toolbar"})},813583,e=>{e.v({chevron:"PromptIcon-module__7VkN2a__chevron",error:"PromptIcon-module__7VkN2a__error",icon:"PromptIcon-module__7VkN2a__icon",success:"PromptIcon-module__7VkN2a__success"})},228759,e=>{e.v({surfcae:"OutputContainer-module__E34JzG__surfcae"})},141738,e=>{e.v({loading:"UserCli-module__fP09pW__loading",output:"UserCli-module__fP09pW__output",root:"UserCli-module__fP09pW__root"})},339487,477743,859194,e=>{"use strict";var t=e.i(276385),r=e.i(389959),a=e.i(192458),i=e.i(351623),n=e.i(344480),l=e.i(975473);let s={},o=i.gql`
+    query CurrentUserClui {
+  currentUser {
+    id
+    clui
+  }
+}
+    `;var u=e.i(197106),d=e.i(659042),c=e.i(712771),p=e.i(5257),m=e.i(269848),g=e.i(525864),h=e.i(255701),f=e.i(195206),x=e.i(491194),y=e.i(612343),v=e.i(408116),b=e.i(299020),j=e.i(126585),T=e.i(342008);let S=e=>{if("ENUM"===e.arg.graphql.kind)return e.value||void 0;switch(e.arg.type){case"string":return e.value;case"int":return parseInt(e.value,10);case"float":return parseFloat(e.value);case"boolean":return!!e.value;default:return}},_=e=>{let t=[],r=[],a={},i={...e.args};if(!e.command.args)return{variables:a,missing:{},extra:Object.keys(i).length?i:void 0};for(let n of Object.values(e.command.args)){let l=e.args[n.name];if(delete i[n.name],void 0===l)n.required?t.push(n):r.push(n);else if("boolean"===n.type&&"boolean"==typeof l)a[n.name]=l;else{let e=S({value:l.toString(),arg:n});void 0!==e&&(a[n.name]=e)}}return{variables:a,missing:{...t.length?{required:t}:{},...r.length?{optional:r}:{}},extra:Object.keys(i).length?i:void 0}};var C=e.i(443197),R=e.i(108431);let w=e=>{let{networkError:r}=e.error,a=r&&r.result&&r.result.errors?r.result.errors.map(e=>e.message):[e.error.toString()],i=1===a.length?a[0]:(0,t.jsx)(t.Fragment,{children:a.map((e,r)=>(0,t.jsxs)("span",{children:[r>0?(0,t.jsx)("br",{}):null,e]},e))});return(0,t.jsx)(R.StatusBanner,{colorway:"negative",icon:(0,t.jsx)(T.default,{}),text:i})};var I=e.i(54456),U=e.i(37048),k=e.i(643484),O=e.i(86145),M=e.i(8047),L=e.i(810277);let P=(e,t)=>"UPDATE"===t.type?{...e,...t.updates}:e,A=({description:e,...r})=>(0,t.jsxs)(U.VStack,{spacing:1,align:"stretch",children:[(0,t.jsx)(I.default,{...r,label:r.name}),e?(0,t.jsxs)(M.Text,{color:"dimmer",variant:"small",children:[e,r.required?"":" (optional)"]}):null,e||r.required?null:(0,t.jsx)(M.Text,{color:"dimmer",variant:"small",children:"optional"})]}),E=({description:e,...r})=>(0,t.jsxs)("div",{clsx:L.default.checkboxInput,children:[(0,t.jsxs)("label",{children:[(0,t.jsx)(O.Checkbox,{...r}),(0,t.jsx)("span",{children:r.name})]}),e?(0,t.jsxs)(M.Text,{color:"dimmer",variant:"small",children:[e,r.required?"":" (optional)"]}):null,e||r.required?null:(0,t.jsx)(M.Text,{color:"dimmer",variant:"small",children:"optional"})]}),D=({description:e,...r})=>(0,t.jsxs)(U.VStack,{spacing:1,align:"stretch",children:[r.name?(0,t.jsx)(M.Text,{color:"dimmer",variant:"small",children:r.name}):null,(0,t.jsx)("label",{clsx:L.default.selectInput,children:(0,t.jsxs)("select",{...r,children:[(0,t.jsx)("option",{value:""},"empty"),r.options.map(e=>(0,t.jsx)("option",{value:e.value,children:e.value},e.value))]})}),e?(0,t.jsxs)(M.Text,{color:"dimmer",variant:"small",children:[e,r.required?"":" (optional)"]}):null,e||r.required?null:(0,t.jsx)(M.Text,{color:"dimmer",variant:"small",children:"optional"})]}),$=e=>{let{command:a,parsedVariables:i}=e,n=a.args&&Object.values(a.args).reverse(),l=Object.keys(i).reduce((e,t)=>(n?.find(e=>e.name===t)&&(e[t]=i[t]),e),{}),[s,o]=(0,r.useReducer)(P,l),u=(0,r.useCallback)(e=>o({type:"UPDATE",updates:e}),[o]),d=n?.find(e=>"boolean"!==e.type&&!s[e.name]);return(0,t.jsx)("div",{className:"wrap",clsx:L.default.cliForm,children:(0,t.jsx)("form",{onSubmit:t=>{t.preventDefault(),e.onSubmit(s)},children:(0,t.jsxs)(U.VStack,{spacing:2,align:"stretch",children:[a.description?(0,t.jsx)(M.Text,{children:a.description}):null,n?n.map(e=>{let r=e.name,a={name:e.name,required:e.required,description:e.description||void 0},i=s[e.name];return"ENUM"===e.graphql.kind&&Array.isArray(e.options)?(0,t.jsx)(D,{...a,options:e.options,autoFocus:d&&d.name===e.name,onChange:t=>u({[e.name]:t.currentTarget.value})},r):"boolean"===e.type?(0,t.jsx)(E,{...a,id:r,checked:!!s[e.name],onChange:t=>u({[e.name]:t})},r):(0,t.jsx)(A,{...a,autoFocus:d&&d.name===e.name,value:i?i.toString():"",onChange:t=>u({[e.name]:t.currentTarget.value})},r)}):null,(0,t.jsx)("div",{children:(0,t.jsx)(k.Button,{colorway:"primary",type:"submit",disabled:e.isLoading,text:e.isLoading?"Loading...":"Submit"})})]})})})},N={},V=i.gql`
+    mutation DeleteTipInteractions($mode: DeleteTipInteractionsMode!, $target: String) {
+  deleteTipInteractions(mode: $mode, target: $target) {
+    __typename
+    ... on DeleteTipInteractionsResult {
+      message
+      deletedCount
+      details
+    }
+    ... on NotFoundError {
+      message
+    }
+    ... on UserError {
+      message
+    }
+  }
+}
+    `;var B=e.i(399245),q=e.i(355407),F=e.i(334028),Q=e.i(570438),z=e.i(89148),G=e.i(449525),H=e.i(142406),W=e.i(528326),K=e.i(61732),Y=e.i(983894),J=e.i(319801);let Z={},X=i.gql`
+    fragment CluiTemplateReplsRepl on Repl {
+  id
+  slug
+  title
+  language
+  iconUrl
+  ...ReplLinkRepl
+}
+    ${J.ReplLinkReplFragmentDoc}`,ee=i.gql`
+    fragment CluiTemplateReplsLanguage on Language {
+  id
+  key
+  icon
+  displayName
+  templateRepl {
+    id
+  }
+  betaTemplateRepl {
+    id
+  }
+}
+    `,et=i.gql`
+    mutation CluiSetLanguageRepl($input: SetLanguageTemplateInput!) {
+  setLanguageTemplateRepl(input: $input) {
+    ... on Repl {
+      id
+    }
+    ... on UnauthorizedError {
+      message
+    }
+    ... on NotFoundError {
+      message
+    }
+    ... on UserError {
+      message
+    }
+  }
+}
+    `;function er(e){let t={...Z,...e};return b.useMutation(et,t)}let ea=i.gql`
+    query CluiSetTemplate {
+  languageTemplateRepls {
+    id
+    ...CluiTemplateReplsRepl
+  }
+  languages(getAll: true) {
+    id
+    ...CluiTemplateReplsLanguage
+  }
+}
+    ${X}
+${ee}`;var ei=e.i(266982),en=e.i(320216),el=e.i(760982),es=e.i(921125),eo=e.i(365757),eu=e.i(941706);function ed({items:e,selectedItem:a,onChange:i,placeholder:n}){let[l,s]=(0,r.useState)(a?.title??""),[o,u]=(0,r.useState)(!1),[d,c]=(0,r.useState)(null),p=a?.value,m=a?.title,g=(0,r.useRef)(p);(0,r.useEffect)(()=>{g.current!==p&&(g.current=p,s(m??""))},[p,m]);let h=o&&""!==l&&l!==m?e.filter(e=>e.title.toLowerCase().includes(l.toLowerCase())):e;return(0,t.jsx)(el.ComboBox,{"aria-label":n??"Select an option",selectedKey:d,onSelectionChange:t=>{if(!t)return;let r=e.find(e=>e.value===t);r&&(s(r.title),c(t),i(r),requestAnimationFrame(()=>{c(null)}))},onOpenChange:e=>{u(e),e||s(a?.title??"")},items:h,inputValue:l,onInputChange:s,menuTrigger:"focus",maxHeight:300,placeholder:n,children:e=>(0,t.jsx)(el.ComboBoxListBoxItem,{id:e.value,label:e.title},e.value)})}function ec(e){return!ei.default.allSupported().find(({key:t})=>t===e)}function ep(e){return e.slice().sort((e,t)=>{let r=ec(e.key),a=ec(t.key);return r&&!a?1:!r&&a?-1:!e.templateRepl&&t.templateRepl?1:e.templateRepl&&!t.templateRepl?-1:e.key!==t.key?e.key.localeCompare(t.key):0})}function em({icon:e,repl:a,betaRepl:i,displayName:n,onRemove:l,language:s}){let[o,u]=(0,r.useState)(null),[d,{loading:c}]=er({onCompleted:()=>{l()},onError:e=>{u(e.message)}});return(0,t.jsxs)("tr",{clsx:eu.default.templateRow,children:[(0,t.jsx)("td",{children:(0,t.jsxs)(U.HStack,{spacing:1,children:[(0,t.jsx)(eo.default,{size:16,alt:n,iconUrl:e}),(0,t.jsxs)(U.VStack,{children:[(0,t.jsx)(M.Text,{children:n}),(0,t.jsx)(M.Text,{variant:"code",style:{color:z.tokens.accentPrimaryDefault},children:s})]})]})}),(0,t.jsx)("td",{children:(0,t.jsxs)(U.HStack,{spacing:1,children:[(0,t.jsx)("div",{children:(0,t.jsx)(eo.default,{size:16,alt:a.title,iconUrl:a.iconUrl})}),(0,t.jsx)(es.default,{repl:a,children:a.url}),"nix"===a.language||"nix_beta"===a.language?(0,t.jsx)("div",{children:"(nix)"}):null]})}),(0,t.jsx)("td",{children:i?(0,t.jsxs)(U.HStack,{spacing:1,children:[(0,t.jsx)("div",{children:(0,t.jsx)(eo.default,{size:16,alt:i.title,iconUrl:i.iconUrl})}),(0,t.jsx)(es.default,{repl:i,children:i.url}),"nix"===i.language||"nix_beta"===i.language?(0,t.jsx)("div",{children:"(nix)"}):null]}):(0,t.jsx)("div",{children:"-"})}),(0,t.jsxs)("td",{children:[(0,t.jsx)(k.Button,{disabled:c,size:"small",colorway:"negative",variant:"underlined",onClick:()=>{window.confirm(`Are you sure you want to remove the template for ${n}?`)&&d({variables:{input:{language:s}}})},iconLeft:(0,t.jsx)(x.default,{}),text:""}),o?(0,t.jsx)(M.Text,{style:{color:z.tokens.accentNegativeDefault},children:o}):null]})]})}function eg({language:e,icon:r,displayName:a}){return(0,t.jsxs)("tr",{clsx:eu.default.templateRow,children:[(0,t.jsx)("td",{children:(0,t.jsxs)(U.HStack,{spacing:1,children:[(0,t.jsx)(eo.default,{size:16,alt:a,iconUrl:r}),(0,t.jsxs)(U.VStack,{children:[(0,t.jsx)(M.Text,{children:a}),(0,t.jsx)(M.Text,{variant:"code",style:{color:z.tokens.accentPrimaryDefault},children:e})]})]})}),(0,t.jsx)("td",{children:(0,t.jsx)(U.HStack,{spacing:1,children:(0,t.jsx)("div",{children:"-"})})}),(0,t.jsx)("td",{children:(0,t.jsx)("div",{children:"-"})}),(0,t.jsx)("td",{children:"-"})]})}function eh({languages:e,templates:a,onSubmit:i}){let{showError:n}=(0,en.default)(),[l,s]=(0,r.useState)(null),[o,u]=(0,r.useState)(null),[d,c]=(0,r.useState)(null),[p,m]=(0,r.useState)(null),[g,{loading:h}]=er({onCompleted:()=>{i(),s(null),u(null),c(null),m(null)},onError:e=>{n(e.message)}}),f=ep(e).map(e=>({value:e.key,title:`${e.key} (${e.displayName})`})),x=a.map(e=>({value:e.id,title:e.slug}));return(0,t.jsx)(U.VStack,{spacing:2,children:(0,t.jsxs)(U.HStack,{spacing:3,align:"center",justify:"space-evenly",children:[(0,t.jsx)(U.VStack,{children:(0,t.jsx)("div",{style:{width:200},children:(0,t.jsx)(ed,{selectedItem:f.find(e=>e.value===l),placeholder:"Select a language",onChange:t=>{s(t.value);let r=e.find(e=>e.key===t.value);if(!r)return;let a=x.find(e=>e.value===r.templateRepl?.id);a&&(u(a.value),m(a.title));let i=x.find(e=>e.value===r.betaTemplateRepl?.id);i&&c(i.value)},items:f})})}),(0,t.jsx)(U.VStack,{children:(0,t.jsx)("div",{className:"select",children:(0,t.jsx)(ed,{selectedItem:x.find(e=>e.value===o),placeholder:"Select a template",onChange:e=>{u(e.value),m(e.title)},items:x})})}),(0,t.jsx)(U.VStack,{children:(0,t.jsx)("div",{className:"select",children:(0,t.jsx)(ed,{selectedItem:x.find(e=>e.value===d),placeholder:"(optional) Select a beta template",onChange:e=>{c(e.value)},items:x})})}),(0,t.jsx)(U.VStack,{children:(0,t.jsx)(k.Button,{colorway:"primary",disabled:!l||!o||h,onClick:()=>{if(!l||!o)throw Error("Expected language and template");let t=e.find(e=>e.key===l);if(!t)throw Error(`Expected language with key ${l}`);!window.confirm(`Are you sure you want to map ${t.displayName} to the template ${p}?`)||h||g({variables:{input:{language:l,replId:o,betaReplId:d}}}).then(e=>{let t=e.data?.setLanguageTemplateRepl;t&&"message"in t&&n(t.message)})},text:"Submit"})})]})})}var ef=e.i(261348);let ex={},ey=i.gql`
+    fragment UserTipFields on UserTip {
+  id
+  title
+  description
+  content
+  tags
+  priority
+  externalUrl
+  criteria
+  ctaTrigger
+  ctaLabel
+  publishedAt
+  timeCreated
+  timeUpdated
+  timeDeleted
+}
+    `,ev=i.gql`
+    query UserTipsManagementTable($after: String, $count: Int, $showArchived: Boolean) {
+  userTips(after: $after, count: $count, showArchived: $showArchived) {
+    items {
+      ...UserTipFields
+    }
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+      nextCursor
+      previousCursor
+    }
+  }
+}
+    ${ey}`;var eb=e.i(534141),ej=e.i(965097),eT=e.i(828322),eS=e.i(40916),e_=e.i(820228),eC=e.i(302973),eR=e.i(94516),ew=e.i(789277),eI=e.i(639098),eU=e.i(528710),ek=e.i(585544),eO=e.i(19322);let eM=({initialTip:e,formRef:a})=>{let{formValues:i,errors:n,handleInputChange:l,handleDateChange:s,validateForm:o}=(e=>{let[t,a]=(0,r.useState)({id:e?.id||void 0,title:e?.title||"",description:e?.description||"",content:e?.content||"",tags:(e?.tags||[]).join(", "),priority:String(e?.priority||0),externalUrl:e?.externalUrl||"",criteria:e?.criteria||"",ctaTrigger:e?.ctaTrigger||"",ctaLabel:e?.ctaLabel||"",publishedAt:e?.publishedAt?new Date(e.publishedAt):null}),[i,n]=(0,r.useState)({}),l=(0,r.useCallback)(e=>t=>{a(r=>({...r,[e]:t.target.value}))},[]),s=(0,r.useCallback)(e=>{a(t=>({...t,publishedAt:e}))},[]);return{formValues:t,errors:i,handleInputChange:l,handleDateChange:s,resetForm:(0,r.useCallback)(e=>{a({id:e?.id||void 0,title:e?.title||"",description:e?.description||"",content:e?.content||"",tags:(e?.tags||[]).join(", "),priority:String(e?.priority||0),externalUrl:e?.externalUrl||"",criteria:e?.criteria||"",ctaTrigger:e?.ctaTrigger||"",ctaLabel:e?.ctaLabel||"",publishedAt:e?.publishedAt?new Date(e.publishedAt):null}),n({})},[]),validateForm:()=>{let e={};return t.title.trim()||(e.title="Title is required"),t.description.trim()||(e.description="Description is required"),t.priority&&isNaN(Number(t.priority))&&(e.priority="Priority must be a number"),t.externalUrl&&!(e=>{try{return new URL(e),!0}catch(e){return!1}})(t.externalUrl)&&(e.externalUrl="Please enter a valid URL"),t.ctaTrigger.trim()||t.externalUrl.trim()||(e.ctaTrigger="Either CTA Trigger or External URL is required",e.externalUrl="Either CTA Trigger or External URL is required"),n(e),0===Object.keys(e).length}}})(e);(0,r.useImperativeHandle)(a,()=>({formValues:i,validateForm:o}),[i,o]);let u=(0,eC.getLocalTimeZone)();return(0,t.jsxs)(K.View,{gap:16,p:16,children:[(0,t.jsxs)(K.View,{children:[(0,t.jsx)(M.Text,{children:"Title *"}),(0,t.jsx)(eU.Input,{value:i.title,onChange:l("title"),placeholder:"Tip title"}),n.title?(0,t.jsx)(M.Text,{color:"default",style:{color:z.tokens.accentNegativeStronger},children:n.title}):null]}),(0,t.jsxs)(K.View,{children:[(0,t.jsx)(M.Text,{children:"Description *"}),(0,t.jsx)(eU.MultiLineInput,{value:i.description,onChange:l("description"),placeholder:"Short description of the tip",rows:2}),n.description?(0,t.jsx)(M.Text,{color:"default",style:{color:z.tokens.accentNegativeStronger},children:n.description}):null]}),(0,t.jsxs)(K.View,{children:[(0,t.jsx)(M.Text,{children:"Criteria"}),(0,t.jsx)(eU.MultiLineInput,{value:i.criteria,onChange:l("criteria"),rows:2}),(0,t.jsx)(M.Text,{variant:"small",color:"dimmer",children:"Specific criteria or context for when this tip should be shown to users (optional and internal)"})]}),(0,t.jsxs)(K.View,{children:[(0,t.jsx)(M.Text,{children:"External URL"}),(0,t.jsx)(eU.Input,{value:i.externalUrl,onChange:l("externalUrl"),placeholder:"e.g. https://example.com/documentation"}),(0,t.jsx)(M.Text,{variant:"small",color:"dimmer",children:"External link for additional resources. Either this or CTA Trigger is required."}),n.externalUrl?(0,t.jsx)(M.Text,{color:"default",style:{color:z.tokens.accentNegativeStronger},children:n.externalUrl}):null]}),(0,t.jsxs)(K.View,{children:[(0,t.jsx)(M.Text,{children:"CTA Trigger"}),(0,t.jsx)(eO.Select,{"aria-label":"CTA Trigger",items:[{id:"",label:"None (empty)"},{id:"bonsai_tour",label:"Launch Bonsai tour"},{id:"auth_pane",label:"Open authentication pane"},{id:"database_pane",label:"Open database pane"},{id:"create_new_chat",label:"Create new agent chat"},{id:"security_scan_pane",label:"Open security scanner pane"}],defaultSelectedKey:i.ctaTrigger||"",onSelectionChange:e=>{l("ctaTrigger")({target:{value:""===e?"":String(e)}})},children:e=>(0,t.jsx)(ek.ListBoxItem,{id:e.id,label:e.label},e.id)}),(0,t.jsx)(M.Text,{variant:"small",color:"dimmer",children:"String identifier to match elements or actions in the codebase. Either this or External URL is required."}),n.ctaTrigger?(0,t.jsx)(M.Text,{color:"default",style:{color:z.tokens.accentNegativeStronger},children:n.ctaTrigger}):null]}),(0,t.jsxs)(K.View,{children:[(0,t.jsx)(M.Text,{children:"CTA Label"}),(0,t.jsx)(eU.Input,{value:i.ctaLabel,onChange:l("ctaLabel"),placeholder:"e.g., Get Started, Learn More, Try Now"}),(0,t.jsx)(M.Text,{variant:"small",color:"dimmer",children:'Text to display on the call-to-action button. Leave empty to use default "Learn more".'})]}),(0,t.jsxs)(K.View,{children:[(0,t.jsx)(M.Text,{children:"Tags"}),(0,t.jsx)(eU.Input,{value:i.tags,onChange:l("tags"),placeholder:"Enter tags separated by commas"}),(0,t.jsx)(M.Text,{variant:"small",color:"dimmer",children:'Comma-separated list of tags (e.g., "beginner, agent, workspace")'})]}),(0,t.jsxs)(K.View,{children:[(0,t.jsx)(M.Text,{children:"Priority"}),(0,t.jsx)(eU.Input,{type:"number",value:i.priority,onChange:l("priority")}),(0,t.jsx)(M.Text,{variant:"small",color:"dimmer",children:"Lower numbers are higher priority (default: 0)"}),n.priority?(0,t.jsx)(M.Text,{color:"default",style:{color:z.tokens.accentNegativeStronger},children:n.priority}):null]}),(0,t.jsxs)(K.View,{children:[(0,t.jsx)(M.Text,{children:"Published Date"}),(0,t.jsx)(eI.default,{granularity:"minute",hourCycle:24,value:i.publishedAt?(0,ew.toCalendarDateTime)((0,eR.parseAbsolute)(i.publishedAt.toISOString(),u)):void 0,onChange:e=>s(e?e.toDate(u):null)}),(0,t.jsx)(M.Text,{variant:"small",color:"dimmer",children:"When the tip should be published. Leave empty for draft state."})]})]})},eL={},eP=i.gql`
+    mutation CreateUserTip($title: String!, $description: String!, $content: String, $tags: [String!], $priority: Int, $externalUrl: String, $criteria: String, $ctaTrigger: String, $ctaLabel: String, $publishedAt: DateTime) {
+  createUserTip(
+    title: $title
+    description: $description
+    content: $content
+    tags: $tags
+    priority: $priority
+    externalUrl: $externalUrl
+    criteria: $criteria
+    ctaTrigger: $ctaTrigger
+    ctaLabel: $ctaLabel
+    publishedAt: $publishedAt
+  ) {
+    ...UserTipFields
+  }
+}
+    ${ey}`,eA=i.gql`
+    mutation UpdateUserTip($id: ID!, $title: String, $description: String, $content: String, $tags: [String!], $priority: Int, $externalUrl: String, $criteria: String, $ctaTrigger: String, $ctaLabel: String, $publishedAt: DateTime, $archived: Boolean) {
+  updateUserTip(
+    id: $id
+    title: $title
+    description: $description
+    content: $content
+    tags: $tags
+    priority: $priority
+    externalUrl: $externalUrl
+    criteria: $criteria
+    ctaTrigger: $ctaTrigger
+    ctaLabel: $ctaLabel
+    publishedAt: $publishedAt
+    archived: $archived
+  ) {
+    ...UserTipFields
+  }
+}
+    ${ey}`;var eE=e.i(488299),eD=e.i(775007),e$=e.i(222826),eN=e.i(609912),eV=e.i(295231),eB=e.i(744006),eq=e.i(984119),eF=e.i(508454),eQ=e.i(964228);let ez={LanguageTemplates:function(){var e;let r,{data:a,loading:i,error:l,refetch:s}=(e={fetchPolicy:"cache-and-network",ssr:!1},r={...Z,...e},n.useQuery(ea,r));if(i)return(0,t.jsx)("div",{children:"Loading..."});if(l)return(0,t.jsx)("div",{children:l.message});if(!a?.languages||!a.languageTemplateRepls)throw Error("Error loading language templates");let{languages:o,languageTemplateRepls:u}=a;return(0,t.jsxs)(U.VStack,{spacing:2,align:"stretch",children:[(0,t.jsxs)(U.VStack,{spacing:1,align:"stretch",children:[(0,t.jsx)(M.Header,{level:3,variant:"subheadDefault",children:"Language Templates"}),(0,t.jsxs)(M.Text,{children:["To perform a flagged rollout, create/find a flag called flag-beta-template-",(0,t.jsx)("span",{clsx:eu.default.accentPrimary,children:"languageKey"}),", and set a beta template in the form below."]})]}),(0,t.jsxs)(U.VStack,{spacing:2,children:[(0,t.jsxs)("table",{children:[(0,t.jsx)("thead",{children:(0,t.jsxs)("tr",{children:[(0,t.jsx)("td",{children:(0,t.jsx)(M.Text,{children:"Language"})}),(0,t.jsx)("td",{children:(0,t.jsx)(M.Text,{children:"Template"})}),(0,t.jsx)("td",{children:(0,t.jsx)(M.Text,{children:"Beta Template (optional)"})})]})}),ep(o).map(e=>{let{icon:r,displayName:a,key:i,templateRepl:n,betaTemplateRepl:l}=e,o=n?.id,d=u.find(e=>e.id===o),c=l?.id,p=u.find(e=>e.id===c);return d?(0,t.jsx)(em,{language:i,icon:r||"",displayName:a,repl:d,betaRepl:p,onRemove:()=>s()},o):(0,t.jsx)(eg,{language:i,icon:r||"",displayName:a},i)})]}),(0,t.jsx)(U.VStack,{spacing:1,align:"stretch",children:(0,t.jsx)(M.Header,{level:3,variant:"subheadDefault",children:"Set new language template"})}),(0,t.jsx)(eh,{languages:o,templates:u,onSubmit:()=>s()})]})]})},UserTipsManagementTable:e=>{var a;let i,[l,s]=(0,r.useState)(1),[o,u]=(0,r.useState)(!1),[d,c]=(0,r.useState)(!1),[p,g]=(0,r.useState)(null),h=(0,r.useRef)(null),f=(0,r.useRef)(null),{data:y,loading:v,error:j}=(a={variables:{after:(0,r.useMemo)(()=>{if(1!==l)return((l-1)*50).toString()},[l]),count:50,showArchived:o},fetchPolicy:"cache-and-network",notifyOnNetworkStatusChange:!0,ssr:!1},i={...ex,...a},n.useQuery(ev,i)),{createTip:T,updateTip:S,archiveTip:_,handleUnarchive:C,createLoading:R,updateLoading:w}=(()=>{let e,t,[a,{loading:i}]=(e={...eL,...void 0},b.useMutation(eP,e)),[n,{loading:l}]=(t={...eL,...void 0},b.useMutation(eA,t)),s=(0,r.useCallback)(async e=>await a({variables:{title:e.title,description:e.description,content:e.content||null,tags:e.tags?e.tags.split(",").map(e=>e.trim()).filter(Boolean):[],priority:e.priority?parseInt(e.priority,10):null,externalUrl:e.externalUrl||null,criteria:e.criteria||null,ctaTrigger:e.ctaTrigger||null,ctaLabel:e.ctaLabel||null,publishedAt:e.publishedAt||null},refetchQueries:["UserTipsManagementTable"]}),[a]),o=(0,r.useCallback)(async e=>{if(!e.id)throw Error("ID is required for updating a tip");return await n({variables:{id:e.id,title:e.title,description:e.description,content:e.content||null,tags:e.tags?e.tags.split(",").map(e=>e.trim()).filter(Boolean):[],priority:e.priority?parseInt(e.priority,10):null,externalUrl:e.externalUrl||null,criteria:e.criteria||null,ctaTrigger:e.ctaTrigger||null,ctaLabel:e.ctaLabel||null,publishedAt:e.publishedAt||null}})},[n]);return{createTip:s,updateTip:o,archiveTip:(0,r.useCallback)(async e=>await n({variables:{id:e,archived:!0}}),[n]),handleUnarchive:(0,r.useCallback)(e=>{e.id&&n({variables:{id:e.id,archived:!1},refetchQueries:["UserTipsManagementTable"]})},[n]),createLoading:i,updateLoading:l}})(),I=(0,r.useMemo)(()=>[...y?.userTips?.items||[]].sort((e,t)=>e.priority!==t.priority?e.priority-t.priority:new Date(e.timeCreated).getTime()-new Date(t.timeCreated).getTime()),[y]),U=(0,r.useMemo)(()=>y?.userTips?.pageInfo,[y]),O=(0,r.useCallback)(()=>{g(null),c(!0)},[]),L=(0,r.useCallback)(async()=>{if(h.current&&h.current.validateForm())try{await T(h.current.formValues),c(!1)}catch{}},[T]),P=(0,r.useCallback)(async()=>{if(f.current&&f.current.validateForm())try{await S(f.current.formValues),g(null)}catch{}},[S]),A=(0,r.useCallback)(()=>{g(null)},[]),E=[{key:"title",label:"Title",isRowHeader:!0},{key:"tags",label:"Tags"},{key:"timeCreated",label:"Created"},{key:"actions",label:"",alignment:"end"}];return j?(0,t.jsx)(K.View,{p:16,children:(0,t.jsxs)(M.Text,{color:"dimmer",children:["Error loading user tips: ",j.message]})}):(0,t.jsxs)(K.View,{p:16,children:[(0,t.jsxs)(K.View,{row:!0,align:"center",justify:"space-between",clsx:eQ.default.header,children:[(0,t.jsxs)(K.View,{row:!0,align:"center",gap:16,children:[(0,t.jsx)(M.Text,{variant:"subheadDefault",children:"User Tips Management"}),(0,t.jsx)(K.View,{row:!0,align:"center",gap:8,children:(0,t.jsxs)(K.SpecializedView.label,{gap:4,row:!0,children:[(0,t.jsx)("input",{type:"checkbox",checked:o,onChange:e=>{u(e.target.checked),s(1)}}),(0,t.jsx)(M.Text,{children:"Show archived"})]})})]}),(0,t.jsx)(k.Button,{text:"Create Tip",onClick:O,colorway:"primary",iconLeft:(0,t.jsx)(eS.default,{})})]}),(0,t.jsx)(eN.IndexTable,{title:"User Tips",items:I,loading:v&&0===I.length,emptyState:(0,t.jsx)(eD.default,{title:v&&0===I.length?"Loading user tips...":"No user tips found",description:v&&0===I.length?"":"Get started by creating your first user tip",illustration:v&&0===I.length?(0,t.jsx)(m.default,{size:32,fill:z.tokens.foregroundDimmer}):(0,t.jsx)(ej.default,{size:32,fill:z.tokens.foregroundDimmer})}),columns:E,autoLayout:!0,children:e=>{var r;return(0,t.jsxs)(eF.TableRow,{id:e.id,columns:E,"data-archived":!!e.timeDeleted,clsx:eQ.default.tableRow,children:[(0,t.jsx)(eq.TableCell,{children:(0,t.jsxs)(K.View,{children:[e.externalUrl?(0,t.jsx)("a",{href:e.externalUrl,target:"_blank",rel:"noopener noreferrer",style:{cursor:"pointer",textDecoration:"underline",color:"inherit"},children:e.title}):(0,t.jsx)(M.Text,{children:e.title}),e.description?(0,t.jsx)(M.Text,{variant:"small",color:"dimmer",children:e.description.length>100?`${e.description.slice(0,100)}...`:e.description}):null,e.ctaLabel||e.ctaTrigger?(0,t.jsxs)(K.View,{row:!0,gap:8,style:{marginTop:4},children:[e.ctaLabel?(0,t.jsxs)(M.Text,{variant:"small",color:"dimmer",children:["CTA: ",e.ctaLabel]}):null,e.ctaTrigger?(0,t.jsxs)(M.Text,{variant:"small",color:"dimmer",children:["Trigger: ",e.ctaTrigger]}):null]}):null]})}),(0,t.jsx)(eq.TableCell,{children:(0,t.jsx)(K.View,{row:!0,wrap:!0,gap:4,children:(e.tags||[]).map(e=>e?(0,t.jsx)(eB.Pill,{text:e},e):null)})}),(0,t.jsx)(eq.TableCell,{children:(0,t.jsx)(M.Text,{children:e.timeCreated&&(r=e.timeCreated)?(0,ef.format)(new Date(r),"MM/dd/yy"):"-"})}),(0,t.jsx)(eq.TableCell,{children:(0,t.jsxs)(eV.PopupMenu,{trigger:(0,t.jsx)(eE.IconButton,{alt:"Actions",size:24,children:(0,t.jsx)(eT.default,{})}),"aria-label":`Actions for ${e.title}`,children:[(0,t.jsx)(eV.MenuItem,{label:"Edit",icon:(0,t.jsx)(eb.default,{}),onAction:()=>g(e)}),e.timeDeleted?(0,t.jsx)(eV.MenuItem,{label:"Restore",icon:(0,t.jsx)(e_.default,{}),onAction:()=>C(e)}):(0,t.jsx)(eV.MenuItem,{label:"Archive",icon:(0,t.jsx)(x.default,{}),onAction:()=>_(e.id)})]})})]},e.id)}}),U&&(U.hasNextPage||U.hasPreviousPage)?(0,t.jsx)(K.View,{clsx:eQ.default.paginationContainer,children:(0,t.jsx)(e$.default,{currentPage:l-1,pageSize:50,totalItems:50*l+50*!!U.hasNextPage,goToPreviousPage:()=>s(e=>Math.max(1,e-1)),goToNextPage:()=>{U.hasNextPage&&s(e=>e+1)}})}):null,(0,t.jsxs)(W.Modal,{isOpen:d,onRequestClose:()=>c(!1),maxWidth:600,children:[(0,t.jsx)(eM,{formRef:h}),(0,t.jsxs)(K.View,{row:!0,justify:"end",gap:8,p:16,children:[(0,t.jsx)(k.Button,{text:"Cancel",onClick:()=>c(!1),colorway:"negative",disabled:R}),(0,t.jsx)(k.Button,{text:R?"Creating...":"Create",onClick:L,colorway:"primary",disabled:R})]})]}),(0,t.jsxs)(W.Modal,{isOpen:null!==p,onRequestClose:A,maxWidth:600,children:[(0,t.jsx)(eM,{initialTip:p,formRef:f}),(0,t.jsxs)(K.View,{row:!0,justify:"end",gap:8,p:16,children:[(0,t.jsx)(k.Button,{text:"Cancel",onClick:A,colorway:"negative",disabled:w}),(0,t.jsx)(k.Button,{text:w?"Updating...":"Update",onClick:P,colorway:"primary",disabled:w})]})]})]})},DeleteTipInteractionsForm:()=>{let e,[a,i]=(0,r.useState)("USERNAME"),[n,l]=(0,r.useState)(""),[s,o]=(0,r.useState)(""),[u,d]=(0,r.useState)(null),[c,p]=(0,r.useState)(!1),m=(0,Q.useCurrentUserId)(),[g,{loading:h}]=(e={...N,...void 0},b.useMutation(V,e)),f=(0,r.useCallback)(async()=>{try{let e;e="ALL"===a?void 0:"MYSELF"===a?m?.toString():n.trim();let{data:t}=await g({variables:{mode:"MYSELF"===a?"USER_ID":a,target:e}}),r=t?.deleteTipInteractions;r&&("DeleteTipInteractionsResult"===r.__typename?(d({message:r.message}),l("")):("NotFoundError"===r.__typename||"UserError"===r.__typename)&&d({error:r.message}))}catch(e){d({error:"An unexpected error occurred"})}},[g,a,n,m]),x=(0,r.useCallback)(async e=>{(e.preventDefault(),o(""),a)?"MYSELF"!==a||m?"USERNAME"!==a&&"USER_ID"!==a&&"ORG"!==a||n.trim()?"ALL"===a?p(!0):await f():"USERNAME"===a?o("Please enter a username"):"USER_ID"===a?o("Please enter a user ID"):o("Please enter a workspace ID"):o("Current user ID not available"):o("Please select what to delete")},[a,n,f,m]),v=(0,r.useCallback)(async()=>{p(!1),await f()},[f]);return(0,t.jsxs)(t.Fragment,{children:[(0,t.jsx)(K.View,{p:16,clsx:Y.default.container,children:(0,t.jsxs)(K.View,{gap:16,align:"stretch",children:[(0,t.jsx)(M.Text,{variant:"subheadBig",children:"Delete user tip interactions"}),(0,t.jsx)(M.Text,{variant:"small",color:"dimmer",children:"This will permanently delete tip interaction data. This action cannot be undone."}),(0,t.jsx)("form",{onSubmit:x,children:(0,t.jsxs)(K.View,{gap:12,align:"stretch",children:[(0,t.jsxs)(K.View,{children:[(0,t.jsx)(M.Text,{variant:"small",clsx:Y.default.label,children:"What to delete"}),(0,t.jsxs)(G.ButtonGroup,{name:"delete-mode",value:a,onChange:e=>{i(e),o(""),d(null)},disabled:h,row:!0,stretch:!0,children:[(0,t.jsx)(G.ButtonGroupItem,{id:"myself-mode",text:"Myself",value:"MYSELF",icon:(0,t.jsx)(F.default,{})}),(0,t.jsx)(G.ButtonGroupItem,{id:"username-mode",text:"Username",value:"USERNAME",icon:(0,t.jsx)(F.default,{})}),(0,t.jsx)(G.ButtonGroupItem,{id:"user-id-mode",text:"User ID",value:"USER_ID",icon:(0,t.jsx)(q.default,{})}),(0,t.jsx)(G.ButtonGroupItem,{id:"org-mode",text:"Workspace",value:"ORG",icon:(0,t.jsx)(y.default,{})}),(0,t.jsx)(G.ButtonGroupItem,{id:"all-mode",text:"All Users",value:"ALL",icon:(0,t.jsx)(B.default,{})})]})]}),"USERNAME"===a||"USER_ID"===a||"ORG"===a?(0,t.jsxs)(K.View,{children:[(0,t.jsx)(M.Text,{variant:"small",clsx:Y.default.label,children:"USERNAME"===a?"Username":"USER_ID"===a?"User ID":"ORG"===a?"Workspace ID":""}),(0,t.jsx)(I.default,{value:n,onChange:e=>{l(e.target.value),o(""),d(null)},placeholder:"USERNAME"===a?"Enter username (e.g., johndoe)...":"USER_ID"===a?"Enter numeric user ID (e.g., 12345)...":"ORG"===a?"Enter workspace ID...":"",disabled:h}),(0,t.jsx)(M.Text,{variant:"small",color:"dimmer",clsx:Y.default.inputDescription,children:"USERNAME"===a?"Enter the exact username without the @ symbol.":"USER_ID"===a?"Enter the numeric user ID from the database.":"ORG"===a?"This will delete tip interactions for all users within the specified workspace.":""})]}):null,"MYSELF"===a&&(0,t.jsx)(K.View,{children:(0,t.jsxs)(M.Text,{variant:"small",color:"dimmer",children:["This will delete your own tip interactions (User ID:"," ",m||"Loading...",")."]})}),"ALL"===a&&(0,t.jsx)(K.View,{children:(0,t.jsx)(M.Text,{variant:"small",color:"dimmer",children:"⚠️ This will delete ALL tip interactions for ALL users globally. This action cannot be undone."})}),s?(0,t.jsxs)(M.Text,{variant:"small",color:"dimmer",children:["⚠️ ",s]}):null,u?(0,t.jsx)(K.View,{style:{padding:z.tokens.space12,borderRadius:z.tokens.borderRadius8,backgroundColor:u.error?z.tokens.redDimmest:z.tokens.greenDimmest,border:`1px solid ${u.error?z.tokens.redDimmer:z.tokens.greenDimmer}`},children:(0,t.jsxs)(M.Text,{variant:"small",children:[u.error?"❌":"✅"," ",u.message||u.error]})}):null,(0,t.jsx)(k.Button,{type:"submit",disabled:!(a&&("ALL"===a||("MYSELF"===a?!!m:n.trim().length>0)))||h,clsx:Y.default.submitButton,colorway:"ALL"===a?"negative":"primary",text:h?"Deleting...":"ALL"===a?"Delete All Interactions":"Delete Interactions"})]})})]})}),(0,t.jsx)(W.Modal,{isOpen:c,onRequestClose:()=>p(!1),maxWidth:500,centered:!0,children:(0,t.jsx)(H.default,{prompt:"Confirm Global Deletion",desc:(0,t.jsxs)(K.View,{gap:8,children:[(0,t.jsxs)(M.Text,{children:["You are about to permanently delete"," ",(0,t.jsx)("strong",{children:"ALL tip interactions"})," for"," ",(0,t.jsx)("strong",{children:"ALL users"})," in the system."]}),(0,t.jsx)(M.Text,{color:"dimmer",children:"This action is irreversible and will affect the entire platform. Are you absolutely sure you want to continue?"})]}),confirmText:"Yes, Delete Everything",danger:!0,loading:h,onCancel:()=>p(!1),onConfirm:v})})]})}};var eG=e.i(174423),eH=e.i(53382);e.i(214847);var eW=e.i(864300),eK=e.i(684658),eY=e.i(908267);let eJ=e=>{let a=(0,eW.useIntl)(),i=(0,r.useMemo)(()=>e.columns.map(e=>({header:e.label,accessorKey:e.key})),[e.columns]),{getHeaderGroups:n,getRowModel:l,getState:s,getPageCount:o,previousPage:u,getCanPreviousPage:d,nextPage:c,getCanNextPage:p}=(0,eG.useReactTable)({columns:i,data:e.rows,getCoreRowModel:(0,eH.getCoreRowModel)(),getPaginationRowModel:(0,eH.getPaginationRowModel)(),initialState:{pagination:{pageIndex:0,pageSize:20}}}),m=(0,r.useCallback)(()=>{if(0===e.rows.length)return;let t=e.columns.map(e=>({header:e.label,accessor:t=>(e=>{if(null==e)return"";if("string"==typeof e||"number"==typeof e||"boolean"==typeof e)return"boolean"==typeof e?String(e):e;try{return JSON.stringify(e)}catch{return String(e)}})(t[e.key])})),r=`clui-export-${new Date().toISOString().replace(/[:.]/g,"-")}`;(0,eK.downloadAsCsv)(e.rows,t,r)},[e.columns,e.rows]);return(0,t.jsxs)("div",{clsx:eY.default.root,children:[(0,t.jsxs)("table",{clsx:eY.default.table,children:[(0,t.jsx)("thead",{children:n().map(e=>(0,t.jsx)("tr",{children:e.headers.map(e=>(0,t.jsx)("th",{clsx:eY.default.cell,children:e.isPlaceholder?null:(0,eG.flexRender)(e.column.columnDef.header,e.getContext())},e.id))},e.id))}),(0,t.jsx)("tbody",{children:l().rows.map(e=>(0,t.jsx)("tr",{children:e.getVisibleCells().map(e=>(0,t.jsx)("td",{clsx:eY.default.cell,children:(0,eG.flexRender)(e.column.columnDef.cell,e.getContext())},e.id))},e.id))})]}),(0,t.jsxs)("div",{clsx:eY.default.toolbar,children:[o()>1?(0,t.jsxs)("div",{clsx:eY.default.pagination,children:[(0,t.jsx)(k.Button,{size:"small",onClick:()=>{u()},disabled:!d(),text:"Previous"}),(0,t.jsx)("div",{clsx:eY.default.pageIndicator,children:(0,t.jsxs)("div",{children:["Page"," ",(0,t.jsxs)("strong",{children:[s().pagination.pageIndex+1," of ",o()]})]})}),(0,t.jsx)(k.Button,{size:"small",onClick:()=>{c()},disabled:!p(),text:"Next"})]}):(0,t.jsx)("div",{}),e.rows.length>0?(0,t.jsx)(k.Button,{size:"small",onClick:m,text:a.formatMessage({id:"cli.tableDownloadCsv",defaultMessage:"{count, plural, one {Download CSV (# row)} other {Download CSV (# rows)}}"},{count:e.rows.length})}):null]})]})};var eZ=e.i(183035),eX=e.i(167392),e0=e.i(416298),e1=e.i(813583);let e4=e=>(0,t.jsxs)("div",{clsx:[e1.default.icon,{[e1.default.success]:e.success,[e1.default.error]:e.error}],children:[(({error:e,success:r})=>e?(0,t.jsx)(e0.default,{}):r?(0,t.jsx)(eZ.default,{}):(0,t.jsx)("div",{clsx:e1.default.chevron,children:(0,t.jsx)(eX.default,{})}))(e)," "]});var e2=e.i(180617);let e8=e=>{let{output:r}=e,a="json"in r&&r.json?(0,t.jsx)(j.default,{json:r.json}):null;if("CluiErrorOutput"===r.__typename)return(0,t.jsxs)(U.VStack,{wrap:"nowrap",spacing:1,align:"stretch",children:[(0,t.jsxs)(U.HStack,{spacing:1,children:[(0,t.jsx)(e4,{error:!0}),(0,t.jsx)("div",{children:r.error})]}),a]});if("CluiSuccessOutput"===r.__typename)return(0,t.jsxs)(U.VStack,{wrap:"nowrap",spacing:1,align:"stretch",children:[(0,t.jsxs)(U.HStack,{spacing:1,children:[(0,t.jsx)(e4,{success:!0}),(0,t.jsx)("div",{children:r.message})]}),a]});if("CluiMarkdownOutput"===r.__typename)return(0,t.jsx)(e2.default,{children:r.markdown});if("CluiTableOutput"===r.__typename)return(0,t.jsx)(eJ,{columns:r.columns,rows:r.rows});if("CluiComponentOutput"===r.__typename){let e=ez[r.component];return e?(0,t.jsx)(e,{data:r.props}):(0,t.jsxs)(U.HStack,{spacing:1,children:[(0,t.jsx)(e4,{}),(0,t.jsxs)("div",{children:["No component found for $",r.component]})]})}return(0,t.jsxs)(U.HStack,{spacing:1,children:[(0,t.jsx)(e4,{}),(0,t.jsx)("div",{children:"no output"})]})},e9=e=>{let[a,i]=(0,r.useState)(null),n=(0,v.useApolloClient)(),l=(0,r.useMemo)(()=>_({args:a||e.args||{},command:e.command}),[e.args,e.command,a]),[s,{data:o,loading:u,error:d,called:c,reset:p}]=(0,b.useMutation)(e.doc,{fetchPolicy:"no-cache"});(0,r.useEffect)(()=>{c||l.missing.required||l.missing.optional&&!a||s({variables:l.variables}).then(async()=>{e.command.path.some(e=>"impersonate"===e)&&await (0,C.signOut)(n)})},[o,d,l,c,s,a,n,e.command.path]);let m=o?e.toOutput(o):null,g=m?.__typename==="CluiErrorOutput",h=(0,r.useCallback)(e=>{p(),i(e)},[p]);if(m&&!g)return(0,t.jsx)(e8,{output:m});if(!(l.missing.optional||l.missing.required||u||d||g||null!==a))return null;let f=null;return d?f=(0,t.jsx)(w,{error:d}):g&&m?.__typename==="CluiErrorOutput"&&(f=(0,t.jsxs)(t.Fragment,{children:[(0,t.jsx)(R.StatusBanner,{colorway:"negative",icon:(0,t.jsx)(T.default,{}),text:m.error}),m.json?(0,t.jsx)(j.default,{json:m.json}):null]})),(0,t.jsxs)(K.View,{gap:8,children:[(0,t.jsx)($,{isLoading:u,command:e.command,parsedVariables:l.variables,onSubmit:h}),f]})};e.s(["default",0,e9],477743);let e3=e=>{let[a,i]=(0,r.useState)(null),n=(0,r.useMemo)(()=>_({args:a||e.args||{},command:e.command}),[e.args,e.command,a]),[s,{data:o,loading:u,error:d,called:c}]=(0,l.useLazyQuery)(e.doc,{fetchPolicy:"network-only"});(0,r.useEffect)(()=>{c||n.missing.required||!a&&n.missing.optional||s({variables:n.variables})},[n,s,c,a]);let p=o?e.toOutput(o):null,m=p?.__typename==="CluiErrorOutput",g=(0,r.useCallback)(t=>{i(t);let r=_({args:t,command:e.command});r.missing.required||s({variables:r.variables})},[s,e.command]);if(p&&!m)return(0,t.jsx)(e8,{output:p});if(!(n.missing.optional||n.missing.required||u||d||m||null!==a))return null;let h=null;return d?h=(0,t.jsx)(w,{error:d}):m&&p?.__typename==="CluiErrorOutput"&&(h=(0,t.jsxs)(t.Fragment,{children:[(0,t.jsx)(R.StatusBanner,{colorway:"negative",icon:(0,t.jsx)(T.default,{}),text:p.error}),p.json?(0,t.jsx)(j.default,{json:p.json}):null]})),(0,t.jsxs)(K.View,{gap:8,children:[(0,t.jsx)($,{isLoading:u,command:e.command,parsedVariables:n.variables,onSubmit:g}),h]})};e.s(["default",0,e3],859194);var e6=e.i(602686),e7=e.i(919073),e5=e.i(228759);function te({onRemove:e,children:r}){return(0,t.jsxs)(K.View,{gap:8,children:[(0,t.jsx)(K.View,{align:"end",children:(0,t.jsx)(eE.IconButton,{onClick:e,alt:"Remove",children:(0,t.jsx)(e6.default,{})})}),(0,t.jsx)(e7.ShadesSurface,{clsx:e5.default.surfcae,p:16,br:4,children:r})]})}var tt=e.i(2001),tr=e.i(415541),ta=e.i(709485),ti=e.i(678852),tn=e.i(141738);let tl={admin:(0,t.jsx)(g.default,{}),staff:(0,t.jsx)(p.default,{}),account:(0,t.jsx)(h.default,{}),team:(0,t.jsx)(y.default,{}),extension:(0,t.jsx)(d.default,{}),moderator:(0,t.jsx)(c.default,{}),trash:(0,t.jsx)(x.default,{}),org:(0,t.jsx)(y.default,{}),bpo:(0,t.jsx)(y.default,{})},ts=(e,t)=>{let r=e;for(let e of t){if(null==r||"object"!=typeof r)return;r=r[e]}return r};e.s(["CluiIconMap",0,tl,"default",0,e=>{let[i,l]=(0,r.useState)([]);(0,r.useEffect)(()=>{i.length>0||window.scrollTo({top:0,left:0})},[i]);let d=(0,r.useCallback)(()=>{l([])},[]);(0,r.useEffect)(()=>{l([])},[e.value]);let c=function(e){var i;let l,{data:d}=(i={ssr:!1},l={...s,...i},n.useQuery(o,l));return(0,r.useMemo)(()=>{let r;if(!d?.currentUser)return null;let i=JSON.parse(JSON.stringify(d.currentUser.clui));var n=({command:e})=>{let t=e.path?.[e.path.length-1];e.path&&2===e.path.length&&t&&tl[t]&&(e.icon=tl[t])};if("object"!=typeof i.commands)throw Error("Expected commands object");n({command:i,root:i});let l=[...Object.values(i.commands)];for(;l.length;){let e=l.shift();e&&(n({command:e,root:i}),e.commands&&l.push(...Object.values(e.commands)))}let s=i.commands||{},o=(r=0,function({searchQuery:e,data:t,active:a,path:i}){if("group"===t.type)return null;let n=[];for(let e=1;e<i.length-1;e++){let t=i[e];"group"!==t.data.type&&n.push(t.data.label)}if(a&&(r=n.length),!e)return a?{score:1}:null;let l=e.replace(/^\s+/,"");if(!l)return a?{score:1}:null;let s=l.split(/\s+/),o=l.endsWith(" ");if(1===s.length&&!o){let e=tt.default.match(s[0],t.label);return e?{score:e.score,render:{ranges:e.ranges}}:null}let u=s.filter(Boolean),d=o?u:u.slice(0,-1),c=o?"":u[u.length-1],p=n.slice(r);if(a||d.length>p.length)return null;for(let e=0;e<d.length;e++)if(d[e]!==p[e])return null;if(!c)return d.length===p.length?{score:1}:null;let m=tt.default.match(c,t.label);return m?{score:m.score,render:{ranges:m.ranges}}:null}),c=function e(r,i){return Object.entries(r).map(([r,n])=>{let l=n.path&&2===n.path.length&&tl[r]?tl[r]:(0,t.jsx)(u.default,{}),s=n.description||"";if(n.commands&&Object.keys(n.commands).length>0){let t=e(n.commands,i);return{data:{type:"context",icon:l,label:r,description:s},match:i,commands:()=>t}}if("CluiOutput"===n.outputType){let e=n.query?e3:e9,o=n.query||n.mutation;if(o){let u=null,d=n.path;return{data:{type:"output",icon:l,label:r,description:s,renderOutput:()=>(u||(u=(0,a.parse)(o)),(0,t.jsx)(e,{command:n,doc:u,toOutput:e=>ts(e,d)}))},match:i}}return{data:{type:"output",icon:l,label:r,description:s},match:i}}return{data:{type:"action",icon:l,label:r,description:s,run:()=>{}},match:i}})}(s,o),p={data:{type:"action",icon:(0,t.jsx)(f.default,{}),label:"clear",description:"Clears screen",run:()=>{(0,tr.track)(ta.events.CLUI_COMMAND_SUBMITTED,{commandPath:"clear",commandType:"action"}),e()}},match:o};return{data:{type:"context",icon:(0,t.jsx)(u.default,{}),label:"CLUI",description:"Run a command"},commands:()=>[...c,p]}},[d,e])}(d),p=(0,r.useMemo)(()=>{if(!c)return null;if(!e.value)return{command:c};let t=function(e,t){if(!t)return[e];let r=t.trim().split(/\s+/),a=[e],i=e;for(let e of r){if(!i.commands)break;let t=i.commands({searchQuery:"",path:a,active:!0});if(t instanceof Promise)break;let r=t.find(t=>"group"!==t.data.type&&t.data.label===e);if(!r||"context"!==r.data.type)break;a.push(r),i=r}return a}(c,e.value);return{command:t.length>1?t:c}},[c,e.value]),g=(0,r.useCallback)(e=>{var r;if(!("output"===(r=e.data).type&&"renderOutput"in r))return;let a=e.path.slice(1).map(e=>"group"===e.data.type?e.data.key:e.data.label).filter(Boolean).join(" ");(0,tr.track)(ta.events.CLUI_COMMAND_SUBMITTED,{commandPath:a,commandType:"output"});let n=e.data.renderOutput(),s=Math.random().toString()+i.length,o=(0,t.jsx)(te,{onRemove:()=>{l(e=>e.filter(e=>e.key!==s))},children:n},s);l(e=>[{key:s,node:o},...e])},[i.length]),h=(0,r.useRef)(null),x=(0,r.useRef)(i.length);(0,r.useEffect)(()=>{p&&x.current>0&&0===i.length&&h.current?.(),x.current=i.length},[p,i.length]);let y=(0,r.useRef)(!1);return(0,r.useEffect)(()=>{p&&!y.current&&(y.current=!0,h.current?.())},[p]),(0,t.jsx)("div",{className:tn.default.root,children:p?(0,t.jsxs)(t.Fragment,{children:[(0,t.jsx)(ti.CommandBar,{command:p.command,onSelect:g,focusRef:h,fullWidth:!0},e.value||""),(0,t.jsx)("div",{className:tn.default.output,children:i.map(e=>e.node)})]}):(0,t.jsx)("div",{className:tn.default.loading,children:(0,t.jsx)(m.default,{})})})},"getPath",0,ts],339487)},97678,e=>{e.v({root:"index-module__MurT_W__root"})},65910,e=>{e.v({iconLink:"InstallOnReplitFooter-module___Z-8zG__iconLink",textLink:"InstallOnReplitFooter-module___Z-8zG__textLink"})},132069,e=>{e.v({buttonLink:"NavItem-module__obNSla__buttonLink",centered:"NavItem-module__obNSla__centered"})},282551,e=>{e.v({fadeIn:"PersonalInviteNavItem-module__kEJtEW__fadeIn","invite-entry-fade-in":"PersonalInviteNavItem-module__kEJtEW__invite-entry-fade-in"})},576592,789987,186894,126729,941983,e=>{"use strict";var t=e.i(276385),r=e.i(389959),a=e.i(151027),i=e.i(295621),n=e.i(55547),l=e.i(650401);e.i(214847);var s=e.i(864300),o=e.i(195206),u=e.i(339487),d=e.i(384001),c=e.i(192458),p=e.i(477743),m=e.i(859194),g=e.i(61732);function h({command:e}){let a=e.query??e.mutation,i=(0,r.useMemo)(()=>a?(0,c.parse)(a):null,[a]);if(!i)return null;let n=e.query?m.default:p.default;return(0,t.jsx)(g.View,{p:8,gap:16,children:(0,t.jsx)(n,{command:e,doc:i,toOutput:t=>(0,u.getPath)(t,e.path)})})}function f(e){let a=(0,s.useIntl)().formatMessage({id:"home.searchCommandsLabel",defaultMessage:"Commands"});return(0,r.useMemo)(()=>({data:{type:"context",icon:(0,t.jsx)(o.default,{}),label:a},commands:()=>e?.commands?Object.entries(e.commands).map(([e,r])=>(function e(r,a,i){let n=0===i?u.CluiIconMap[r]??(0,t.jsx)(o.default,{}):(0,t.jsx)(o.default,{});return void 0!==a.commands&&Object.keys(a.commands).length>0?{match:d.matchLabel,data:{type:"context",label:r,description:a.description??"",icon:n},commands:t=>t.active||t.searchQuery?Object.entries(a.commands??{}).map(([t,r])=>e(t,r,i+1)):[]}:{match:d.matchLabel,data:{type:"context",label:r,description:a.description??"",icon:n,view:(0,t.jsx)(h,{command:a})},commands:()=>[]}})(e,r,0)):[]}),[e,a])}var x=e.i(407617),y=e.i(735362);function v(){let e=(0,n.useRouter)();return(0,r.useMemo)(()=>({data:{type:"context",icon:(0,t.jsx)(t.Fragment,{}),label:"Staff"},commands:()=>[{match:d.matchLabel,data:{type:"action",icon:(0,t.jsx)(y.default,{}),label:"Run Evaluations",description:"Open the evaluations page to batch test Agent",run:()=>{e.push("/evaluations")}}}]}),[e])}var b=e.i(345836),j=e.i(921125);function T(){let e=(0,n.useRouter)();return(0,r.useCallback)(t=>{let{href:r,as:a}=(0,j.replLinkProps)(t);e.push(r,a)},[e])}var S=e.i(678852),_=e.i(97678);function C(){let e=function(){let e=(0,s.useIntl)(),a=e.formatMessage({id:"home.searchRecent",defaultMessage:"Recent"}),i=e.formatMessage({id:"home.searchApps",defaultMessage:"Search Apps"}),{data:n}=(0,l.useGlobalPersonalRecentReplsQuery)({variables:{count:b.RECENT_REPLS_SIDEBAR_MENU_COUNT},fetchPolicy:"cache-and-network",ssr:!1}),o=n?.recentRepls,[u]=(0,l.useGlobalPersonalSearchLazyQuery)(),d=T(),c=(0,r.useMemo)(()=>o?.length?{data:{type:"context",label:a,icon:(0,t.jsx)(t.Fragment,{})},commands:e=>e.searchQuery?[]:o.map(t=>(0,x.toReplResult)(e.searchQuery,t,d))}:null,[o,d,a]),p=v(),m=n?.currentUser?.isStaff,g=f(n?.currentUser?.clui),h=(0,r.useMemo)(()=>({data:{type:"group",key:"search"},commands:async e=>{if(""===e.searchQuery.trim())return[];let t=await u({variables:{search:e.searchQuery}}),r=t.data?.currentUser?.replSearch;return r?r.map(t=>(0,x.toReplResult)(e.searchQuery,t,d)):[]}}),[u,d]);return(0,r.useMemo)(()=>({data:{type:"context",label:i,description:i,icon:(0,t.jsx)(t.Fragment,{})},commands:()=>[...c?[c]:[],h,g,...m?[p]:[]]}),[c,h,g,m,p,i])}();return(0,t.jsx)(S.CommandBar,{autoFocus:!0,command:e})}function R({orgId:e}){let a=function(e){let a=(0,s.useIntl)(),i=a.formatMessage({id:"home.searchRecent",defaultMessage:"Recent"}),n=a.formatMessage({id:"home.searchApps",defaultMessage:"Search Apps"}),{data:o}=(0,l.useGlobalOrgRecentReplsQuery)({variables:{orgId:e,count:b.RECENT_REPLS_SIDEBAR_MENU_COUNT},fetchPolicy:"cache-and-network",ssr:!1}),u=o?.currentUser?.org.__typename==="Org"?o.currentUser.org:null,d=u?.recentRepls.items,c=u?.name,p=o?.currentUser?.isStaff,[m]=(0,l.useGlobalOrgSearchLazyQuery)(),g=T(),h=v(),y=f(o?.currentUser?.clui),j=(0,r.useMemo)(()=>({data:{type:"group",key:"search"},commands:async t=>{if(""===t.searchQuery.trim())return[];let r=await m({variables:{orgId:e,replsInput:{filters:{title:{search:t.searchQuery}}}}}),a=r.data?.currentUser?.org.__typename==="Org"?r.data.currentUser.org:null,i=a?.repls.__typename==="ReplConnection"?a.repls.items:null;return i?i.map(e=>(0,x.toReplResult)(t.searchQuery,e,g)):[]}}),[e,m,g]),S=(0,r.useMemo)(()=>d?.length?{data:{type:"context",label:i,icon:(0,t.jsx)(t.Fragment,{})},commands:e=>e.searchQuery?[]:d.map(t=>(0,x.toReplResult)(e.searchQuery,t,g))}:null,[d,g,i]);return(0,r.useMemo)(()=>({data:{type:"context",label:n,description:c?a.formatMessage({id:"home.searchAppsInOrg",defaultMessage:"Search Apps in {orgName}"},{orgName:c}):n,icon:(0,t.jsx)(t.Fragment,{})},commands:()=>[...S?[S]:[],j,y,...p?[h]:[]]}),[S,j,y,c,p,h,n,a])}(e);return(0,t.jsx)(S.CommandBar,{autoFocus:!0,command:a})}let w=(0,i.defaultKeyCombo)({cmdOrCtrl:!0,key:"k"});e.s(["GlobalSearch",0,function(){let{orgId:e}=(0,a.useCurrentUserStoredOrgContext)();return(0,t.jsx)(g.View,{clsx:_.default.root,children:e?(0,t.jsx)(R,{orgId:e}):(0,t.jsx)(C,{})})},"useGloablSearchState",0,function(){var e;let[t,a]=(0,r.useState)(!1);return e=(0,r.useCallback)(()=>a(e=>!e),[]),(0,r.useEffect)(()=>{let t=t=>{(0,i.getKeyCombination)(t)===w&&e()};return document.addEventListener("keydown",t),()=>{document.removeEventListener("keydown",t)}},[e]),[t,a]}],576592);var I=e.i(638424),U=e.i(256758),k=e.i(8047),O=e.i(813707),M=e.i(411966),L=e.i(86145),P=e.i(488299),A=e.i(773222);let E=()=>{let e=(0,s.useIntl)(),[a,i]=(0,r.useState)(!1),[n,l]=(0,M.usePerfToggle)(M.PERF_TOGGLE_KEYS.lagRadar),[o,u]=(0,M.usePerfToggle)(M.PERF_TOGGLE_KEYS.analyticsInspector),[d,c]=(0,M.usePerfToggle)(M.PERF_TOGGLE_KEYS.devBar),p=e.formatMessage({id:"components.perfButtonPerformance",defaultMessage:"Performance"}),m=e.formatMessage({id:"components.perfButtonLagRadar",defaultMessage:"Lag Radar"}),h=e.formatMessage({id:"components.perfButtonAnalyticsInspector",defaultMessage:"Analytics Inspector"}),f=e.formatMessage({id:"components.perfButtonDevBar",defaultMessage:"Dev bar"});return(0,t.jsxs)(A.PopoverTrigger,{label:p,isOpen:a,onOpenChange:i,children:[(0,t.jsx)(P.IconButton,{alt:p,size:28,tooltipPlacement:"left-start",children:(0,t.jsx)(O.default,{})}),(0,t.jsxs)(g.View,{gap:4,p:8,children:[(0,t.jsxs)(g.View,{row:!0,gap:8,children:[(0,t.jsx)(L.Checkbox,{id:"lag-radar",name:m,checked:n,onChange:l}),(0,t.jsx)("label",{htmlFor:"lag-radar",children:m})]}),(0,t.jsxs)(g.View,{row:!0,gap:8,children:[(0,t.jsx)(L.Checkbox,{id:"analytics-inspector",name:h,checked:o,onChange:u}),(0,t.jsx)("label",{htmlFor:"analytics-inspector",children:h})]}),(0,t.jsxs)(g.View,{row:!0,gap:8,children:[(0,t.jsx)(L.Checkbox,{id:"dev-bar",name:f,checked:d,onChange:c}),(0,t.jsx)("label",{htmlFor:"dev-bar",children:f})]})]})]})};var D=e.i(65910);e.s(["InstallOnReplitFooter",0,function({isStaffplorer:e}){let r=(0,s.useIntl)();return(0,t.jsxs)(g.View,{justify:"space-between",row:!0,pl:4,children:[(0,t.jsxs)(g.View,{row:!0,gap:2,align:"center",children:[(0,t.jsx)(k.Text,{color:"dimmest",variant:"small",children:r.formatMessage({id:"home.installReplitOn",defaultMessage:"Install Replit on"})}),(0,t.jsx)(I.default,{href:"/mobile",target:"_blank",clsx:D.default.iconLink,children:(0,t.jsx)(U.default,{})}),(0,t.jsxs)(g.View,{row:!0,gap:2,align:"center",children:[(0,t.jsx)(g.View,{px:2,children:(0,t.jsx)(k.Text,{color:"dimmest",variant:"small",children:"•"})}),(0,t.jsx)(I.default,{href:"https://docs.replit.com/updates",target:"_blank",clsx:D.default.textLink,children:r.formatMessage({id:"home.changelog",defaultMessage:"Changelog"})})]})]}),(0,t.jsx)(g.View,{pl:8,children:e?(0,t.jsx)(E,{}):void 0})]})}],789987);var $=e.i(666644),N=e.i(749556),V=e.i(776065),B=e.i(926233),q=e.i(323499),F=e.i(415541),Q=e.i(709485),z=e.i(419635),G=e.i(244945),H=e.i(132069);function W(e){let r=(0,n.useRouter)(),i="function"==typeof e.active?e.active(r):e.active??!1,l=(0,a.getOrgTrackingContext)(e.orgId?{id:e.orgId}:void 0),s=e.disabled??!1,o=(0,t.jsx)(z.ButtonLink,{clsx:[H.default.buttonLink,{[H.default.centered]:e.centered}],disabled:s,variant:e.variant??(i?void 0:"nofill"),onClick:t=>{var r;s?t.preventDefault():(e.onClick?.(t),r=e.label,(0,F.track)(Q.events.NAV_ITEM_CLICK,{target:r,source:"sidebar",isWorkspace:!1,context:l}))},onMouseEnter:e.onMouseEnter,"aria-current":i?"page":void 0,"data-cy":e.dataCy,tabIndex:0,href:e.href,as:e.as,iconLeft:e.icon,text:e.label,iconRight:e.tag?(0,t.jsx)(g.View,{children:e.tag}):void 0});return(0,t.jsx)(g.View,{tag:"li",justify:"space-between",row:!0,grow:!0,shrink:!0,children:s&&e.disabledTooltipText?(0,t.jsx)(G.Tooltip,{tooltip:e.disabledTooltipText,placement:"right",children:(e,r)=>(0,t.jsx)("div",{ref:r,...e,style:{pointerEvents:"auto",flexGrow:1,flexShrink:1,minWidth:0},children:(0,t.jsx)("div",{style:{pointerEvents:"none"},children:o})})}):o})}e.s(["NavItem",0,W],186894);var K=e.i(934290),Y=e.i(933302);e.s(["InviteNavItem",0,function({org:e}){let a=(0,s.useIntl)(),i=(0,n.useRouter)(),l=(0,Y.useGetExperimentParam)("sidebar_invite_button","show_invite_button",!1)(),[o,u]=(0,r.useState)(!1);(0,r.useEffect)(()=>{u(!0)},[]);let{data:d}=(0,$.useSidebarInviteNavItemQuery)({variables:{orgId:e.id,membersInput:{count:3}},skip:!o,ssr:!1,fetchPolicy:"cache-and-network"});if(!o||!l)return null;let c=d?.currentUser?.org?.__typename==="Org"?d.currentUser.org:null,p=`/t/${e.slug}?${(0,B.settingsQueryString)("invitedUsers")}`;return(0,t.jsx)(W,{label:a.formatMessage({id:"home.navInviteLabel",defaultMessage:"Invite"}),icon:(0,t.jsx)(N.default,{}),active:!1,href:p,as:p,dataCy:"sidebar-invite-btn",orgId:e.id,tag:function({intl:e,orgData:r}){var a,i,n;if(!r)return null;let l=r.customer?.__typename==="Customer"&&"CustomerSeats"===r.customer.seats.__typename?r.customer.seats:null,s=l?(0,q.customerCollaboratorSeats)(l).remaining:null,o="OrgMemberConnection"===r.members.__typename?r.members:null,u=(o?.items??[]).slice(0,3).map(e=>({id:e.member.user.id,username:e.member.user.username,fullName:e.member.user.fullName,image:e.member.user.image}));return(0,t.jsx)(K.AvatarStackWithPill,{users:u,pillText:(a=e,i=s,n=u.length>0,null===i||i<=0?null:n?a.formatMessage({id:"home.navInviteSeatsFree",defaultMessage:"+{count} free"},{count:i}):a.formatMessage({id:"home.navInviteSeatsFreeEmpty",defaultMessage:"{count} free"},{count:i})),pillColorway:"blue"})}({intl:a,orgData:c}),onClick:e=>{var t;e.metaKey||e.ctrlKey||e.shiftKey||e.altKey||0!==e.button||(e.preventDefault(),t=i,(0,V.updatePathWithQueryParams)({router:t,params:(0,B.settingsQueryParams)("invitedUsers")}))}})}],126729);var J=e.i(351623),Z=e.i(820669),X=e.i(344480);e.i(975473);let ee={},et=J.gql`
+    query SidebarPersonalInviteNavItem($count: Int!) {
+  currentUser {
+    id
+    username
+    fullName
+    image
+    personalOrgAuthorizations {
+      ... on OrgAuthorizations {
+        addMember {
+          isAuthorized
+          code
+        }
+      }
+    }
+    deployedRepls: repls(input: {count: 1, filters: {deploymentStatus: deployed}}) {
+      ... on ReplConnection {
+        items {
+          id
+        }
+      }
+    }
+    customer {
+      ...CollaboratorCountV2Customer
+      ... on Customer {
+        id
+        authorizations {
+          enablePromotions {
+            isAuthorized
+          }
+        }
+      }
+    }
+  }
+  recentRepls(count: $count, filter: own) {
+    id
+    title
+    iconUrl
+    latestAgentScreenshotUrl
+    timeUpdated
+    isOwner
+  }
+}
+    ${Z.CollaboratorCountV2CustomerFragmentDoc}`;var er=e.i(908796),ea=e.i(780902),ei=e.i(664239),en=e.i(614852),el=e.i(206406),es=e.i(29685),eo=e.i(183035),eu=e.i(89148),ed=e.i(406664),ec=e.i(919073),ep=e.i(365757);function em({repl:e,size:r=24}){return e.screenshotUrl?(0,t.jsx)(g.View,{role:"img","aria-label":e.title,style:{width:r,height:r,borderRadius:4,flexShrink:0,backgroundImage:`url(${e.screenshotUrl})`,backgroundSize:"cover",backgroundPosition:"center"}}):(0,t.jsx)(ep.default,{size:r,iconUrl:e.iconUrl,alt:e.title})}function eg({repls:e,selectedReplId:r,onSelect:a}){let i=(0,s.useIntl)(),n=i.formatMessage({id:"home.invitePopoverRecentProjects",defaultMessage:"Recent projects"});return(0,t.jsxs)(ec.ShadesSurface,{br:8,border:"strong",elevate:!1,py:4,role:"listbox","aria-label":n,children:[(0,t.jsx)(g.View,{pl:12,pt:4,pb:4,children:(0,t.jsx)(k.Text,{variant:"small",color:"dimmest",multiline:!1,children:n})}),e.map(e=>{let n=e.id===r;return(0,t.jsxs)(ed.Interactive,{variant:"listItem",px:12,py:8,row:!0,align:"center",gap:8,role:"option",tabIndex:0,"aria-selected":n,"aria-label":e.title,onPress:()=>a(e.id),style:n?{backgroundColor:`color-mix(in srgb, ${eu.tokens.blueDimmest} 45%, transparent)`}:void 0,children:[(0,t.jsx)(em,{repl:e,size:24}),(0,t.jsx)(g.View,{grow:!0,shrink:!0,style:{minWidth:0},children:(0,t.jsx)(k.Text,{variant:"small",multiline:!1,children:e.title})}),(0,t.jsx)(k.Text,{variant:"small",color:"dimmest",multiline:!1,style:{flexShrink:0},children:(0,en.formatRelativeTime)(e.timeUpdated,{locale:i.locale,style:"narrow"})}),(0,t.jsx)(g.View,{align:"center",style:{width:16},children:n?(0,t.jsx)(eo.default,{size:16,color:eu.tokens.blueDefault}):null})]},e.id)})]})}var eh=e.i(643484),ef=e.i(903790);function ex({repls:e,customer:a}){let i=(0,s.useIntl)(),[n,l]=(0,r.useState)(e[0]?.id??""),[o,u]=(0,r.useState)(!1),d=e.find(e=>e.id===n)??e[0];if(!d)return null;let c=d.id,p=e.length>1,m=a?.seats.__typename==="CustomerSeats"?a.seats:null,h=!!m&&(0,q.customerCollaboratorSeats)(m).remaining<=ei.SHOW_COLLABORATOR_COUNT_UI_THRESHOLD,f=p?(0,t.jsx)(eh.Button,{variant:"outlined",size:"xsmall",text:o?i.formatMessage({id:"home.invitePopoverDone",defaultMessage:"Done"}):i.formatMessage({id:"home.invitePopoverChange",defaultMessage:"Change"}),onClick:()=>u(e=>!e)}):null,x=(0,t.jsx)(el.default,{replId:c,alwaysOn:!0,lazyMintOnCopy:!0},c);return(0,t.jsxs)(g.View,{py:12,gap:12,align:"stretch",style:{width:360},children:[(0,t.jsxs)(g.View,{px:12,gap:8,children:[(0,t.jsxs)(g.View,{row:!0,align:"center",justify:"space-between",gap:8,children:[(0,t.jsxs)(g.View,{row:!0,align:"center",gap:10,grow:!0,shrink:!0,style:{minWidth:0},children:[(0,t.jsx)(em,{repl:d,size:36}),(0,t.jsxs)(g.View,{grow:!0,shrink:!0,style:{minWidth:0},children:[(0,t.jsx)(k.Text,{multiline:!1,showTooltipOnTruncate:!0,style:{fontWeight:eu.tokens.fontWeightMedium},children:i.formatMessage({id:"home.invitePopoverInviteTo",defaultMessage:"Invite to {title}"},{title:d.title})}),(0,t.jsx)(k.Text,{color:"dimmest",multiline:!1,style:{fontSize:"11px"},children:i.formatMessage({id:"home.invitePopoverEdited",defaultMessage:"Edited {time}"},{time:(0,en.formatRelativeTime)(d.timeUpdated,{locale:i.locale,style:"narrow"})})})]})]}),(0,t.jsx)("div",{style:{flexShrink:0},children:f})]}),o?(0,t.jsx)(eg,{repls:e,selectedReplId:c,onSelect:e=>{l(e),u(!1)}}):null,h?(0,t.jsx)(g.View,{style:{alignSelf:"flex-end"},children:(0,t.jsx)(ei.CollaboratorCountV2,{customer:a,isAdmin:!0,enterpriseContactContext:"collaborator_limit_workspace_multiplayer",upgradeContext:"workspace_multiplayer_header"})}):null]}),(0,t.jsx)(g.View,{px:12,children:(0,t.jsx)(ec.ShadesSurface,{br:8,border:"strong",elevate:!1,py:12,children:x})}),(0,t.jsx)(ef.DividerH,{}),(0,t.jsx)(es.MultiplayerManagerV2,{replId:c,hideHeader:!0},c)]})}var ey=e.i(744006),ev=e.i(282551);e.s(["PersonalInviteNavItem",0,function(){var e;let a,i=(0,s.useIntl)(),n=(0,ea.useIsMobile)(),[l,o]=(0,r.useState)(!1);(0,r.useEffect)(()=>{o(!0)},[]);let u=(0,Y.useGetExperimentParam)("sidebar_invite_popover_personal","show_invite_entry",!1),d=l&&!n,{data:c}=(e={variables:{count:8},skip:!d,ssr:!1,fetchPolicy:"cache-and-network"},a={...ee,...e},X.useQuery(et,a)),[p,m]=(0,r.useState)(!1);if(!d)return null;let h=c?.currentUser,f=h?.personalOrgAuthorizations?.__typename==="OrgAuthorizations"?h.personalOrgAuthorizations.addMember:null,x=h?.deployedRepls?.__typename==="ReplConnection"&&h.deployedRepls.items.length>0,y=h?.customer?.authorizations.enablePromotions.isAuthorized??!1,v=(c?.recentRepls??[]).filter(e=>e.isOwner).slice(0,4).map(e=>({id:e.id,title:e.title,iconUrl:e.iconUrl,screenshotUrl:e.latestAgentScreenshotUrl??null,timeUpdated:e.timeUpdated}));if(!function({addMemberAuthorized:e,addMemberCode:t,hasDeployedRepl:r,promotionsAuthorized:a}){return(e||t===er.OrgAuthorizationCode.InsufficientQuota)&&r&&a}({addMemberAuthorized:f?.isAuthorized??!1,addMemberCode:f?.code,hasDeployedRepl:x,promotionsAuthorized:y})||0===v.length||!h||!u())return null;let b=i.formatMessage({id:"home.navInviteLabel",defaultMessage:"Invite"}),j=h.customer?.seats.__typename==="CustomerSeats"?h.customer.seats:null,T=j?(0,q.customerCollaboratorSeats)(j).remaining:null,S=T&&T>0?(0,t.jsx)(ey.Pill,{compact:!0,variant:"muted",colorway:"blue",text:(0,t.jsx)(k.Text,{variant:"small",height:"singleLine",multiline:!1,children:i.formatMessage({id:"home.navInviteSeatsFreeEmpty",defaultMessage:"{count} free"},{count:T})})}):null;return(0,t.jsxs)(A.PopoverTrigger,{isOpen:p,onOpenChange:e=>{e&&(0,F.track)(Q.events.INVITE_POPOVER_OPENED,{replId:v[0]?.id,source:"homeSidebar"}),m(e)},label:b,placement:"right top",children:[({onClick:e,ref:r})=>(0,t.jsxs)(g.View,{grow:!0,shrink:!0,clsx:ev.default.fadeIn,innerRef:r,style:{position:"relative"},"aria-haspopup":"dialog","aria-expanded":p,children:[(0,t.jsx)(W,{label:b,icon:(0,t.jsx)(N.default,{}),active:!1,variant:"outlined",centered:!0,href:"#",dataCy:"sidebar-personal-invite-btn",onClick:t=>{t.preventDefault(),e()}}),S?(0,t.jsx)(g.View,{align:"center",justify:"center",style:{position:"absolute",right:8,top:0,bottom:0,pointerEvents:"none"},children:S}):null]}),(0,t.jsx)(ex,{repls:v,customer:h.customer??void 0})]})}],941983)},702210,908833,223481,e=>{"use strict";var t=e.i(276385),r=e.i(953436),a=e.i(61935),i=e.i(76112),n=e.i(943172),l=e.i(445807),s=e.i(730497);e.i(214847);var o=e.i(864300),u=e.i(448942),d=e.i(744006),c=e.i(477814);let p=e=>t=>t.pathname===e;e.s(["useGlobalSidebarNavItems",0,function(e,m,g=!1){let{sidebarItems:{homeItem:h,replsItem:f,deploymentsItem:x,usageItem:y,connectorsItem:v}}=function({org:e,isSubscribed:p=!1}={}){var m;let g,h,f,x,y=(0,o.useIntl)(),v=e?(0,u.orgLinks)({slug:e.slug}):void 0,b=(0,s.useFlag)({controlName:"flag-free-plan",default:!1}),j=b&&!p&&!e,T=(m=e?.id,h=(0,o.useIntl)(),x=!(f=(0,l.useUsageActionRequired)(m)).loading&&f.actionRequired,{as:"/usage",href:"/usage",label:h.formatMessage({id:"home.navUsageLabel",defaultMessage:"Usage"}),icon:(0,t.jsx)(i.default,{}),tag:x?(0,t.jsx)(d.Pill,{clsx:c.navItemPillCss.self,text:h.formatMessage({id:"home.actionRequired",defaultMessage:"Action required"}),colorway:"yellow"}):void 0}),S=y.formatMessage({id:"home.navHomeLabel",defaultMessage:"Home"}),_=v?{...v.home,label:S,icon:(0,t.jsx)(r.default,{})}:{...c.homeItem,label:S},C=v?{...v.repls,icon:(0,t.jsx)(n.default,{}),label:y.formatMessage({id:"home.navProjectsLabel",defaultMessage:"Projects"})}:{href:"/repls",label:y.formatMessage({id:"home.navMyProjects",defaultMessage:"My Projects"}),icon:(0,t.jsx)(n.default,{}),routerPath:"/repls"},R=y.formatMessage({id:"home.navPublishedProjects",defaultMessage:"Published Projects"}),w=v?{...c.deploymentsItem,...v.deployments,label:R}:{...c.deploymentsItem,label:R};return!b||p||e?v?g={...v.connectors,icon:(0,t.jsx)(a.default,{}),label:y.formatMessage({id:"home.navIntegrationsLabel",defaultMessage:"Integrations"})}:v||(g={href:"/integrations",as:"/integrations",label:y.formatMessage({id:"home.navIntegrationsLabel",defaultMessage:"Integrations"}),icon:(0,t.jsx)(a.default,{}),routerPath:"/integrations"}):g=void 0,{sidebarItems:{homeItem:_,replsItem:C,deploymentsItem:w,usageItem:j?void 0:T,connectorsItem:g}}}({org:e,isSubscribed:g});return{home:{...h,active:h.routerPath?p(h.routerPath):p(h.href.toString())},repls:{...f,active:f.routerPath?p(f.routerPath):p(f.href.toString())},deployments:x?{...x,active:x.routerPath?p(x.routerPath):p(x.href.toString())}:void 0,connectors:v?{...v,active:v.routerPath?p(v.routerPath):p(v.href.toString())}:void 0,usage:m&&y?{...y,active:p(y.href.toString())}:void 0}}],702210);var m=e.i(960933);let g=m.Type.Object({domains:m.Type.Optional(m.Type.Array(m.Type.String())),id:m.Type.Optional(m.Type.String({description:"A stable identifier for the artifact that persists across folder renames. When absent, the folder name is used as the artifact identity."})),integratedSkills:m.Type.Optional(m.Type.Array(m.Type.Object({name:m.Type.Optional(m.Type.String()),version:m.Type.Optional(m.Type.String())}))),kind:m.Type.Optional(m.Type.Union([m.Type.Literal("web"),m.Type.Literal("slides"),m.Type.Literal("video"),m.Type.Literal("mobile"),m.Type.Literal("automation"),m.Type.Literal("game"),m.Type.Literal("data-app"),m.Type.Literal("cli"),m.Type.Literal("vnc"),m.Type.Literal("api"),m.Type.Literal("design"),m.Type.Literal("custom"),m.Type.Literal("design-system")])),pageMetadata:m.Type.Optional(m.Type.Array(m.Type.Object({path:m.Type.String(),screenshotTimestamp:m.Type.Optional(m.Type.String()),screenshotUri:m.Type.Optional(m.Type.String())}))),previewDomain:m.Type.Optional(m.Type.String()),previewPath:m.Type.Optional(m.Type.String()),previewPort:m.Type.Optional(m.Type.Number({description:"The port that the workspace preview connects to. Only valid when router is port."})),router:m.Type.Optional(m.Type.Union([m.Type.Literal("port"),m.Type.Literal("path"),m.Type.Literal("domain"),m.Type.Literal("expo-domain")],{description:"The preview routing strategy. port (legacy), path, domain, or expo-domain."})),services:m.Type.Optional(m.Type.Array(m.Type.Object({development:m.Type.Object({run:m.Type.Union([m.Type.Object({args:m.Type.Array(m.Type.String()),env:m.Type.Optional(m.Type.Record(m.Type.String(),m.Type.String()))},{additionalProperties:!1}),m.Type.String(),m.Type.Array(m.Type.String())],{description:"The command to run the service during development."})},{description:"Configuration for running the service during development."}),ensurePreviewReachable:m.Type.Optional(m.Type.String({description:"Path to ensure is reachable before showing the preview."})),env:m.Type.Optional(m.Type.Record(m.Type.String(),m.Type.String())),localPort:m.Type.Number({description:"The port the service listens on."}),name:m.Type.String({description:"The service name, which becomes the workflow name for development."}),paths:m.Type.Optional(m.Type.Array(m.Type.String(),{description:"Path prefixes that will be routed to this service."})),production:m.Type.Optional(m.Type.Object({build:m.Type.Optional(m.Type.Union([m.Type.Object({args:m.Type.Array(m.Type.String()),env:m.Type.Optional(m.Type.Record(m.Type.String(),m.Type.String()))},{additionalProperties:!1}),m.Type.String(),m.Type.Array(m.Type.String())],{description:"Command to build the project for production."})),health:m.Type.Optional(m.Type.Object({liveness:m.Type.Optional(m.Type.Object({headers:m.Type.Optional(m.Type.Record(m.Type.String(),m.Type.String())),path:m.Type.Optional(m.Type.String({description:"The path for the check. For example, `/ready`. Defaults to `/`."}))})),startup:m.Type.Optional(m.Type.Object({headers:m.Type.Optional(m.Type.Record(m.Type.String(),m.Type.String())),path:m.Type.Optional(m.Type.String({description:"The path for the check. For example, `/ready`. Defaults to `/`."}))}))},{description:"Configuration for production healthchecks."})),publicDir:m.Type.Optional(m.Type.String({description:"Root directory for static file serving. Only valid when serve is 'static'."})),responseHeaders:m.Type.Optional(m.Type.Array(m.Type.Object({name:m.Type.Optional(m.Type.String({description:"The name of the header to add."})),path:m.Type.Optional(m.Type.String({description:"The pattern to apply the header to."})),value:m.Type.Optional(m.Type.String({description:"The value of the header to add."}))}),{description:"Headers to apply to responses for static serving. Only valid when serve is 'static'."})),rewrites:m.Type.Optional(m.Type.Array(m.Type.Object({from:m.Type.Optional(m.Type.String({description:"The pattern to rewrite."})),to:m.Type.Optional(m.Type.String({description:"The new pattern."}))}),{description:"URL rewrite rules for static serving (e.g. SPA fallback). Only valid when serve is 'static'."})),run:m.Type.Optional(m.Type.Union([m.Type.Object({args:m.Type.Array(m.Type.String()),env:m.Type.Optional(m.Type.Record(m.Type.String(),m.Type.String()))},{additionalProperties:!1}),m.Type.String(),m.Type.Array(m.Type.String())],{description:"Command to run the service in production."})),serve:m.Type.Optional(m.Type.Union([m.Type.Literal("static"),m.Type.Literal("proxy")],{default:"proxy",description:"How the service is served in production. 'proxy' (default) proxies to a running process. 'static' serves files directly from publicDir."}))},{description:"Configuration for building and running the service in production."}))}))),title:m.Type.Optional(m.Type.String()),version:m.Type.Optional(m.Type.String())},{$id:"Artifact"});e.s(["Artifact",0,g],908833);var h=e.i(105349);e.s(["validate",()=>h.default],223481)},566977,e=>{"use strict";var t=e.i(351623),r=e.i(319801),a=e.i(517414),i=e.i(989074),n=e.i(323604);let l=t.gql`
+    fragment ReplCardArtifact on ReplArtifact {
+  artifactId
+  title
+  kind
+  previewPath
+  latestScreenshotUri
+}
+    `;i.BuildStatusBadgeHostingDeploymentFragmentDoc,n.DeploymentLinkFragmentDoc;var s=e.i(676107);let o=t.gql`
+    fragment ReplCardRepl on Repl {
+  id
+  title
+  iconUrl
+  isPrivate
+  isStarred
+  isCurrentUserStarred
+  timeUpdated
+  lastOpened
+  latestAgentScreenshotUrl
+  ...ReplLinkRepl
+  ...ComponentsReplActions
+  artifacts {
+    ...ReplCardArtifact
+  }
+  user {
+    id
+    username
+    fullName
+    image
+  }
+  hostingDeployment {
+    __typename
+    ... on HostingDeployment {
+      id
+      ...DeploymentItem
+      latestBuildStatus
+      currentBuild {
+        id
+        status
+        timeCreated
+        artifacts {
+          ...HostingBuildArtifactFields
+        }
+        user {
+          id
+          displayName
+        }
+      }
+    }
+  }
+  authorizations {
+    star {
+      isAuthorized
+    }
+    viewFileContents {
+      isAuthorized
+    }
+    editFileContents {
+      isAuthorized
+      code
+      message
+    }
+  }
+}
+    ${r.ReplLinkReplFragmentDoc}
+${a.ComponentsReplActionsFragmentDoc}
+${l}
+${s.DeploymentItemFragmentDoc}
+${s.HostingBuildArtifactFieldsFragmentDoc}`;e.s(["ReplCardReplFragmentDoc",0,o],566977)},349525,e=>{e.v({content:"index-module__SJkCTa__content",footer:"index-module__SJkCTa__footer",header:"index-module__SJkCTa__header",hideWhenCollapsed:"index-module__SJkCTa__hideWhenCollapsed",isOpen:"index-module__SJkCTa__isOpen",planUsageMonitor:"index-module__SJkCTa__planUsageMonitor",root:"index-module__SJkCTa__root"})},330971,884188,e=>{"use strict";var t=e.i(276385),r=e.i(55547),a=e.i(389959),i=e.i(14154),n=e.i(908796),l=e.i(923242),s=e.i(917255),o=e.i(336187),u=e.i(965097),d=e.i(40916),c=e.i(346781),p=e.i(255701),m=e.i(357253),g=e.i(76112),h=e.i(394572),f=e.i(908628),x=e.i(749556),y=e.i(334028),v=e.i(612343),b=e.i(761201),j=e.i(671864),T=e.i(445807),S=e.i(897395),_=e.i(151027),C=e.i(410458),R=e.i(856010),w=e.i(948176);e.i(214847);var I=e.i(864300),U=e.i(776065),k=e.i(415541),O=e.i(709485),M=e.i(926233),L=e.i(33602),P=e.i(448942),A=e.i(416004),E=e.i(289038),D=e.i(127384),$=e.i(576592),N=e.i(789987),V=e.i(126729),B=e.i(186894),q=e.i(941983),F=e.i(765269),Q=e.i(345836),z=e.i(111377),G=e.i(702210),H=e.i(89148),W=e.i(919073),K=e.i(643484),Y=e.i(488299),J=e.i(528326),Z=e.i(744006),X=e.i(8047),ee=e.i(61732),et=e.i(960933),er=e.i(862927),ea=e.i(908833),ei=e.i(223481),en=e.i(351623),el=e.i(566977),es=e.i(989074);let eo=en.gql`
+    fragment ReplsTableRepl on Repl {
+  ...ReplCardRepl
+  url
+  timeCreated
+  hostingDeployment {
+    __typename
+    ... on HostingDeployment {
+      ...BuildStatusBadgeHostingDeployment
+      currentBuild {
+        id
+        isPrivate
+      }
+    }
+  }
+}
+    ${el.ReplCardReplFragmentDoc}
+${es.BuildStatusBadgeHostingDeploymentFragmentDoc}`,eu=en.gql`
+    fragment ReplsGridRepl on Repl {
+  id
+  ...ReplsTableRepl
+}
+    ${eo}`,ed=en.gql`
+    fragment ReplsViewRepl on Repl {
+  id
+  ...ReplsTableRepl
+  ...ReplsGridRepl
+}
+    ${eo}
+${eu}`;var ec=e.i(344480),ep=e.i(975473);let em={},eg=en.gql`
+    query CurrentUserRepls($input: CurrentUserReplsInput!) {
+  currentUser {
+    id
+    repls(input: $input) {
+      __typename
+      ... on ReplConnection {
+        items {
+          ...ReplsViewRepl
+        }
+        pageInfo {
+          hasNextPage
+          nextCursor
+        }
+      }
+      ... on Error {
+        message
+      }
+    }
+  }
+}
+    ${ed}`;var eh=e.i(569910),ef=e.i(320216);let ex=[],ey=et.Type.Union([et.Type.Literal(n.CurrentUserReplsSortTypeEnum.CreationDate),et.Type.Literal(n.CurrentUserReplsSortTypeEnum.LastOpened),et.Type.Literal(n.CurrentUserReplsSortTypeEnum.LastUpdated),et.Type.Literal(n.CurrentUserReplsSortTypeEnum.PublishedAt)]),ev=et.Type.Union([et.Type.Literal(n.CurrentUserReplsSortDirectionEnum.Ascending),et.Type.Literal(n.CurrentUserReplsSortDirectionEnum.Descending)]),eb=et.Type.Union([et.Type.Literal(n.CurrentUserReplsDeploymentStatusEnum.Deployed),et.Type.Literal(n.CurrentUserReplsDeploymentStatusEnum.Failed),et.Type.Literal(n.CurrentUserReplsDeploymentStatusEnum.NotDeployed),et.Type.Literal(n.CurrentUserReplsDeploymentStatusEnum.Success)]),ej=et.Type.Union([et.Type.Literal("grid"),et.Type.Literal("table")]),eT=et.Type.Union([et.Type.Literal("__MULTIPLAYER_REPLS__"),et.Type.String({pattern:"^__TEAM__\\d+__$"})]),eS={lastUpdated:n.CurrentUserReplsSortTypeEnum.LastOpened,createdAt:n.CurrentUserReplsSortTypeEnum.CreationDate,publishedAt:n.CurrentUserReplsSortTypeEnum.PublishedAt};function e_({sortType:e,sortDirection:t,defaultSortType:r=n.CurrentUserReplsSortTypeEnum.LastUpdated}){return{sortType:e??r,direction:t??n.CurrentUserReplsSortDirectionEnum.Descending,pinnedFirst:!0}}function eC({orgId:e,publishedOnly:t,sort:r,cursor:a,search:i,filters:l}){let s={},o=!1;for(let e of l)switch(e.type){case"publishedStatus":e.value&&(s.deploymentStatus=e.value,o=!0);break;case"creator":e.value.size>0&&(s.createdBy={userIds:Array.from(e.value)});break;case"folder":e.value&&(s.folderId=e.value);break;case"buildType":e.value&&(s.artifactKind=e.value);break;default:(0,eh.default)(e)}return!o&&t&&(s.deploymentStatus=n.CurrentUserReplsDeploymentStatusEnum.Deployed),{count:24,sort:r,cursor:a,...e?{orgId:e}:{},...i?{search:i}:{},...Object.keys(s).length>0?{filters:s}:{}}}function eR({orgId:e}){let t,r=(0,a.useRef)(!1),[i]=(t={...em,...void 0},ep.useLazyQuery(eg,t));return(0,a.useCallback)(()=>{r.current||(r.current=!0,i({variables:{input:eC({orgId:e,publishedOnly:!1,sort:e_({sortType:void 0,sortDirection:void 0,defaultSortType:n.CurrentUserReplsSortTypeEnum.LastOpened}),cursor:void 0,search:void 0,filters:[]})}}))},[i,e])}e.s(["COLUMN_TO_SORT_TYPE",0,eS,"usePrewarmRepls",0,eR,"useReplsData",0,function({orgId:e,publishedOnly:t,sortType:r,sortDirection:i,debouncedSearch:l,filters:s}){var o;let u,{showError:d}=(0,ef.default)(),c=(0,I.useIntl)(),p=n.CurrentUserReplsSortTypeEnum.LastOpened,m=eC({orgId:e,publishedOnly:t,sort:e_({sortType:r,sortDirection:i,defaultSortType:p}),cursor:void 0,search:l||void 0,filters:s}),{data:g,previousData:h,loading:f,error:x,fetchMore:y}=(o={refetchWritePolicy:"overwrite",fetchPolicy:"cache-and-network",nextFetchPolicy:"cache-first",notifyOnNetworkStatusChange:!0,ssr:!1,variables:{input:m}},u={...em,...o},ec.useQuery(eg,u)),v=g?.currentUser?.repls?.__typename==="ReplConnection"?g.currentUser.repls:void 0,b=g?.currentUser?.repls?.__typename==="NotFoundError"||g?.currentUser?.repls?.__typename==="UserError",{search:j,...T}=m,S=JSON.stringify(T),_=(0,a.useRef)(null);b||x?_.current=null:v&&(_.current={nonSearchInputsKey:S,connection:v});let C=(0,a.useRef)(l),R=(0,a.useRef)(!1);C.current!==l&&(C.current=l,R.current=!0),f||(R.current=!1);let w=f&&""!==l&&R.current,U=f&&_.current?.nonSearchInputsKey===S?_.current?.connection:void 0,k=v??U,O=k?.items??ex,M=g?.currentUser?.id??h?.currentUser?.id,L=k?.pageInfo.hasNextPage??!1,P=x?.message,A=g?.currentUser?.repls?.__typename==="NotFoundError"||g?.currentUser?.repls?.__typename==="UserError"?g.currentUser.repls.message:void 0,E=(0,a.useCallback)(async()=>{if(f||!k?.pageInfo.nextCursor)return;let a=eC({orgId:e,publishedOnly:t,sort:e_({sortType:r,sortDirection:i,defaultSortType:p}),cursor:k.pageInfo.nextCursor,search:l||void 0,filters:s});await y({variables:{input:a},updateQuery:(e,{fetchMoreResult:t})=>{if(t.currentUser?.repls?.__typename!=="ReplConnection")return d(c.formatMessage({id:"home.couldNotLoadMore",defaultMessage:"Could not load more results - please refresh the page and try again"})),e;let r=[...e.currentUser?.repls?.__typename==="ReplConnection"?e.currentUser.repls.items:[],...t.currentUser.repls.items];return{...t,currentUser:{...t.currentUser,repls:{...t.currentUser.repls,items:r}}}}})},[f,y,e,t,r,i,p,l,s,k?.pageInfo.nextCursor,d,c]);return{items:O,loading:f,isSearchLoading:w,canLoadMore:L,onLoadMore:E,errorMessage:P??A,currentUserId:M}},"useReplsQueryParams",0,function(){let e=(0,U.useQueryParam)("sort","string"),t=(0,U.useQueryParam)("order","string"),r=(0,U.useQueryParam)("search","string"),i=(0,U.useQueryParam)("status","string"),n=(0,U.useQueryParam)("creator","string"),l=(0,U.useQueryParam)("view","string"),s=(0,U.useQueryParam)("folder","string"),o=(0,U.useQueryParam)("buildType","string");return(0,a.useMemo)(()=>{let a=er.Value.Check(ey,e)?e:void 0,u=er.Value.Check(ev,t)?t:void 0,d=er.Value.Check(eb,i)?i:void 0,c=new Set;n&&n.split(",").filter(Boolean).map(Number).filter(e=>!Number.isNaN(e)&&e>0).forEach(e=>c.add(e));let p=er.Value.Check(ej,l)?l:void 0;return{sortType:a,sortDirection:u,search:r,statusFilter:d,selectedCreators:c,view:p,folderFilter:s&&((0,ei.validate)(s)||er.Value.Check(eT,s))?s:void 0,buildTypeFilter:er.Value.Check(ea.Artifact.properties.kind,o)?o:void 0}},[e,t,r,i,n,l,s,o])}],884188);var ew=e.i(349525);let eI=(0,H.cvarsFrom)("index.module.css",["--sidebar-width","--content-width","--sidebar-z-index","--header-height","--border-color"]);function eU({orgSlug:e}){let r=(0,E.useOrgGroupNavItems)({orgSlug:e});return(0,t.jsx)(ee.View,{tag:"ul",gap:2,children:r.map(e=>(0,t.jsx)(B.NavItem,{...e,active:e.active??!1},`nav-item-${e.label}`))})}function ek(e){return e.metaKey||e.ctrlKey||e.shiftKey||e.altKey||0!==e.button}let eO=({currentOrg:e,canSeeReferralCTA:a,isUsingLegacyPersonalContext:i,isResolvedPersonalContext:s,isSubscribed:u=!1,isUnifiedPlansEnabled:c=!1})=>{let g=(0,I.useIntl)(),{home:f,repls:x,deployments:y,usage:j,connectors:T}=(0,G.useGlobalSidebarNavItems)(e,i,u),S=eR({orgId:e?.id}),R=(0,r.useRouter)(),w=(0,_.useIsCurrentOrgEnterprise)(),L=g.formatMessage({id:"home.navCreateSomethingNew",defaultMessage:"Create something new"}),{disableImport:A,disableIntegrations:E}=(0,C.default)(e?.id),D=g.formatMessage({id:"home.disabledByAdmin",defaultMessage:"Disabled by your enterprise admin"}),$=c&&w&&e?.authorizations.viewOrgAnalytics?.isAuthorized,N=e?(0,P.orgLinks)({slug:e.slug}).analytics:void 0,F=e?(0,P.orgLinks)({slug:e.slug}).groups:void 0,z=!e||(e.authorizations.viewOrgSecurity?.isAuthorized??!1),H=e?`/t/${e.slug}`:"/home",W=e?`/t/${e.slug}`:"/~",K=`${H}?${(0,M.settingsQueryString)("security")}`,Y=`${W}?${(0,M.settingsQueryString)("security")}`,J=`${H}?${(0,M.settingsQueryString)("promotionsReferrals")}`,Z=`${W}?${(0,M.settingsQueryString)("promotionsReferrals")}`,X=`${H}?${M.SETTINGS_SHOW_PARAM}=true`,et=`${W}?${M.SETTINGS_SHOW_PARAM}=true`;return(0,t.jsxs)(ee.View,{gap:16,children:[(0,t.jsxs)(ee.View,{gap:8,children:[(0,t.jsx)(B.NavItem,{active:!1,icon:(0,t.jsx)(d.default,{}),centered:!0,label:L,dataCy:"sidebar-new-repl-btn",variant:"outlined",href:{pathname:e?`/t/${e.slug}`:"/home",query:{create:!0}},as:e?`/t/${e.slug}`:"/~",onClick:()=>{(0,k.track)(O.events.OPEN_REPL_CREATION_PAGE,{source:"global sidebar",context:(0,_.getOrgTrackingContext)(e)})}}),(0,t.jsx)(B.NavItem,{active:!1,icon:(0,t.jsx)(h.default,{}),centered:!0,label:g.formatMessage({id:"home.navImportCodeOrDesign",defaultMessage:"Import code or design"}),dataCy:"sidebar-import-btn",variant:"outlined",disabled:A,disabledTooltipText:D,href:{pathname:"/import"},as:"/import",onClick:()=>{(0,k.track)(O.events.OPEN_IMPORT_PAGE,{source:"global sidebar",href:window.location.href,context:(0,_.getOrgTrackingContext)(e)})}}),s?(0,t.jsx)(q.PersonalInviteNavItem,{}):null]}),(0,t.jsxs)(ee.View,{tag:"ul","aria-label":g.formatMessage({id:"home.sidebarPagesAriaLabel",defaultMessage:"Pages"}),gap:2,children:[(0,t.jsx)(B.NavItem,{...f,active:f.active??!1}),(0,t.jsx)(Q.RecentReplsHoverCard,{content:e?(0,t.jsx)(Q.OrgSidebarRecentRepls,{orgId:e.id}):(0,t.jsx)(Q.SidebarRecentRepls,{}),children:e=>(0,t.jsx)(ee.View,{grow:!0,shrink:!0,innerRef:e,children:(0,t.jsx)(B.NavItem,{...x,active:x.active??!1,label:g.formatMessage(b.REPL_DISPLAY_NAME.plural),onMouseEnter:()=>S(),disableTooltip:!0})})}),y?(0,t.jsx)(B.NavItem,{...y,active:y.active??!1}):null,T?(0,t.jsx)(B.NavItem,{...T,active:T.active??!1,disabled:E,disabledTooltipText:D}):null,j&&!c?(0,t.jsx)(B.NavItem,{...j,active:j.active??!1}):null,c&&w&&F?(0,t.jsx)(B.NavItem,{...F,label:g.formatMessage({id:"home.navGroupsLabel",defaultMessage:"Groups"}),icon:(0,t.jsx)(v.default,{}),active:eL(F.routerPath)}):null,$&&N?(0,t.jsx)(B.NavItem,{...N,label:g.formatMessage({id:"home.navAnalyticsLabel",defaultMessage:"Analytics"}),icon:(0,t.jsx)(l.default,{}),active:eL(N.routerPath)}):null,c&&z?(0,t.jsx)(B.NavItem,{label:g.formatMessage({id:"home.navSecurityLabel",defaultMessage:"Security"}),icon:(0,t.jsx)(m.default,{}),active:!1,href:K,as:Y,onClick:e=>{ek(e)||(e.preventDefault(),(0,U.updatePathWithQueryParams)({router:R,params:(0,M.settingsQueryParams)("security")}))}}):null,!function(e){if(!e)return!1;let t=e.authorizations.addMember;return t.isAuthorized||t.code===n.OrgAuthorizationCode.InsufficientQuota}(e)?null:(0,t.jsx)(V.InviteNavItem,{org:{id:e.id,slug:e.slug}}),c&&a?(0,t.jsx)(B.NavItem,{label:g.formatMessage({id:"home.navPromotionsLabel",defaultMessage:"Promotions"}),icon:(0,t.jsx)(o.default,{}),active:!1,href:J,as:Z,onClick:e=>{ek(e)||(e.preventDefault(),(0,U.updatePathWithQueryParams)({router:R,params:(0,M.settingsQueryParams)("promotionsReferrals")}))}}):null,c?(0,t.jsx)(B.NavItem,{label:g.formatMessage({id:"home.navSettingsLabel",defaultMessage:"Settings"}),icon:(0,t.jsx)(p.default,{}),active:!1,href:X,as:et,onClick:e=>{ek(e)||(e.preventDefault(),(0,U.updatePathWithQueryParams)({router:R,params:[{mode:"add",key:M.SETTINGS_SHOW_PARAM,value:"true"}]}))}}):null]})]})},eM=({currentOrg:e,isUsingLegacyPersonalContext:r})=>{let i=(0,I.useIntl)(),[n,l]=(0,a.useState)(!1),{home:s,repls:o}=(0,G.useGlobalSidebarNavItems)(e,r);return(0,t.jsxs)(t.Fragment,{children:[(0,t.jsxs)(ee.View,{gap:6,children:[(0,t.jsx)(K.Button,{variant:"outlined",colorway:"primary",text:i.formatMessage({id:"home.requestMemberSeat",defaultMessage:"Request a Member Seat"}),onClick:()=>l(!0),iconLeft:(0,t.jsx)(x.default,{})}),(0,t.jsxs)(ee.View,{tag:"ul","aria-label":i.formatMessage({id:"home.sidebarPagesAriaLabel",defaultMessage:"Pages"}),gap:2,children:[(0,t.jsx)(B.NavItem,{...s,active:s.active??!1}),(0,t.jsx)(B.NavItem,{...o,active:o.active??!1,label:i.formatMessage({id:"home.filterAllProjects",defaultMessage:"All {noun}"},{noun:i.formatMessage(b.REPL_DISPLAY_NAME.plural)})})]})]}),(0,t.jsx)(A.default,{isOpen:n,orgId:e?.id,orgName:e?.name,onClose:()=>l(!1),onSuccess:()=>l(!1)})]})},eL=e=>t=>t.pathname===e,eP=({org:e})=>{let r=(0,I.useIntl)(),{slug:a}=e,i=(0,P.orgLinks)({slug:a}),n=e.authorizations.viewUsage.isAuthorized&&e.authorizations.viewSubscription.isAuthorized,s=e.authorizations.viewOrgAnalytics?.isAuthorized,o=e.authorizations.viewOrgSecurity?.isAuthorized;return(0,t.jsxs)(t.Fragment,{children:[(0,t.jsx)(ee.View,{p:6,children:(0,t.jsx)(X.Text,{variant:"small",color:"dimmest",height:"singleLine",children:r.formatMessage({id:"home.manageOrganization",defaultMessage:"Manage Organization"})})}),(0,t.jsxs)(ee.View,{tag:"ul","aria-label":r.formatMessage({id:"home.sidebarManageWorkspaceAriaLabel",defaultMessage:"Manage Workspace"}),gap:2,children:[(0,t.jsx)(B.NavItem,{...i.members,label:r.formatMessage({id:"home.navMembersLabel",defaultMessage:"Members"}),icon:(0,t.jsx)(y.default,{}),active:eL(i.members.routerPath)}),(0,t.jsx)(B.NavItem,{...i.groups,label:r.formatMessage({id:"home.navGroupsLabel",defaultMessage:"Groups"}),icon:(0,t.jsx)(v.default,{}),active:eL(i.groups.routerPath)}),n?(0,t.jsx)(eA,{...i.usage,orgId:e.id,active:eL(i.usage.routerPath)}):null,s?(0,t.jsx)(B.NavItem,{...i.analytics,label:r.formatMessage({id:"home.navAnalyticsLabel",defaultMessage:"Analytics"}),icon:(0,t.jsx)(l.default,{}),active:eL(i.analytics.routerPath)}):null,o?(0,t.jsx)(B.NavItem,{...i.security,label:r.formatMessage({id:"home.navSecurityLabel",defaultMessage:"Security"}),icon:(0,t.jsx)(m.default,{}),active:eL(i.security.routerPath)}):null,(0,t.jsx)(B.NavItem,{...i.profile,label:r.formatMessage({id:"home.navProfileLabel",defaultMessage:"Profile"}),icon:(0,t.jsx)(f.default,{}),active:eL(i.profile.routerPath)}),(0,t.jsx)(B.NavItem,{...i.settings,label:r.formatMessage({id:"home.navSettingsLabel",defaultMessage:"Settings"}),icon:(0,t.jsx)(p.default,{}),active:e=>e.pathname===i.settings.routerPath||e.pathname===`${i.settings.routerPath}/[[...tab]]`})]})]})},eA=e=>{let r=(0,I.useIntl)(),a=(0,T.useUsageActionRequired)(e.orgId),i=!a.loading&&a.actionRequired;return(0,t.jsx)(B.NavItem,{...e,icon:(0,t.jsx)(g.default,{}),tag:i?(0,t.jsx)(Z.Pill,{text:r.formatMessage({id:"home.actionRequired",defaultMessage:"Action required"}),colorway:"yellow"}):void 0,label:r.formatMessage({id:"home.navUsageLabel",defaultMessage:"Usage"})})};function eE(e){let r=(0,I.useIntl)(),[a,i]=(0,$.useGloablSearchState)();return(0,t.jsxs)(t.Fragment,{children:[(0,t.jsx)(Y.IconButton,{...e,alt:r.formatMessage({id:"home.searchLabel",defaultMessage:"Search"}),size:28,onClick:()=>i(!0),children:(0,t.jsx)(c.default,{})}),(0,t.jsx)(J.Modal,{noPadding:!0,hideCloseButton:!0,isOpen:a,onRequestClose:()=>i(!1),children:(0,t.jsx)($.GlobalSearch,{})})]})}e.s(["Sidebar",0,function(e){let a,l,o,d=(0,I.useIntl)(),c=(0,r.useRouter)(),{isOpen:p}=e,m={[eI.sidebarWidth]:D.SIDEBAR_WIDTH+"px",[eI.contentWidth]:D.SIDEBAR_WIDTH+"px",[eI.sidebarZIndex]:D.SIDEBAR_Z_INDEX.toString(),[eI.headerHeight]:D.APP_HEADER_HEIGHT+"px"},{currentUser:g}=e,{orgId:h,orgRole:f,loading:x}=(0,_.useCurrentUserStoredOrgContext)(),y=(0,w.useReferralCTAWorkspaceContext)(),{isAuthorized:v}=(0,j.useCanSeeReferralCTA)(y),b=void 0===h,T=!g.isSubscribed&&b,C=f===n.SystemOrgGroupType.SystemViewers,{data:U,loading:k}=(0,i.useLayoutSidebarGetOrgQuery)({variables:{orgId:h??""},skip:!h}),O=U?.getOrg?.__typename==="Org"?U.getOrg:void 0,M=!!h&&k,P=(0,R.useIsUnifiedPlanEnabled)(b?{currentUser:g}:{org:O}),A=(0,R.useIsUnifiedPlanEnabledForAnyOrg)(g);return O?(a=O.name,l=O.image,o=O.id):(M?(a="",l=void 0):(a=g.firstName??g.username,l=g.image),o=void 0),(0,t.jsxs)(W.ShadesSurface,{border:{side:"right"},elevate:"1x",tag:"nav",clsx:[ew.default.root,{[ew.default.isOpen]:p}],style:m,children:[(0,t.jsx)(ee.View,{clsx:ew.default.header,p:6,row:!0,gap:6,align:"center",justify:"end",children:(0,t.jsx)(eE,{})}),(0,t.jsxs)(ee.View,{clsx:ew.default.content,px:6,grow:!0,shrink:!0,gap:16,children:[A?(0,t.jsx)(ee.View,{clsx:ew.default.hideWhenCollapsed,children:(0,t.jsx)(S.OwnerPill,{ownerName:a,image:l,currentOrgId:o,isNewDesignEnabled:A,alignment:"start",stretch:!0})}):null,e.sidebarType===L.SidebarType.Index?(0,t.jsxs)(t.Fragment,{children:[(0,t.jsx)(t.Fragment,{children:C&&O?(0,t.jsx)(eM,{currentOrg:O,isUsingLegacyPersonalContext:b}):(0,t.jsx)(eO,{currentOrg:O,isUsingLegacyPersonalContext:b,isResolvedPersonalContext:void 0===h&&!x,isSubscribed:g.isSubscribed,canSeeReferralCTA:v,isUnifiedPlansEnabled:P})}),(0,t.jsx)(ee.View,{clsx:ew.default.hideWhenCollapsed,children:P||b||!O?null:(0,t.jsx)(eP,{org:O})})]}):(0,t.jsx)(eU,{orgSlug:"string"==typeof c.query.orgSlug?c.query.orgSlug:O?.slug})]}),e.sidebarType===L.SidebarType.Index?(0,t.jsxs)(ee.View,{p:12,gap:6,clsx:ew.default.footer,children:[(0,t.jsxs)(ee.View,{clsx:ew.default.hideWhenCollapsed,tag:"ul",gap:2,children:[(0,t.jsx)(B.NavItem,{href:"https://learn.replit.com/",label:d.formatMessage({id:"home.navLearnLabel",defaultMessage:"Learn"}),icon:(0,t.jsx)(u.default,{}),active:!1}),(0,t.jsx)(B.NavItem,{href:"https://docs.replit.com",label:d.formatMessage({id:"home.navDocumentationLabel",defaultMessage:"Documentation"}),icon:(0,t.jsx)(s.default,{}),active:!1})]}),(0,t.jsxs)(ee.View,{clsx:ew.default.hideWhenCollapsed,gap:6,children:[T?(0,t.jsx)(ee.View,{clsx:ew.default.planUsageMonitor,children:(0,t.jsx)(F.default,{})}):null,!T&&v&&p?(0,t.jsx)(z.SidebarReferralButton,{}):null]}),(0,t.jsx)(ee.View,{clsx:ew.default.hideWhenCollapsed,children:(0,t.jsx)(N.InstallOnReplitFooter,{isStaffplorer:g.isStaff&&g.isExplorer})})]}):null]})}],330971)}]);
+
+//# debugId=5c4e191d-c313-cb3c-9951-56b437d27db3
+//# sourceMappingURL=124qmx~ypx_g4.js.map

@@ -1,0 +1,240 @@
+;!function(){try { var e="undefined"!=typeof globalThis?globalThis:"undefined"!=typeof global?global:"undefined"!=typeof window?window:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&((e._debugIds|| (e._debugIds={}))[n]="89a5e94a-d4fc-fd93-3779-f3ba42225d97")}catch(e){}}();
+(globalThis.TURBOPACK||(globalThis.TURBOPACK=[])).push(["object"==typeof document?document.currentScript:void 0,530294,e=>{"use strict";var t,n=e.i(634759);e.i(683405);var o=((t={}).DISABLED="disabled",t.DEFAULT_ON="defaultOn",t.DEFAULT_OFF="defaultOff",t.DEFAULT_ON_AFTER_INITIAL_PROMPT="defaultOnAfterInitialPrompt",t);let i={[n.StackBlueprint.STACK_BLUEPRINT_FULLSTACK_JS]:"defaultOn",[n.StackBlueprint.STACK_BLUEPRINT_BEST_EFFORT_FALLBACK]:"defaultOn",[n.StackBlueprint.STACK_BLUEPRINT_STREAMLIT]:"defaultOn",[n.StackBlueprint.STACK_BLUEPRINT_EXPO]:"defaultOnAfterInitialPrompt",[n.StackBlueprint.STACK_BLUEPRINT_GAMESTACK_JS]:"disabled",[n.StackBlueprint.STACK_BLUEPRINT_AGENT]:"disabled",[n.StackBlueprint.STACK_BLUEPRINT_PNPM_WORKSPACE]:"defaultOn"};e.s(["AutomatedTestingConfig",()=>o,"getAutomatedTestingConfig",0,function(e){return e?i[e]??"defaultOff":"defaultOff"}])},509838,e=>{"use strict";var t=e.i(351623),n=e.i(344480);e.i(975473);let o={},i=t.gql`
+    query getWebDesignMockup($replId: String!) {
+  getRepl(id: $replId) {
+    ... on Repl {
+      id
+      config {
+        isWebDesignMockup
+      }
+    }
+  }
+}
+    `;e.s(["GetWebDesignMockupDocument",0,i,"useGetWebDesignMockupQuery",0,function(e){let t={...o,...e};return n.useQuery(i,t)}])},159425,e=>{"use strict";var t=e.i(509838),n=e.i(473072),o=e.i(551904);e.s(["useIsAgentWebDesignMockup",0,function(){let e=(0,n.default)(),{data:i,loading:r}=(0,t.useGetWebDesignMockupQuery)({variables:{replId:e}}),a=i?.getRepl?.__typename==="Repl"&&(i.getRepl.config?.isWebDesignMockup??!1);return(0,o.useInProgressMockupToAppGraduation)()?{isWebDesignMockup:!0,loading:!0}:{isWebDesignMockup:a,loading:r}}])},898699,721037,577671,600426,e=>{"use strict";var t=e.i(389959),n=e.i(830675),o=e.i(908796),i=e.i(74768),r=e.i(634759),a=e.i(541793),l=e.i(15442);let d=(0,a.atom)(null);function s(e){return Object.fromEntries(Object.entries(e).filter(([,e])=>null!=e))}var u=e.i(530294),g=e.i(473072),A=e.i(426788),c=e.i(29079),p=e.i(321202),E=e.i(159425),f=e.i(276385),m=e.i(351623),M=e.i(344480);e.i(975473);var I=e.i(299020);let _={},v=m.gql`
+    fragment UserReplSettingsFragment on UserReplSettings {
+  agentSettings {
+    explicitFields
+    modelTier
+    isTurboEnabled
+    isHighEffortEnabled
+    isPlanModeEnabled
+    isAppTestingEnabled
+    isCodeOptimizationEnabled
+    isAutoCheckpointingEnabled
+  }
+  taskSettings {
+    explicitFields
+    isAutoApprovePlanEnabled
+    isAutoMergeEnabled
+  }
+}
+    `,h=m.gql`
+    query CurrentUserReplSettings($replId: String!) {
+  currentUser {
+    id
+  }
+  getRepl(id: $replId) {
+    ... on Repl {
+      id
+      currentUserSettings {
+        ...UserReplSettingsFragment
+      }
+    }
+  }
+}
+    ${v}`;function L(e){let t={..._,...e};return M.useQuery(h,t)}let P=m.gql`
+    mutation UpdateCurrentUserReplSettings($input: UpdateCurrentUserReplSettingsInput!) {
+  updateCurrentUserReplSettings(input: $input) {
+    __typename
+    ... on UpdateCurrentUserReplSettingsPayload {
+      userReplSettings {
+        ...UserReplSettingsFragment
+      }
+    }
+    ... on UserError {
+      message
+    }
+    ... on UnauthorizedError {
+      message
+    }
+    ... on NotFoundError {
+      message
+    }
+  }
+}
+    ${v}`;function b(e){let t={..._,...e};return I.useMutation(P,t)}e.s(["CurrentUserReplSettingsDocument",0,h,"UserReplSettingsFragmentFragmentDoc",0,v,"useCurrentUserReplSettingsQuery",0,L,"useUpdateCurrentUserReplSettingsMutation",0,b],721037);let S={},T=m.gql`
+    fragment UserReplSettingsBootstrapFragment on UserReplSettings {
+  isBootstrapped
+  ...UserReplSettingsFragment
+}
+    ${v}`,U=m.gql`
+    query UserReplSettingsBootstrap($replId: String!) {
+  currentUser {
+    id
+  }
+  getRepl(id: $replId) {
+    ... on Repl {
+      id
+      currentUserSettings {
+        ...UserReplSettingsBootstrapFragment
+      }
+    }
+  }
+}
+    ${T}`,C=m.gql`
+    mutation BootstrapCurrentUserReplSettings($input: BootstrapCurrentUserReplSettingsInput!) {
+  bootstrapCurrentUserReplSettings(input: $input) {
+    __typename
+    ... on BootstrapCurrentUserReplSettingsPayload {
+      didBootstrap
+      userReplSettings {
+        ...UserReplSettingsBootstrapFragment
+      }
+    }
+    ... on UserError {
+      message
+    }
+    ... on UnauthorizedError {
+      message
+    }
+    ... on NotFoundError {
+      message
+    }
+  }
+}
+    ${T}`;function y({cache:e,replId:t,settings:n}){e.updateQuery({query:h,variables:{replId:t}},e=>e?.getRepl.__typename!=="Repl"?e:{...e,getRepl:{...e.getRepl,currentUserSettings:n}}),e.modify({id:e.identify({__typename:"Repl",id:t}),fields:{currentUserSettings:()=>n}})}e.s(["useCurrentUserReplSettings",0,function(){let e=(0,g.default)(),{data:o,loading:i,refetch:r}=L({variables:{replId:e}}),[a]=b(),l=o?.getRepl?.__typename==="Repl"?o.getRepl:null,d=l?.currentUserSettings?.agentSettings??null;return{loading:i,agentSettings:d,taskSettings:l?.currentUserSettings?.taskSettings??null,updateSettings:(0,t.useCallback)(async t=>{try{let o=await a({variables:{input:{replId:e,...t}}}),i=o.data?.updateCurrentUserReplSettings;if(i?.__typename==="UpdateCurrentUserReplSettingsPayload")return await r(),!0;return n.captureMessage("updateCurrentUserReplSettings returned non-payload",{extra:{replId:e,typename:i?.__typename,message:i&&"message"in i?i.message:void 0}}),!1}catch(o){return n.captureException(o,{extra:{message:"Error updating current user repl settings",replId:e,input:t}}),!1}},[r,e,a])}},"writeCurrentUserReplSettingsToCache",0,y],577671);let D=[250,1e3];async function N({attempt:e,bootstrap:t,replId:o}){try{let e=await t({variables:{input:{replId:o}}}),i=e.data?.bootstrapCurrentUserReplSettings;if(i?.__typename==="BootstrapCurrentUserReplSettingsPayload")return;n.captureMessage("bootstrapCurrentUserReplSettings returned non-payload",{extra:{replId:o,typename:i?.__typename,message:i&&"message"in i?i.message:void 0}})}catch(r){let n=D[e];if(null!=n){var i;return await (i=n,new Promise(e=>{setTimeout(e,i)})),N({attempt:e+1,bootstrap:t,replId:o})}throw r}}let R=(0,t.createContext)({isComplete:!0,isBootstrapping:!1});function O(){return(0,t.useContext)(R)}e.s(["UserReplSettingsBootstrapProvider",0,function({children:e}){let o=function(){var e,o;let i,r,a=(0,g.default)(),l=(0,t.useRef)(new Set),[d,s]=(0,t.useState)(()=>({isComplete:!1,isBootstrapping:!1})),{data:u,loading:A}=(e={variables:{replId:a}},i={...S,...e},M.useQuery(U,i)),[c]=(o={update(e,t){let n=t.data?.bootstrapCurrentUserReplSettings;n?.__typename==="BootstrapCurrentUserReplSettingsPayload"&&y({cache:e,replId:a,settings:n.userReplSettings})}},r={...S,...o},I.useMutation(C,r)),p=u?.getRepl.__typename==="Repl"?u.getRepl:null,E=u?.currentUser!=null,f=null!=p,m=p?.currentUserSettings?.isBootstrapped===!0;return(0,t.useEffect)(()=>{if(A)return void s({isComplete:!1,isBootstrapping:!1});if(!E||!f||m)return void s({isComplete:!0,isBootstrapping:!1});if(l.current.has(a))return;l.current.add(a);let e=!1;return s({isComplete:!1,isBootstrapping:!0}),(async()=>{try{await N({attempt:0,bootstrap:c,replId:a})}catch(e){n.captureException(e,{extra:{message:"Error bootstrapping current user repl settings",replId:a}})}finally{e||s({isComplete:!0,isBootstrapping:!1})}})(),()=>{e=!0}},[c,E,f,m,A,a]),d}(),i=(0,t.useMemo)(()=>({isComplete:o.isComplete,isBootstrapping:o.isBootstrapping}),[o.isComplete,o.isBootstrapping]);return(0,f.jsx)(R.Provider,{value:i,children:e})},"useUserReplSettingsBootstrapState",0,O],600426);var k=e.i(786864);let F={modelProfile:o.ModelProfile.ModelProfileAdvanced,enableAutomatedTesting:!1,enableAutoCheckpointing:!0,autoApprovePlan:!1,chatMode:o.AgentChatMode.Unspecified,autonomyLevel:o.AutonomyLevel.Unspecified,enableHighEffort:!1};function G(e){return Object.fromEntries(Object.entries(e).filter(([,e])=>null!=e))}function B(e,t){return e?.explicitFields.includes(t)??!1}function w(e,t){let n=function(e){switch(e){case o.ModelProfile.ModelProfileStandard:return o.UserReplModelTier.Economy;case o.ModelProfile.ModelProfileAdvanced:case o.ModelProfile.ModelProfileAdvancedFast:return o.UserReplModelTier.Power;default:return}}(t);n&&(e.modelTier=n);let i=function(e){switch(e){case o.ModelProfile.ModelProfileAdvancedFast:return!0;case o.ModelProfile.ModelProfileStandard:case o.ModelProfile.ModelProfileAdvanced:return!1;default:return}}(t);null!=i&&(e.isTurboEnabled=i)}function z({agentSettings:e,currentAgentSettings:t,currentSettings:n,fallbackModelProfile:i}){let r=B(t,o.UserReplAgentSettingsField.ModelTier)&&t?.modelTier===o.UserReplModelTier.Lite;n.chatMode===o.AgentChatMode.QuickEdit||r||!(B(t,o.UserReplAgentSettingsField.ModelTier)||B(t,o.UserReplAgentSettingsField.IsTurboEnabled))?w(e,i):(B(t,o.UserReplAgentSettingsField.ModelTier)&&(e.modelTier=t?.modelTier),B(t,o.UserReplAgentSettingsField.IsTurboEnabled)&&(e.isTurboEnabled=t?.isTurboEnabled))}e.s(["DEFAULT_AGENT_SETTINGS",0,F,"useAgentSettings",0,function(){let e,a,f,m=(0,g.default)(),[M]=(0,i.useUpdateUserReplAgentSettingsMutation)(),{previewSettings:I,replacePreviewSettings:_,updatePreviewSettings:v,clearPreviewSettings:h}=(e=(0,l.useValue)(d),a=(0,l.useSet)(d),f=(0,t.useCallback)(e=>{a(s(e))},[a]),{previewSettings:e,replacePreviewSettings:f,updatePreviewSettings:(0,t.useCallback)(e=>{a(t=>({...t??{},...s(e)}))},[a]),clearPreviewSettings:(0,t.useCallback)(()=>{a(null)},[a])}),{shouldSeeFreemiumExperience:L}=(0,k.useShouldSeeFreemiumExperience)(),{authorizations:P,loading:b}=(0,c.useAgentAuthorization)(),{isBootstrapping:S,isComplete:T}=O(),U=P?.turboAgentModel?.isAuthorized,C=P?.highEffortAgentModel?.isAuthorized,y=P?.defaultAdvancedAgentModel?.isAuthorized,{data:D,loading:N,refetch:R}=(0,i.useReplAgentSettingQuery)({variables:{replId:m}}),{isWebDesignMockup:F}=(0,E.useIsAgentWebDesignMockup)(),x=D?.getRepl.__typename==="Repl"&&D.getRepl.timeCreated&&new Date(D.getRepl.timeCreated)<new Date("2025-09-10"),H=D?.getRepl.__typename==="Repl"?D.getRepl.config.agentSettings:null,Q=D?.getRepl.__typename==="Repl"?D.getRepl.currentUserSettings:null,V=Q?.agentSettings??null,$=function({legacyAgentSettings:e,userReplAgentSettings:t,userReplTaskSettings:n}){var i,r;if(!e&&!t&&!n)return null;let a=G({modelProfile:e?.modelProfile,enableAutomatedTesting:e?.enableAutomatedTesting,enableAutoCheckpointing:e?.enableAutoCheckpointing,autoApprovePlan:e?.autoApprovePlan,chatMode:e?.chatMode,autonomyLevel:e?.autonomyLevel});if(B(t,o.UserReplAgentSettingsField.ModelTier))switch(t?.modelTier){case o.UserReplModelTier.Lite:a.chatMode=o.AgentChatMode.QuickEdit;break;case o.UserReplModelTier.Economy:a.chatMode=o.AgentChatMode.General,a.modelProfile=o.ModelProfile.ModelProfileStandard;break;case o.UserReplModelTier.Power:a.chatMode=o.AgentChatMode.General,a.modelProfile=o.ModelProfile.ModelProfileAdvanced}return B(t,o.UserReplAgentSettingsField.IsTurboEnabled)&&(t?.isTurboEnabled===!0&&a.modelProfile===o.ModelProfile.ModelProfileAdvanced?a.modelProfile=o.ModelProfile.ModelProfileAdvancedFast:t?.isTurboEnabled!==!0&&a.modelProfile===o.ModelProfile.ModelProfileAdvancedFast&&(a.modelProfile=o.ModelProfile.ModelProfileAdvanced)),B(t,o.UserReplAgentSettingsField.IsHighEffortEnabled)&&t?.isHighEffortEnabled!=null&&(a.enableHighEffort=t.isHighEffortEnabled),B(t,o.UserReplAgentSettingsField.IsPlanModeEnabled)&&(t?.isPlanModeEnabled===!0?a.chatMode=o.AgentChatMode.Discussion:a.chatMode===o.AgentChatMode.Discussion&&(a.chatMode=o.AgentChatMode.General)),B(t,o.UserReplAgentSettingsField.IsAppTestingEnabled)&&t?.isAppTestingEnabled!=null&&(a.enableAutomatedTesting=t.isAppTestingEnabled),B(t,o.UserReplAgentSettingsField.IsCodeOptimizationEnabled)&&t?.isCodeOptimizationEnabled!=null&&(a.autonomyLevel=t.isCodeOptimizationEnabled?o.AutonomyLevel.High:o.AutonomyLevel.Low),B(t,o.UserReplAgentSettingsField.IsAutoCheckpointingEnabled)&&t?.isAutoCheckpointingEnabled!=null&&(a.enableAutoCheckpointing=t.isAutoCheckpointingEnabled),i=n,r=o.UserReplTaskSettingsField.IsAutoApprovePlanEnabled,i?.explicitFields.includes(r)&&n?.isAutoApprovePlanEnabled!=null&&(a.autoApprovePlan=n.isAutoApprovePlanEnabled),a}({legacyAgentSettings:H,userReplAgentSettings:V,userReplTaskSettings:Q?.taskSettings??null}),Y=!F&&!L&&$?.chatMode!==o.AgentChatMode.QuickEdit&&$?.autonomyLevel===o.AutonomyLevel.Max,W=$?.modelProfile!=null&&$.modelProfile!==o.ModelProfile.ModelProfileUnspecified,K=D?.getRepl.__typename==="Repl"?D.getRepl.config.initialStackBlueprint:void 0,{stackBlueprint:q}=(0,p.useAgentStackBlueprint)(),j=function({agentStackBlueprint:e,initialStackBlueprint:t}){return e?e:t?t===o.InitialStackBlueprint.StackBlueprintExpo?r.StackBlueprint.STACK_BLUEPRINT_EXPO:t:void 0}({agentStackBlueprint:q,initialStackBlueprint:K}),X=(0,u.getAutomatedTestingConfig)(j),J=X===u.AutomatedTestingConfig.DEFAULT_ON,Z=(0,t.useMemo)(()=>{let e,t,n,i=X===u.AutomatedTestingConfig.DEFAULT_ON_AFTER_INITIAL_PROMPT,a=o.AutonomyLevel.High;L?a=o.AutonomyLevel.Low:x&&(a=o.AutonomyLevel.Medium),e=F?o.AutonomyLevel.Low:L?$?.autonomyLevel&&$.autonomyLevel!==o.AutonomyLevel.Unspecified&&$.autonomyLevel!==o.AutonomyLevel.Max?$.autonomyLevel:o.AutonomyLevel.Low:Y?o.AutonomyLevel.High:$?.autonomyLevel&&$.autonomyLevel!==o.AutonomyLevel.Unspecified?$.autonomyLevel:a;let l=j===r.StackBlueprint.STACK_BLUEPRINT_EXPO&&L,d=o.AgentChatMode.Unspecified;if(L?d=$?.chatMode!==o.AgentChatMode.QuickEdit||l?o.AgentChatMode.General:o.AgentChatMode.QuickEdit:F&&!function(e=o.AgentChatMode.Unspecified){return e===o.AgentChatMode.Unspecified||e===o.AgentChatMode.General||e===o.AgentChatMode.QuickEdit}($?.chatMode)?d=o.AgentChatMode.General:$?.chatMode&&$.chatMode!==o.AgentChatMode.Unspecified&&(d=$.chatMode),t=X!==u.AutomatedTestingConfig.DISABLED&&d!==o.AgentChatMode.QuickEdit&&($?.enableAutomatedTesting!=null?$.enableAutomatedTesting:!!i||!L&&J),F)n=o.ModelProfile.ModelProfileUnspecified;else if(L)n=o.ModelProfile.ModelProfileStandard;else{let e=$?.modelProfile;n=e&&e!==o.ModelProfile.ModelProfileUnspecified?e:(0,A.getDefaultModelProfile)(y)}!1===U&&n===o.ModelProfile.ModelProfileAdvancedFast&&(n=o.ModelProfile.ModelProfileAdvanced);let s=!0===C&&($?.enableHighEffort??!1);return{modelProfile:n,enableAutomatedTesting:t,enableAutoCheckpointing:$?.enableAutoCheckpointing??!0,autoApprovePlan:$?.autoApprovePlan??!1,chatMode:d,autonomyLevel:e,enableHighEffort:s}},[L,$,J,x,Y,F,X,j,U,C,y]),ee=(0,t.useMemo)(()=>{let e=I?{...Z,...G(I)}:Z;return!0!==C&&e.enableHighEffort?{...e,enableHighEffort:!1}:e},[I,Z,C]),et=(0,t.useCallback)(async e=>{var t;let i=G(e),r=function({currentAgentSettings:e,currentSettings:t,newSettings:n}){let i={},r={},a=void 0!==n.chatMode,l=void 0!==n.modelProfile,d=n.chatMode??t.chatMode,s=n.modelProfile??t.modelProfile;if(a&&(d===o.AgentChatMode.QuickEdit?(i.modelTier=o.UserReplModelTier.Lite,i.isPlanModeEnabled=!1,r.isAutoApprovePlanEnabled=!1):d===o.AgentChatMode.Discussion?(i.isPlanModeEnabled=!0,z({agentSettings:i,currentAgentSettings:e,currentSettings:t,fallbackModelProfile:s})):d===o.AgentChatMode.General&&(i.isPlanModeEnabled=!1,z({agentSettings:i,currentAgentSettings:e,currentSettings:t,fallbackModelProfile:s}))),l&&d!==o.AgentChatMode.QuickEdit&&w(i,s),void 0!==n.enableAutomatedTesting&&(i.isAppTestingEnabled=n.enableAutomatedTesting),void 0!==n.enableHighEffort&&(i.isHighEffortEnabled=n.enableHighEffort),void 0!==n.enableAutoCheckpointing&&(i.isAutoCheckpointingEnabled=n.enableAutoCheckpointing),void 0!==n.autonomyLevel){let e=function(e){switch(e){case o.AutonomyLevel.High:case o.AutonomyLevel.Max:return!0;case o.AutonomyLevel.Low:return!1;default:return}}(n.autonomyLevel);null!=e&&(i.isCodeOptimizationEnabled=e)}return void 0!==n.autoApprovePlan&&(r.isAutoApprovePlanEnabled=n.autoApprovePlan),{...Object.keys(i).length>0?{agentSettings:i}:{},...Object.keys(r).length>0?{taskSettings:r}:{}}}({currentAgentSettings:V,currentSettings:ee,newSettings:i});if(!((t=r).agentSettings||t.taskSettings))return!0;try{let e=await M({variables:{input:{replId:m,...r}}}),t=e.data?.updateCurrentUserReplSettings;if(t?.__typename==="UpdateCurrentUserReplSettingsPayload")return await R(),!0;return n.captureMessage("updateCurrentUserReplSettings returned non-payload for agent settings",{extra:{replId:m,typename:t?.__typename,message:t&&"message"in t?t.message:void 0}}),!1}catch(e){return n.captureException(e,{extra:{message:"Error updating user repl agent settings",replId:m,attemptedSettings:i,currentSettings:V}}),!1}},[m,R,ee,M,V]);return{replId:m,settings:ee,replacePreviewSettings:_,updatePreviewSettings:v,clearPreviewSettings:h,updateSettings:et,loading:N||b||S||!T,settingsLoading:N,stackBlueprint:j,hasCustomizedModelProfile:W}}],898699)},426788,e=>{"use strict";var t,n,o,i,r,a=e.i(908796),l=e.i(82259);e.i(660670);var d=e.i(806240),s=e.i(677994);let u=new Map,g={$type:"google.protobuf.BoolValue",encode:(e,t=new s.BinaryWriter)=>(!1!==e.value&&t.uint32(8).bool(e.value),t),decode(e,t){let n=e instanceof s.BinaryReader?e:new s.BinaryReader(e),o=void 0===t?n.len:n.pos+t,i={value:!1};for(;n.pos<o;){let e=n.uint32();switch(e>>>3){case 1:if(8!==e)break;i.value=n.bool();continue}if((7&e)==4||0===e)break;n.skip(7&e)}return i},async *encodeTransform(e){for await(let t of e)if(globalThis.Array.isArray(t))for(let e of t)yield*[g.encode(e).finish()];else yield*[g.encode(t).finish()]},async *decodeTransform(e){for await(let t of e)if(globalThis.Array.isArray(t))for(let e of t)yield*[g.decode(e)];else yield*[g.decode(t)]},fromJSON:e=>({value:null!=e.value&&globalThis.Boolean(e.value)}),toJSON(e){let t={};return!1!==e.value&&(t.value=e.value),t}};u.set(g.$type,g);var A=((t={})[t.UNSPECIFIED=0]="UNSPECIFIED",t[t.GENERAL=1]="GENERAL",t[t.DISCUSSION=2]="DISCUSSION",t[t.INITIAL_PLANNING=3]="INITIAL_PLANNING",t[t.QUICK_EDIT=4]="QUICK_EDIT",t);(n={})[n.UNSPECIFIED=0]="UNSPECIFIED",n[n.SYNC=1]="SYNC",n[n.ASYNC=2]="ASYNC",n[n.DESIGN=3]="DESIGN",n[n.BUILD=4]="BUILD";var c=((o={})[o.UNSPECIFIED=0]="UNSPECIFIED",o[o.LOW=1]="LOW",o[o.MEDIUM=2]="MEDIUM",o[o.HIGH=3]="HIGH",o[o.MAX=4]="MAX",o);(i={})[i.UNSPECIFIED=0]="UNSPECIFIED",i[i.LITE=1]="LITE",i[i.PRO=2]="PRO";var p=((r={})[r.UNSPECIFIED=0]="UNSPECIFIED",r[r.STANDARD=1]="STANDARD",r[r.ADVANCED=2]="ADVANCED",r[r.ADVANCED_FAST=3]="ADVANCED_FAST",r);let E={$type:"replit.ai.chat.AgentConfig",encode:(e,t=new s.BinaryWriter)=>(0!==e.maxSteps&&t.uint32(8).int32(e.maxSteps),void 0!==e.enablePlanMode&&g.encode({value:e.enablePlanMode},t.uint32(18).fork()).join(),void 0!==e.enableHumanInLoop&&g.encode({value:e.enableHumanInLoop},t.uint32(26).fork()).join(),void 0!==e.thinkingEnabled&&g.encode({value:e.thinkingEnabled},t.uint32(34).fork()).join(),0!==e.modelProfile&&t.uint32(40).int32(e.modelProfile),void 0!==e.enableAutomatedTesting&&g.encode({value:e.enableAutomatedTesting},t.uint32(50).fork()).join(),0!==e.samplingRate&&t.uint32(56).int32(e.samplingRate),void 0!==e.webSearchEnabled&&g.encode({value:e.webSearchEnabled},t.uint32(66).fork()).join(),0!==e.agentMode&&t.uint32(72).int32(e.agentMode),void 0!==e.imageGenerationEnabled&&g.encode({value:e.imageGenerationEnabled},t.uint32(82).fork()).join(),0!==e.initialBuildMode&&t.uint32(88).int32(e.initialBuildMode),void 0!==e.maxAutonomyEnabled&&g.encode({value:e.maxAutonomyEnabled},t.uint32(98).fork()).join(),0!==e.autonomyLevel&&t.uint32(112).int32(e.autonomyLevel),0!==e.agentInitialBuildTier&&t.uint32(120).int32(e.agentInitialBuildTier),!1!==e.headlessMode&&t.uint32(128).bool(e.headlessMode),void 0!==e.workspaceLessMode&&g.encode({value:e.workspaceLessMode},t.uint32(138).fork()).join(),void 0!==e.enableAutoCheckpointing&&g.encode({value:e.enableAutoCheckpointing},t.uint32(146).fork()).join(),void 0!==e.autoApprovePlan&&g.encode({value:e.autoApprovePlan},t.uint32(154).fork()).join(),t),decode(e,t){let n=e instanceof s.BinaryReader?e:new s.BinaryReader(e),o=void 0===t?n.len:n.pos+t,i={maxSteps:0,enablePlanMode:void 0,enableHumanInLoop:void 0,thinkingEnabled:void 0,modelProfile:0,enableAutomatedTesting:void 0,samplingRate:0,webSearchEnabled:void 0,agentMode:0,imageGenerationEnabled:void 0,initialBuildMode:0,maxAutonomyEnabled:void 0,autonomyLevel:0,agentInitialBuildTier:0,headlessMode:!1,workspaceLessMode:void 0,enableAutoCheckpointing:void 0,autoApprovePlan:void 0};for(;n.pos<o;){let e=n.uint32();switch(e>>>3){case 1:if(8!==e)break;i.maxSteps=n.int32();continue;case 2:if(18!==e)break;i.enablePlanMode=g.decode(n,n.uint32()).value;continue;case 3:if(26!==e)break;i.enableHumanInLoop=g.decode(n,n.uint32()).value;continue;case 4:if(34!==e)break;i.thinkingEnabled=g.decode(n,n.uint32()).value;continue;case 5:if(40!==e)break;i.modelProfile=n.int32();continue;case 6:if(50!==e)break;i.enableAutomatedTesting=g.decode(n,n.uint32()).value;continue;case 7:if(56!==e)break;i.samplingRate=n.int32();continue;case 8:if(66!==e)break;i.webSearchEnabled=g.decode(n,n.uint32()).value;continue;case 9:if(72!==e)break;i.agentMode=n.int32();continue;case 10:if(82!==e)break;i.imageGenerationEnabled=g.decode(n,n.uint32()).value;continue;case 11:if(88!==e)break;i.initialBuildMode=n.int32();continue;case 12:if(98!==e)break;i.maxAutonomyEnabled=g.decode(n,n.uint32()).value;continue;case 14:if(112!==e)break;i.autonomyLevel=n.int32();continue;case 15:if(120!==e)break;i.agentInitialBuildTier=n.int32();continue;case 16:if(128!==e)break;i.headlessMode=n.bool();continue;case 17:if(138!==e)break;i.workspaceLessMode=g.decode(n,n.uint32()).value;continue;case 18:if(146!==e)break;i.enableAutoCheckpointing=g.decode(n,n.uint32()).value;continue;case 19:if(154!==e)break;i.autoApprovePlan=g.decode(n,n.uint32()).value;continue}if((7&e)==4||0===e)break;n.skip(7&e)}return i},async *encodeTransform(e){for await(let t of e)if(globalThis.Array.isArray(t))for(let e of t)yield*[E.encode(e).finish()];else yield*[E.encode(t).finish()]},async *decodeTransform(e){for await(let t of e)if(globalThis.Array.isArray(t))for(let e of t)yield*[E.decode(e)];else yield*[E.decode(t)]},fromJSON:e=>({maxSteps:f(e.maxSteps)?globalThis.Number(e.maxSteps):0,enablePlanMode:f(e.enablePlanMode)?!!e.enablePlanMode:void 0,enableHumanInLoop:f(e.enableHumanInLoop)?!!e.enableHumanInLoop:void 0,thinkingEnabled:f(e.thinkingEnabled)?!!e.thinkingEnabled:void 0,modelProfile:f(e.modelProfile)?function(e){switch(e){case 0:case"MODEL_PROFILE_UNSPECIFIED":return 0;case 1:case"MODEL_PROFILE_STANDARD":return 1;case 2:case"MODEL_PROFILE_ADVANCED":return 2;case 3:case"MODEL_PROFILE_ADVANCED_FAST":return 3;default:throw new globalThis.Error("Unrecognized enum value "+e+" for enum ModelProfile")}}(e.modelProfile):0,enableAutomatedTesting:f(e.enableAutomatedTesting)?!!e.enableAutomatedTesting:void 0,samplingRate:f(e.samplingRate)?globalThis.Number(e.samplingRate):0,webSearchEnabled:f(e.webSearchEnabled)?!!e.webSearchEnabled:void 0,agentMode:f(e.agentMode)?function(e){switch(e){case 0:case"AGENT_MODE_UNSPECIFIED":return 0;case 1:case"AGENT_MODE_GENERAL":return 1;case 2:case"AGENT_MODE_DISCUSSION":return 2;case 3:case"AGENT_MODE_INITIAL_PLANNING":return 3;case 4:case"AGENT_MODE_QUICK_EDIT":return 4;default:throw new globalThis.Error("Unrecognized enum value "+e+" for enum AgentMode")}}(e.agentMode):0,imageGenerationEnabled:f(e.imageGenerationEnabled)?!!e.imageGenerationEnabled:void 0,initialBuildMode:f(e.initialBuildMode)?function(e){switch(e){case 0:case"AGENT_INITIAL_BUILD_MODE_UNSPECIFIED":return 0;case 1:case"AGENT_INITIAL_BUILD_MODE_SYNC":return 1;case 2:case"AGENT_INITIAL_BUILD_MODE_ASYNC":return 2;case 3:case"AGENT_INITIAL_BUILD_MODE_DESIGN":return 3;case 4:case"AGENT_INITIAL_BUILD_MODE_BUILD":return 4;default:throw new globalThis.Error("Unrecognized enum value "+e+" for enum AgentInitialBuildMode")}}(e.initialBuildMode):0,maxAutonomyEnabled:f(e.maxAutonomyEnabled)?!!e.maxAutonomyEnabled:void 0,autonomyLevel:f(e.autonomyLevel)?function(e){switch(e){case 0:case"AUTONOMY_LEVEL_UNSPECIFIED":return 0;case 1:case"AUTONOMY_LEVEL_LOW":return 1;case 2:case"AUTONOMY_LEVEL_MEDIUM":return 2;case 3:case"AUTONOMY_LEVEL_HIGH":return 3;case 4:case"AUTONOMY_LEVEL_MAX":return 4;default:throw new globalThis.Error("Unrecognized enum value "+e+" for enum AutonomyLevel")}}(e.autonomyLevel):0,agentInitialBuildTier:f(e.agentInitialBuildTier)?function(e){switch(e){case 0:case"AGENT_INITIAL_BUILD_TIER_UNSPECIFIED":return 0;case 1:case"AGENT_INITIAL_BUILD_TIER_LITE":return 1;case 2:case"AGENT_INITIAL_BUILD_TIER_PRO":return 2;default:throw new globalThis.Error("Unrecognized enum value "+e+" for enum AgentInitialBuildTier")}}(e.agentInitialBuildTier):0,headlessMode:!!f(e.headlessMode)&&globalThis.Boolean(e.headlessMode),workspaceLessMode:f(e.workspaceLessMode)?!!e.workspaceLessMode:void 0,enableAutoCheckpointing:f(e.enableAutoCheckpointing)?!!e.enableAutoCheckpointing:void 0,autoApprovePlan:f(e.autoApprovePlan)?!!e.autoApprovePlan:void 0}),toJSON(e){let t={};return 0!==e.maxSteps&&(t.maxSteps=Math.round(e.maxSteps)),void 0!==e.enablePlanMode&&(t.enablePlanMode=e.enablePlanMode),void 0!==e.enableHumanInLoop&&(t.enableHumanInLoop=e.enableHumanInLoop),void 0!==e.thinkingEnabled&&(t.thinkingEnabled=e.thinkingEnabled),0!==e.modelProfile&&(t.modelProfile=function(e){switch(e){case 0:return"MODEL_PROFILE_UNSPECIFIED";case 1:return"MODEL_PROFILE_STANDARD";case 2:return"MODEL_PROFILE_ADVANCED";case 3:return"MODEL_PROFILE_ADVANCED_FAST";default:throw new globalThis.Error("Unrecognized enum value "+e+" for enum ModelProfile")}}(e.modelProfile)),void 0!==e.enableAutomatedTesting&&(t.enableAutomatedTesting=e.enableAutomatedTesting),0!==e.samplingRate&&(t.samplingRate=Math.round(e.samplingRate)),void 0!==e.webSearchEnabled&&(t.webSearchEnabled=e.webSearchEnabled),0!==e.agentMode&&(t.agentMode=function(e){switch(e){case 0:return"AGENT_MODE_UNSPECIFIED";case 1:return"AGENT_MODE_GENERAL";case 2:return"AGENT_MODE_DISCUSSION";case 3:return"AGENT_MODE_INITIAL_PLANNING";case 4:return"AGENT_MODE_QUICK_EDIT";default:throw new globalThis.Error("Unrecognized enum value "+e+" for enum AgentMode")}}(e.agentMode)),void 0!==e.imageGenerationEnabled&&(t.imageGenerationEnabled=e.imageGenerationEnabled),0!==e.initialBuildMode&&(t.initialBuildMode=function(e){switch(e){case 0:return"AGENT_INITIAL_BUILD_MODE_UNSPECIFIED";case 1:return"AGENT_INITIAL_BUILD_MODE_SYNC";case 2:return"AGENT_INITIAL_BUILD_MODE_ASYNC";case 3:return"AGENT_INITIAL_BUILD_MODE_DESIGN";case 4:return"AGENT_INITIAL_BUILD_MODE_BUILD";default:throw new globalThis.Error("Unrecognized enum value "+e+" for enum AgentInitialBuildMode")}}(e.initialBuildMode)),void 0!==e.maxAutonomyEnabled&&(t.maxAutonomyEnabled=e.maxAutonomyEnabled),0!==e.autonomyLevel&&(t.autonomyLevel=function(e){switch(e){case 0:return"AUTONOMY_LEVEL_UNSPECIFIED";case 1:return"AUTONOMY_LEVEL_LOW";case 2:return"AUTONOMY_LEVEL_MEDIUM";case 3:return"AUTONOMY_LEVEL_HIGH";case 4:return"AUTONOMY_LEVEL_MAX";default:throw new globalThis.Error("Unrecognized enum value "+e+" for enum AutonomyLevel")}}(e.autonomyLevel)),0!==e.agentInitialBuildTier&&(t.agentInitialBuildTier=function(e){switch(e){case 0:return"AGENT_INITIAL_BUILD_TIER_UNSPECIFIED";case 1:return"AGENT_INITIAL_BUILD_TIER_LITE";case 2:return"AGENT_INITIAL_BUILD_TIER_PRO";default:throw new globalThis.Error("Unrecognized enum value "+e+" for enum AgentInitialBuildTier")}}(e.agentInitialBuildTier)),!1!==e.headlessMode&&(t.headlessMode=e.headlessMode),void 0!==e.workspaceLessMode&&(t.workspaceLessMode=e.workspaceLessMode),void 0!==e.enableAutoCheckpointing&&(t.enableAutoCheckpointing=e.enableAutoCheckpointing),void 0!==e.autoApprovePlan&&(t.autoApprovePlan=e.autoApprovePlan),t}};function f(e){return null!=e}u.set(E.$type,E);let m={maxSteps:0,initialBuildMode:l.AgentInitialBuildMode.AGENT_INITIAL_BUILD_MODE_UNSPECIFIED,samplingRate:0,agentInitialBuildTier:l.AgentInitialBuildTier.AGENT_INITIAL_BUILD_TIER_UNSPECIFIED,headlessMode:!1,workspaceLessMode:!1},M={[a.ModelProfile.ModelProfileUnspecified]:l.ModelProfile.MODEL_PROFILE_UNSPECIFIED,[a.ModelProfile.ModelProfileStandard]:l.ModelProfile.MODEL_PROFILE_STANDARD,[a.ModelProfile.ModelProfileAdvanced]:l.ModelProfile.MODEL_PROFILE_ADVANCED,[a.ModelProfile.ModelProfileAdvancedFast]:l.ModelProfile.MODEL_PROFILE_ADVANCED_FAST},I={[a.ModelProfile.ModelProfileUnspecified]:p.UNSPECIFIED,[a.ModelProfile.ModelProfileStandard]:p.STANDARD,[a.ModelProfile.ModelProfileAdvanced]:p.ADVANCED,[a.ModelProfile.ModelProfileAdvancedFast]:p.ADVANCED_FAST},_={[a.AgentChatMode.Unspecified]:A.UNSPECIFIED,[a.AgentChatMode.General]:A.GENERAL,[a.AgentChatMode.Discussion]:A.DISCUSSION,[a.AgentChatMode.InitialPlanning]:A.INITIAL_PLANNING,[a.AgentChatMode.QuickEdit]:A.QUICK_EDIT},v={[a.AutonomyLevel.Unspecified]:c.UNSPECIFIED,[a.AutonomyLevel.Low]:c.LOW,[a.AutonomyLevel.Medium]:c.MEDIUM,[a.AutonomyLevel.High]:c.HIGH,[a.AutonomyLevel.Max]:c.MAX},h={[a.AgentChatMode.Unspecified]:l.AgentMode.AGENT_MODE_UNSPECIFIED,[a.AgentChatMode.General]:l.AgentMode.AGENT_MODE_GENERAL,[a.AgentChatMode.Discussion]:l.AgentMode.AGENT_MODE_DISCUSSION,[a.AgentChatMode.InitialPlanning]:l.AgentMode.AGENT_MODE_INITIAL_PLANNING,[a.AgentChatMode.QuickEdit]:l.AgentMode.AGENT_MODE_QUICK_EDIT},L={[a.AutonomyLevel.Unspecified]:l.AutonomyLevel.AUTONOMY_LEVEL_UNSPECIFIED,[a.AutonomyLevel.Low]:l.AutonomyLevel.AUTONOMY_LEVEL_LOW,[a.AutonomyLevel.Medium]:l.AutonomyLevel.AUTONOMY_LEVEL_MEDIUM,[a.AutonomyLevel.High]:l.AutonomyLevel.AUTONOMY_LEVEL_HIGH,[a.AutonomyLevel.Max]:l.AutonomyLevel.AUTONOMY_LEVEL_MAX},P={[l.AutonomyLevel.AUTONOMY_LEVEL_UNSPECIFIED]:a.AutonomyLevel.Unspecified,[l.AutonomyLevel.AUTONOMY_LEVEL_LOW]:a.AutonomyLevel.Low,[l.AutonomyLevel.AUTONOMY_LEVEL_MEDIUM]:a.AutonomyLevel.Medium,[l.AutonomyLevel.AUTONOMY_LEVEL_HIGH]:a.AutonomyLevel.High,[l.AutonomyLevel.AUTONOMY_LEVEL_MAX]:a.AutonomyLevel.Max},b={[d.ModelProfile.UNSPECIFIED]:a.ModelProfile.ModelProfileUnspecified,[d.ModelProfile.STANDARD]:a.ModelProfile.ModelProfileStandard,[d.ModelProfile.ADVANCED]:a.ModelProfile.ModelProfileAdvanced,[d.ModelProfile.ADVANCED_FAST]:a.ModelProfile.ModelProfileAdvancedFast},S={[d.AutonomyLevel.UNSPECIFIED]:a.AutonomyLevel.Unspecified,[d.AutonomyLevel.LOW]:a.AutonomyLevel.Low,[d.AutonomyLevel.MEDIUM]:a.AutonomyLevel.Medium,[d.AutonomyLevel.HIGH]:a.AutonomyLevel.High,[d.AutonomyLevel.MAX]:a.AutonomyLevel.Max},T={[d.AgentMode.UNSPECIFIED]:a.AgentChatMode.Unspecified,[d.AgentMode.GENERAL]:a.AgentChatMode.General,[d.AgentMode.DISCUSSION]:a.AgentChatMode.Discussion,[d.AgentMode.INITIAL_PLANNING]:a.AgentChatMode.InitialPlanning,[d.AgentMode.QUICK_EDIT]:a.AgentChatMode.QuickEdit},U={[a.ModelProfile.ModelProfileUnspecified]:d.ModelProfile.UNSPECIFIED,[a.ModelProfile.ModelProfileStandard]:d.ModelProfile.STANDARD,[a.ModelProfile.ModelProfileAdvanced]:d.ModelProfile.ADVANCED,[a.ModelProfile.ModelProfileAdvancedFast]:d.ModelProfile.ADVANCED_FAST},C={[a.AutonomyLevel.Unspecified]:d.AutonomyLevel.UNSPECIFIED,[a.AutonomyLevel.Low]:d.AutonomyLevel.LOW,[a.AutonomyLevel.Medium]:d.AutonomyLevel.MEDIUM,[a.AutonomyLevel.High]:d.AutonomyLevel.HIGH,[a.AutonomyLevel.Max]:d.AutonomyLevel.MAX},y={[a.AgentChatMode.General]:d.AgentMode.GENERAL,[a.AgentChatMode.Discussion]:d.AgentMode.DISCUSSION,[a.AgentChatMode.InitialPlanning]:d.AgentMode.INITIAL_PLANNING,[a.AgentChatMode.QuickEdit]:d.AgentMode.QUICK_EDIT,[a.AgentChatMode.Unspecified]:d.AgentMode.UNSPECIFIED};e.s(["autonomyLevelMapFromAiChatEnum",0,P,"convertAgentConfigFromChortToGQL",0,function({modelProfile:e,autonomyLevel:t,enableAutomatedTesting:n,enableAutoCheckpointing:o,enableHighEffort:i,agentMode:r}){return{modelProfile:b[e],autonomyLevel:S[t],chatMode:void 0!==r?T[r]:a.AgentChatMode.General,enableAutomatedTesting:n,enableAutoCheckpointing:o??!0,enableHighEffort:i}},"convertAgentConfigFromGQLToChort",0,function({modelProfile:e,autonomyLevel:t,enableAutomatedTesting:n,enableAutoCheckpointing:o,chatMode:i,enableHighEffort:r}){let l=i===a.AgentChatMode.QuickEdit;return{modelProfile:U[e],autonomyLevel:C[t],enableAutomatedTesting:n,enableAutoCheckpointing:o,enableHighEffort:!l&&r,webSearchEnabled:!0,imageGenerationEnabled:!0,thinkingEnabled:!1,agentMode:y[i]}},"convertAgentSettingsFromGQLToAiChat",0,function({modelProfile:e,chatMode:t,autonomyLevel:n,enableAutomatedTesting:o,enableAutoCheckpointing:i,enableHighEffort:r},l={}){let d=Object.fromEntries(Object.entries(l).filter(([e,t])=>void 0!==t)),s=t===a.AgentChatMode.QuickEdit;return{...m,enableAutomatedTesting:o,enableAutoCheckpointing:i,enableHighEffort:!s&&r,webSearchEnabled:!0,imageGenerationEnabled:!0,thinkingEnabled:!1,maxAutonomyEnabled:!1,modelProfile:M[e],agentMode:h[t],autonomyLevel:L[n],...d}},"convertAgentSettingsFromGQLToCellTaskmanTaskConfig",0,function({modelProfile:e,enableAutomatedTesting:t}){let n=void 0===t?{}:{enableAutomatedTesting:t};switch(e){case a.ModelProfile.ModelProfileStandard:return{...n,modelProfile:"economy"};case a.ModelProfile.ModelProfileAdvanced:return{...n,modelProfile:"power"};case a.ModelProfile.ModelProfileAdvancedFast:return{...n,modelProfile:"power_turbo"};case a.ModelProfile.ModelProfileUnspecified:return n}},"convertAgentSettingsFromGQLToTaskmanTaskConfig",0,function({chatMode:e,autonomyLevel:t,modelProfile:n,enableAutomatedTesting:o}){let i=_[e],r=v[t],a=I[n];return{enableAutomatedTesting:o,...i===A.UNSPECIFIED?{}:{agentMode:i},...r===c.UNSPECIFIED?{}:{autonomyLevel:r},...a===p.UNSPECIFIED?{}:{modelProfile:a}}},"getDefaultModelProfile",0,function(e){return e?a.ModelProfile.ModelProfileAdvanced:a.ModelProfile.ModelProfileStandard},"getModelProfileForAnalytics",0,function(e){if(null!=e)return({[l.ModelProfile.MODEL_PROFILE_UNSPECIFIED]:void 0,[l.ModelProfile.MODEL_PROFILE_STANDARD]:"standard",[l.ModelProfile.MODEL_PROFILE_ADVANCED]:"advanced",[l.ModelProfile.MODEL_PROFILE_ADVANCED_FAST]:"advanced_fast"})[e]??void 0}],426788)},29079,890639,e=>{"use strict";var t=e.i(908796),n=e.i(351623),o=e.i(344480);e.i(975473);let i={},r=n.gql`
+    fragment AgentWorkspaceAuthorizations on OrgAuthorizations {
+  paidAgent: useAiAgent(tier: paid, replId: $replId) {
+    __typename
+    isAuthorized
+    message
+    code
+  }
+  freeAgent: useAiAgent(tier: free) {
+    __typename
+    isAuthorized
+    message
+    code
+  }
+  turboAgentModel: useTurbo(replId: $replId) {
+    __typename
+    isAuthorized
+    message
+    code
+  }
+  quickEditAgentModel: useQuickEdit(replId: $replId) {
+    __typename
+    isAuthorized
+    message
+    code
+  }
+  highEffortAgentModel: useHighEffort {
+    __typename
+    isAuthorized
+    message
+    code
+  }
+  defaultAdvancedAgentModel: defaultAdvancedAgentModel(replId: $replId) {
+    __typename
+    isAuthorized
+    message
+    code
+  }
+}
+    `,a=n.gql`
+    query GetAgentRepl($replId: String!) {
+  getRepl(id: $replId) {
+    __typename
+    ... on Repl {
+      id
+      org {
+        id
+        slug
+      }
+      user {
+        id
+      }
+    }
+    ... on Error {
+      message
+    }
+  }
+}
+    `;function l(e){let t={...i,...e};return o.useQuery(a,t)}let d=n.gql`
+    query GetAgentReplAuthorizations($orgId: String, $ownerUserId: Int!, $replId: String!) {
+  currentUser {
+    id
+    personalOrgAuthorizations {
+      ... on OrgAuthorizations {
+        ...AgentWorkspaceAuthorizations
+      }
+      ... on Error {
+        message
+      }
+    }
+    org(orgId: $orgId) {
+      ... on Org {
+        id
+        authorizations {
+          ... on OrgAuthorizations {
+            ...AgentWorkspaceAuthorizations
+          }
+        }
+      }
+      ... on Error {
+        message
+      }
+    }
+  }
+  replOwner: user(id: $ownerUserId) {
+    id
+    paidAgentAuthorization(replId: $replId) {
+      ... on OrgAuthorization {
+        isAuthorized
+        message
+        code
+      }
+      ... on Error {
+        message
+      }
+    }
+    defaultAdvancedAgentModelAuthorization(replId: $replId) {
+      ... on OrgAuthorization {
+        isAuthorized
+        message
+        code
+      }
+      ... on Error {
+        message
+      }
+    }
+    turboAgentModelAuthorization(replId: $replId) {
+      ... on OrgAuthorization {
+        isAuthorized
+        message
+        code
+      }
+      ... on Error {
+        message
+      }
+    }
+  }
+}
+    ${r}`;function s(e){let t={...i,...e};return o.useQuery(d,t)}e.s(["GetAgentReplAuthorizationsDocument",0,d,"GetAgentReplDocument",0,a,"useGetAgentReplAuthorizationsQuery",0,s,"useGetAgentReplQuery",0,l],890639);var u=e.i(473072);let g={__typename:"OrgAuthorization",isAuthorized:!1,message:"Free agent is not available in personal repls for guests",code:t.OrgAuthorizationCode.InsufficientPermissions},A={__typename:"OrgAuthorization",isAuthorized:!1,message:"Quick Edit authorization is not available for guests",code:t.OrgAuthorizationCode.InsufficientPermissions};e.s(["useAgentAuthorization",0,function(e){let n=(0,u.default)(),{orgId:o,orgSlug:i,ownerUserId:r,loading:a,error:d}=function(){let{data:e,loading:t,error:n}=l({variables:{replId:(0,u.default)()}});return{orgId:e?.getRepl.__typename==="Repl"?e.getRepl.org?.id:void 0,orgSlug:e?.getRepl.__typename==="Repl"?e.getRepl.org?.slug:void 0,ownerUserId:e?.getRepl.__typename==="Repl"?e.getRepl.user?.id:void 0,loading:t,error:n}}(),{data:c,loading:p,error:E,refetch:f}=s({variables:{orgId:o,ownerUserId:r??0,replId:n},skip:!r,pollInterval:e?.pollInterval&&o?e.pollInterval:void 0}),m=c?.currentUser?.id,M=!!m&&!!r&&m===r;if(a||p)return{loading:!0,refetch:f,orgId:void 0,orgSlug:void 0};if(d||E)return{loading:!1,refetch:f,orgId:void 0,orgSlug:void 0};if(o)return{authorizations:c?.currentUser?.org.__typename==="Org"?c.currentUser.org.authorizations:void 0,loading:!1,refetch:f,isOwner:M,isOrgRepl:!0,isGuestInPersonalRepl:!1,orgId:o,orgSlug:i};if(!r)return{authorizations:void 0,loading:!1,refetch:f,isOwner:M,isOrgRepl:!1,orgSlug:void 0};if(M){let e=c?.currentUser?.personalOrgAuthorizations;return{authorizations:e?.__typename==="OrgAuthorizations"?e:void 0,loading:!1,refetch:f,isOwner:M,isOrgRepl:!1,isGuestInPersonalRepl:!1,orgSlug:void 0}}let I=c?.replOwner?.paidAgentAuthorization,_=c?.replOwner?.defaultAdvancedAgentModelAuthorization,v=c?.replOwner?.turboAgentModelAuthorization,h=c?.currentUser?.personalOrgAuthorizations,L=h?.__typename==="OrgAuthorizations"?h.quickEditAgentModel:void 0;return I?.__typename==="OrgAuthorization"?{authorizations:{__typename:"OrgAuthorizations",paidAgent:I,freeAgent:g,turboAgentModel:v?.__typename==="OrgAuthorization"?v:{__typename:"OrgAuthorization",isAuthorized:!1,message:"Turbo mode authorization is not available for guests",code:t.OrgAuthorizationCode.InsufficientPermissions},quickEditAgentModel:L??A,highEffortAgentModel:{__typename:"OrgAuthorization",isAuthorized:!0,message:"",code:t.OrgAuthorizationCode.Authorized},defaultAdvancedAgentModel:_?.__typename==="OrgAuthorization"?_:{__typename:"OrgAuthorization",isAuthorized:!1,message:"Default advanced agent model check is not available for guests",code:t.OrgAuthorizationCode.InsufficientPermissions}},loading:!1,refetch:f,isOwner:M,isOrgRepl:!1,isGuestInPersonalRepl:!0,orgSlug:void 0}:{authorizations:void 0,loading:!1,refetch:f,isOwner:M,isOrgRepl:!1,isGuestInPersonalRepl:!0,orgSlug:void 0}}],29079)},786864,734135,e=>{"use strict";var t=e.i(351623),n=e.i(344480);e.i(975473);let o={},i=t.gql`
+    query GetShouldSeeFreemiumExperience($replId: String!) {
+  getRepl(id: $replId) {
+    __typename
+    ... on Repl {
+      id
+      authorizations {
+        viewFreemiumExperience {
+          isAuthorized
+        }
+      }
+    }
+  }
+}
+    `;function r(e){let t={...o,...e};return n.useQuery(i,t)}e.s(["GetShouldSeeFreemiumExperienceDocument",0,i,"useGetShouldSeeFreemiumExperienceQuery",0,r],734135);var a=e.i(473072);e.s(["useShouldSeeFreemiumExperience",0,function(){let{data:e,loading:t,error:n,refetch:o}=r({variables:{replId:(0,a.default)()}});return{shouldSeeFreemiumExperience:e?.getRepl.__typename==="Repl"&&e.getRepl.authorizations.viewFreemiumExperience.isAuthorized,loading:t,error:n,refetch:o}}],786864)}]);
+
+//# debugId=89a5e94a-d4fc-fd93-3779-f3ba42225d97
+//# sourceMappingURL=07pbabpoio-.2.js.map

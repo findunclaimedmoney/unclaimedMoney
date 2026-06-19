@@ -1,0 +1,535 @@
+;!function(){try { var e="undefined"!=typeof globalThis?globalThis:"undefined"!=typeof global?global:"undefined"!=typeof window?window:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&((e._debugIds|| (e._debugIds={}))[n]="c7e99f02-f977-0976-6ad9-ba7defe3fa38")}catch(e){}}();
+(globalThis.TURBOPACK||(globalThis.TURBOPACK=[])).push(["object"==typeof document?document.currentScript:void 0,785671,e=>{e.v({safeArea:"HoverCard-module__k7KuFa__safeArea"})},965531,e=>{"use strict";var t=e.i(276385),r=e.i(389959),n=e.i(971131),i=e.i(89148),o=e.i(773222),l=e.i(61732),s=e.i(785671);let a=(0,i.cvarsFrom)("HoverCard.module.css",["--safe-area-clip-path"]),u=(0,r.createContext)(null),p=(0,r.createContext)(null);function c(e,t){return e.x>=t.left&&e.x<=t.right&&e.y>=t.top&&e.y<=t.bottom}class d{entries=new Map;openIds=new Set;nextId=1;warmedUp=!1;warmUntil=0;lastSwapOpenAt=-1/0;warmupTimer;cooldownTimer;warmupId;register(e){let t=this.nextId++;return this.entries.set(t,e),t}unregister(e){this.entries.delete(e),this.openIds.delete(e),this.warmupId===e&&this.cancelWarmup()}requestOpen(e,t,r){(this.cancelCooldown(),r||t<=0||this.warmedUp)?this.showNow(e):(this.cancelWarmup(),this.warmupId=e,this.warmupTimer=setTimeout(()=>{this.warmupTimer=void 0,this.warmupId=void 0,this.warmedUp=!0,this.showNow(e)},t))}cancelOpen(e){this.warmupId===e&&this.cancelWarmup()}notifyOpened(e){this.openIds.add(e),this.warmedUp=!0,this.cancelCooldown()}notifyClosed(e){this.openIds.delete(e),0===this.openIds.size&&(this.warmUntil=Date.now()+500,this.startCooldown())}isWarm(){return this.openIds.size>0||this.warmedUp||Date.now()<this.warmUntil}isSwapDismissal(){return Date.now()-this.lastSwapOpenAt<50}showNow(e){let t=this.entries.get(e);if(!t)return;let r=this.collectAncestorIds(e),n=!1;for(let t of[...this.openIds])t!==e&&!r.has(t)&&this.entries.get(t)?.requestForceClose()&&(this.openIds.delete(t),n=!0);n&&(this.lastSwapOpenAt=Date.now()),this.cancelWarmup(),this.cancelCooldown(),this.warmedUp=!0,this.openIds.add(e),t.show()}collectAncestorIds(e){let t=new Set,r=this.entries.get(e)?.getParentId?.();for(;void 0!==r&&!t.has(r);)t.add(r),r=this.entries.get(r)?.getParentId?.();return t}cancelWarmup(){clearTimeout(this.warmupTimer),this.warmupTimer=void 0,this.warmupId=void 0}startCooldown(){this.cancelCooldown(),this.cooldownTimer=setTimeout(()=>{this.cooldownTimer=void 0,this.warmedUp=!1},500)}cancelCooldown(){clearTimeout(this.cooldownTimer),this.cooldownTimer=void 0}resetForTest(){this.cancelWarmup(),this.cancelCooldown(),this.entries.clear(),this.openIds.clear(),this.warmedUp=!1,this.warmUntil=0,this.lastSwapOpenAt=-1/0}}let m=new d,g="pointer",R=-1,f=-1;{window.addEventListener("keydown",()=>{g="keyboard"},{capture:!0,passive:!0});let e=e=>{g="pointer",R=e.clientX,f=e.clientY};window.addEventListener("mousemove",e,{capture:!0,passive:!0}),window.addEventListener("mousedown",e,{capture:!0,passive:!0}),window.addEventListener("pointerdown",e,{capture:!0,passive:!0})}e.s(["HoverCard",0,function({content:e,children:i,isDisabled:d=!1,openDelayMs:v=200,placement:h="right",offset:I=8,opensOnFocus:w=!0,opensOnClick:C=!1,contentPadding:F=8}){let U=(0,r.useRef)(null),b=(0,r.useRef)(null),[k,y]=(0,r.useState)(!1),D=(0,r.useContext)(u),$=(0,r.useContext)(p),x=(0,r.useRef)($);x.current=$;let E=(0,r.useRef)(void 0),P=(0,r.useRef)(!1),T=(0,r.useRef)(!1),S=(0,r.useRef)(!1),q=(0,r.useRef)(!1),A=(0,r.useCallback)(()=>S.current||q.current,[]),L=(0,r.useRef)(),H=(0,r.useRef)(),[M,W]=(0,r.useState)(null),N=(0,r.useRef)(!1),O=(0,r.useRef)(null),B=(0,r.useRef)(),G=(0,r.useRef)(0),_=(0,r.useRef)(!1),Q=(0,r.useRef)(!1),z=(0,r.useRef)(!1),j=(0,r.useCallback)(()=>{clearTimeout(L.current),clearTimeout(H.current)},[]);(0,r.useEffect)(()=>j,[j]);let Z=(0,r.useCallback)(()=>{N.current=!1,O.current=null,clearTimeout(B.current),W(null)},[]);(0,r.useEffect)(()=>()=>clearTimeout(B.current),[]);let V=(0,r.useCallback)(()=>{j(),Z(),T.current=!1,_.current=!1,G.current=0},[j,Z]),X=(0,r.useCallback)(e=>{let t=E.current;void 0!==t&&(T.current=!0,P.current=m.isWarm(),m.requestOpen(t,v,e))},[v]),K=(0,r.useCallback)(()=>{let e=E.current;void 0!==e&&m.cancelOpen(e),T.current=!1,P.current=!1,y(!1)},[]),Y=(0,r.useRef)(()=>!0);(0,r.useEffect)(()=>{let e=m.register({show:()=>y(!0),requestForceClose:()=>Y.current(),getParentId:()=>x.current?.()});return E.current=e,()=>{m.unregister(e),E.current=void 0}},[]),(0,r.useEffect)(()=>{if(k&&D)return D.hold(),()=>D.release()},[k,D]),(0,r.useEffect)(()=>{let e=E.current;return k?(void 0!==e&&m.notifyOpened(e),()=>{void 0!==e&&m.notifyClosed(e)}):void V()},[k,V]);let J=(0,r.useCallback)((e=!0)=>{let t="u"<typeof document?null:document.activeElement;return t instanceof Node&&t instanceof HTMLElement&&(w&&U.current?.contains(t)===!0?z.current:b.current?.contains(t)===!0&&(!e||function(e){if(e.isContentEditable)return!0;let t=e.tagName;if("INPUT"===t||"TEXTAREA"===t)return!0;let r=e.getAttribute("role");return"textbox"===r||"searchbox"===r||"combobox"===r}(t)||"keyboard"===g))},[w]);Y.current=(0,r.useCallback)(()=>!(G.current>0||J())&&(y(!1),V(),S.current=!1,q.current=!1,!0),[J,V]);let ee=(0,r.useCallback)((e,{strictFocus:t=!0}={})=>{clearTimeout(e.current),_.current=!0,G.current>0||(e.current=setTimeout(()=>{_.current=!1,A()||J(t)||N.current||K()},200))},[K,J,A]),et=(0,r.useCallback)(()=>{clearTimeout(B.current),B.current=setTimeout(()=>{Z(),ee(L)},400)},[ee,Z]),er=(0,r.useCallback)(e=>{if(R<0||f<0)return!1;let t=function(e,t){let r=function(e,t){if(t.width<=0||t.height<=0||c(e,t))return null;let r=[];return e.x<t.left?r.push({side:"left",distance:t.left-e.x}):e.x>t.right&&r.push({side:"right",distance:e.x-t.right}),e.y<t.top?r.push({side:"top",distance:t.top-e.y}):e.y>t.bottom&&r.push({side:"bottom",distance:e.y-t.bottom}),r.sort((e,t)=>e.distance-t.distance),r[0]?.side??null}(e,t);if(null===r)return null;let{left:n,top:i,right:o,bottom:l}=t;switch(r){case"left":return{apex:e,near1:{x:n,y:i},near2:{x:n,y:l}};case"right":return{apex:e,near1:{x:o,y:i},near2:{x:o,y:l}};case"top":return{apex:e,near1:{x:n,y:i},near2:{x:o,y:i}};case"bottom":return{apex:e,near1:{x:n,y:l},near2:{x:o,y:l}}}}({x:R,y:f},e);return!!t&&(N.current=!0,O.current=e,W(t),et(),!0)},[et]);(0,r.useEffect)(()=>{if(!M)return;let e=e=>{let t={x:e.clientX,y:e.clientY},r=O.current,n=U.current?.getBoundingClientRect();(function(e,{apex:t,near1:r,near2:n}){let i=(t,r)=>(e.x-r.x)*(t.y-r.y)-(t.x-r.x)*(e.y-r.y),o=i(t,r),l=i(r,n),s=i(n,t);return!((o<0||l<0||s<0)&&(o>0||l>0||s>0))})(t,M)||null!==r&&c(t,r)||void 0!==n&&c(t,n)?et():(Z(),ee(L))};return window.addEventListener("mousemove",e,{capture:!0}),()=>window.removeEventListener("mousemove",e,{capture:!0})},[M,et,ee,Z]);let en=(0,r.useCallback)(()=>ee(H),[ee]),ei=(0,r.useCallback)(()=>{q.current=!1,en()},[en]),eo=(0,r.useCallback)(()=>{q.current=!0,clearTimeout(H.current),_.current=!1},[]);(0,r.useEffect)(()=>{if(d)return;let e=U.current;if(!e)return;let t=()=>{clearTimeout(L.current),_.current=!1,X(!1)},r=()=>{let e=E.current;T.current&&void 0!==e&&(T.current=!1,m.cancelOpen(e))},n=()=>{S.current=!0,Q.current||t()},i=()=>{z.current=!0,t()},o=()=>{S.current=!1,Q.current=!1,r();let e=b.current?.getBoundingClientRect();void 0!==e&&er(e)||ee(L)},l=e=>{if(C){Q.current=!1,_.current=!1,j(),X(!0);return}j(),K(),(e.detail>=1||S.current)&&(z.current=!1,Q.current=!0)},s=e=>{z.current=!1;let t=e.relatedTarget;t instanceof Node&&b.current?.contains(t)||(r(),ee(L))};return function(e){if(R<0||f<0)return!1;let t=e.getBoundingClientRect();return!(t.width<=0)&&!(t.height<=0)&&R>=t.left&&R<=t.right&&f>=t.top&&f<=t.bottom}(e)&&(S.current=!0,Q.current=!0),e.addEventListener("mouseenter",n),e.addEventListener("mouseleave",o),e.addEventListener("click",l),w&&(e.addEventListener("focusin",i),e.addEventListener("focusout",s)),()=>{j(),r(),e.removeEventListener("mouseenter",n),e.removeEventListener("mouseleave",o),e.removeEventListener("click",l),e.removeEventListener("focusin",i),e.removeEventListener("focusout",s)}},[d,w,C,ee,j,X,K,er]);let el=(0,r.useCallback)(()=>{Z(),eo(),X(!0)},[eo,X,Z]),es=(0,r.useCallback)(()=>{ei()},[ei]),ea=(0,r.useCallback)(e=>{let t=e.relatedTarget;t instanceof Node&&(b.current?.contains(t)||U.current?.contains(t))||en()},[en]),eu=(0,r.useCallback)(()=>{G.current+=1,clearTimeout(L.current),clearTimeout(H.current)},[]),ep=(0,r.useCallback)(()=>{0===G.current||(G.current-=1,G.current>0||_.current&&ee(H,{strictFocus:!1}))},[ee]),ec=(0,r.useMemo)(()=>({hold:eu,release:ep}),[eu,ep]),ed=(0,r.useCallback)(()=>E.current,[]);return(0,t.jsxs)(t.Fragment,{children:[i(U),(0,t.jsx)(o.RawPopover,{isNonModal:!0,disableAnimation:P.current||m.isSwapDismissal(),triggerRef:U,isOpen:k,placement:h,offset:I,children:(0,t.jsx)(l.View,{innerRef:b,onMouseEnter:el,onMouseLeave:es,onBlur:ea,gap:4,p:F,children:(0,t.jsx)(p.Provider,{value:ed,children:(0,t.jsx)(u.Provider,{value:ec,children:e})})})}),null!==M&&"u">typeof document?(0,n.createPortal)((0,t.jsx)("div",{clsx:s.default.safeArea,style:{[a.safeAreaClipPath]:function({apex:e,near1:t,near2:r}){return`polygon(${e.x}px ${e.y}px, ${t.x}px ${t.y}px, ${r.x}px ${r.y}px)`}(M)}}),document.body):null]})},"useHoverCardHold",0,function(){return(0,r.useContext)(u)}])},669011,e=>{"use strict";var t=e.i(351623),r=e.i(99357),n=e.i(344480);e.i(975473);let i={},o=t.gql`
+    fragment ReplEnvironmentHeaderInviteButtonRepl on Repl {
+  id
+  owner {
+    ... on User {
+      id
+    }
+    ... on Team {
+      id
+    }
+  }
+  org {
+    id
+    slug
+    type
+  }
+  authorizations {
+    editPermissions {
+      isAuthorized
+    }
+  }
+}
+    `,l=t.gql`
+    query InviteButtonOrgReplPerms($replId: String!) {
+  currentUser {
+    id
+    username
+    fullName
+    image
+  }
+  getRepl(id: $replId) {
+    __typename
+    ... on Repl {
+      __typename
+      ...ReplMultiplayerStatusV2
+    }
+  }
+}
+    ${r.ReplMultiplayerStatusV2FragmentDoc}`;e.s(["ReplEnvironmentHeaderInviteButtonReplFragmentDoc",0,o,"useInviteButtonOrgReplPermsQuery",0,function(e){let t={...i,...e};return n.useQuery(l,t)}])},762288,e=>{"use strict";var t=e.i(351623);let r=t.gql`
+    fragment UserLinkUser on User {
+  id
+  url
+  username
+}
+    `,n=t.gql`
+    fragment UserLinkCurrentUser on CurrentUser {
+  id
+  url
+  username
+}
+    `;e.s(["UserLinkCurrentUserFragmentDoc",0,n,"UserLinkUserFragmentDoc",0,r])},117714,e=>{"use strict";var t=e.i(351623),r=e.i(344480);e.i(975473);let n={},i=t.gql`
+    fragment NewPaneRepl on Repl {
+  id
+  config {
+    isAgentStack
+    isServer
+    isExpertMode
+  }
+}
+    `,o=t.gql`
+    query NewPanePrimaryOutput($replId: String!) {
+  getRepl(id: $replId) {
+    ... on Repl {
+      id
+      config {
+        isAgentStack
+      }
+    }
+  }
+}
+    `;e.s(["NewPaneReplFragmentDoc",0,i,"useNewPanePrimaryOutputQuery",0,function(e){let t={...n,...e};return r.useQuery(o,t)}])},590911,e=>{"use strict";var t=e.i(351623);let r=t.gql`
+    fragment DevCopyUsernameItemCurrentUser on CurrentUser {
+  id
+  username
+}
+    `;e.s(["DevCopyUsernameItemCurrentUserFragmentDoc",0,r])},575872,29530,663197,e=>{"use strict";var t=e.i(351623),r=e.i(344480);e.i(975473);var n=e.i(299020);let i={},o=t.gql`
+    fragment WorkspaceDoGitProviderImportCurrentUser on CurrentUser {
+  id
+  username
+}
+    `,l=t.gql`
+    fragment WorkspaceDoGitProviderImportRepl on Repl {
+  id
+  org {
+    id
+  }
+  config {
+    gitRemoteUrl
+    doClone
+    isAgentRepl
+  }
+  slug
+}
+    `,s=t.gql`
+    query WorkspaceDoGitProviderImportFlow($replId: String!) {
+  getRepl(id: $replId) {
+    ...WorkspaceDoGitProviderImportRepl
+  }
+  currentUser {
+    ...WorkspaceDoGitProviderImportCurrentUser
+  }
+}
+    ${l}
+${o}`,a=t.gql`
+    query WorkspaceDoGitProviderImportConnectorBaseUrl($input: GitProviderContextInput) {
+  currentUser {
+    id
+    gitHubInfoV2(input: $input) {
+      webBaseUrl
+      apiBaseUrl
+    }
+  }
+}
+    `,u=t.gql`
+    mutation WorkspaceDoGitProviderImportFlowFinishClone($input: UpdateReplInput!) {
+  updateRepl(input: $input) {
+    repl {
+      id
+      config {
+        doClone
+      }
+    }
+  }
+}
+    `,p=t.gql`
+    query GitHubImportGetTopLanguages($input: GitHubRepoInfoInput!) {
+  githubRepoInfo(input: $input) {
+    ... on GitHubRepoInfoOutput {
+      topLanguages
+      repositorySource
+    }
+    ... on TooManyRequestsError {
+      message
+    }
+    ... on UnauthorizedError {
+      message
+    }
+    ... on ServiceUnavailable {
+      message
+    }
+    ... on UserError {
+      message
+    }
+    ... on NotFoundError {
+      message
+    }
+  }
+}
+    `,c=t.gql`
+    query BitbucketImportGetTopLanguages($input: BitbucketRepoInfoInput!) {
+  bitbucketRepoInfo(input: $input) {
+    ... on BitbucketRepoInfoOutput {
+      topLanguages
+      repositorySource
+    }
+    ... on UnauthorizedError {
+      message
+    }
+    ... on ServiceUnavailable {
+      message
+    }
+    ... on UserError {
+      message
+    }
+    ... on NotFoundError {
+      message
+    }
+  }
+}
+    `;e.s(["WorkspaceDoGitProviderImportCurrentUserFragmentDoc",0,o,"WorkspaceDoGitProviderImportReplFragmentDoc",0,l,"useBitbucketImportGetTopLanguagesQuery",0,function(e){let t={...i,...e};return r.useQuery(c,t)},"useGitHubImportGetTopLanguagesQuery",0,function(e){let t={...i,...e};return r.useQuery(p,t)},"useWorkspaceDoGitProviderImportConnectorBaseUrlQuery",0,function(e){let t={...i,...e};return r.useQuery(a,t)},"useWorkspaceDoGitProviderImportFlowFinishCloneMutation",0,function(e){let t={...i,...e};return n.useMutation(u,t)},"useWorkspaceDoGitProviderImportFlowQuery",0,function(e){let t={...i,...e};return r.useQuery(s,t)}],575872);let d=t.gql`
+    fragment PageTitleRepl on Repl {
+  id
+  title
+}
+    `;e.s(["PageTitleReplFragmentDoc",0,d],29530);let m=t.gql`
+    fragment ReplInfoRepl on Repl {
+  id
+  title
+  iconUrl
+}
+    `;e.s(["ReplInfoReplFragmentDoc",0,m],663197)},838317,e=>{"use strict";var t=e.i(351623),r=e.i(180273),n=e.i(669011),i=e.i(590911),o=e.i(762288),l=e.i(85085),s=e.i(344480);e.i(975473);let a={},u=t.gql`
+    fragment WorkspaceHeaderNavMenuRepl on Repl {
+  id
+  org {
+    id
+    slug
+    ...IsUnifiedPlanEnabledOrg
+  }
+  ...ReplEnvironmentHeaderInviteButtonRepl
+}
+    ${r.IsUnifiedPlanEnabledOrgFragmentDoc}
+${n.ReplEnvironmentHeaderInviteButtonReplFragmentDoc}`,p=t.gql`
+    fragment WorkspaceHeaderNavMenuCurrentUser on CurrentUser {
+  id
+  image
+  username
+  ...DevCopyUsernameItemCurrentUser
+  ...IsUnifiedPlanEnabledPersonalWorkspaceCurrentUser
+  ...UserLinkCurrentUser
+  ...OrgSwitcherCurrentUser
+}
+    ${i.DevCopyUsernameItemCurrentUserFragmentDoc}
+${r.IsUnifiedPlanEnabledPersonalWorkspaceCurrentUserFragmentDoc}
+${o.UserLinkCurrentUserFragmentDoc}
+${l.OrgSwitcherCurrentUserFragmentDoc}`,c=t.gql`
+    query WorkspaceHeaderNavMenu($replId: String!) {
+  getRepl(id: $replId) {
+    ... on Repl {
+      ...WorkspaceHeaderNavMenuRepl
+    }
+  }
+  currentUser {
+    ...WorkspaceHeaderNavMenuCurrentUser
+  }
+}
+    ${u}
+${p}`;e.s(["WorkspaceHeaderNavMenuReplFragmentDoc",0,u,"useWorkspaceHeaderNavMenuQuery",0,function(e){let t={...a,...e};return s.useQuery(c,t)}])},917628,e=>{"use strict";var t=e.i(351623),r=e.i(838317),n=e.i(344480);e.i(975473);let i={},o=t.gql`
+    fragment DesktopAppNavMenuRepl on Repl {
+  ...WorkspaceHeaderNavMenuRepl
+}
+    ${r.WorkspaceHeaderNavMenuReplFragmentDoc}`,l=t.gql`
+    query DesktopAppNavMenuRepl($replId: String!) {
+  getRepl(id: $replId) {
+    ... on Repl {
+      ...DesktopAppNavMenuRepl
+    }
+  }
+}
+    ${o}`;e.s(["DesktopAppNavMenuReplFragmentDoc",0,o,"useDesktopAppNavMenuReplQuery",0,function(e){let t={...i,...e};return n.useQuery(l,t)}])},951894,72159,879106,809541,e=>{"use strict";var t=e.i(351623),r=e.i(663197),n=e.i(669011),i=e.i(917628);let o=t.gql`
+    fragment ReplEnvironmentHeaderRepl on Repl {
+  id
+  url
+  agentFeedback {
+    ... on ReplAgentFeedback {
+      isEnabled
+    }
+  }
+  authorizations {
+    viewPermissions {
+      isAuthorized
+    }
+    viewDeploymentConfig {
+      isAuthorized
+    }
+    viewFreemiumExperience {
+      isAuthorized
+    }
+  }
+  owner {
+    ... on Team {
+      id
+    }
+    ... on User {
+      id
+      isSubscribed
+    }
+  }
+  hostingDeployment {
+    ... on HostingDeployment {
+      id
+      timeCreated
+      replitAppSubdomain
+      latestBuildStatus
+      currentBuild {
+        id
+        provider
+      }
+    }
+  }
+  config {
+    isInPlanningPhase
+    isWebDesignMockup
+  }
+  isFreeUserWithStaticDeployment
+  ...ReplInfoRepl
+  ...ReplEnvironmentHeaderInviteButtonRepl
+  ...DesktopAppNavMenuRepl
+}
+    ${r.ReplInfoReplFragmentDoc}
+${n.ReplEnvironmentHeaderInviteButtonReplFragmentDoc}
+${i.DesktopAppNavMenuReplFragmentDoc}`;e.s(["ReplEnvironmentHeaderReplFragmentDoc",0,o],951894);var l=e.i(344480);e.i(975473);var s=e.i(299020);let a={},u=t.gql`
+    fragment FigmaImportFlowRepl on Repl {
+  id
+  config {
+    figmaUrl
+    figmaImportStatus
+  }
+}
+    `,p=t.gql`
+    query FigmaImportFlow($replId: String!) {
+  getRepl(id: $replId) {
+    ... on Repl {
+      id
+      ...FigmaImportFlowRepl
+    }
+  }
+}
+    ${u}`,c=t.gql`
+    mutation UpdateReplForFigmaImport($input: UpdateReplInput!) {
+  updateRepl(input: $input) {
+    repl {
+      id
+      isRenamed
+      title
+      ...FigmaImportFlowRepl
+    }
+  }
+}
+    ${u}`,d=t.gql`
+    mutation GetFigmaIntermediateToken($input: GetFigmaIntermediateTokenInput!) {
+  getFigmaIntermediateToken(input: $input) {
+    ... on FigmaImportIntermediateToken {
+      token
+    }
+    ... on NoOAuthFoundError {
+      message
+    }
+    ... on InvalidFigmaUrlError {
+      message
+    }
+    ... on FigmaRateLimitError {
+      message
+    }
+  }
+}
+    `;e.s(["FigmaImportFlowReplFragmentDoc",0,u,"useFigmaImportFlowQuery",0,function(e){let t={...a,...e};return l.useQuery(p,t)},"useGetFigmaIntermediateTokenMutation",0,function(e){let t={...a,...e};return s.useMutation(d,t)},"useUpdateReplForFigmaImportMutation",0,function(e){let t={...a,...e};return s.useMutation(c,t)}],72159);var m=e.i(846545);let g={},R=t.gql`
+    fragment LovableZipImportFlowRepl on Repl {
+  id
+  config {
+    zipImportSource
+    zipImportStatus
+  }
+}
+    `,f=t.gql`
+    query LovableZipImportFlow($replId: String!) {
+  getRepl(id: $replId) {
+    ... on Repl {
+      id
+      ...LovableZipImportFlowRepl
+    }
+  }
+}
+    ${R}`,v=t.gql`
+    mutation UpdateReplForLovableZipImport($input: UpdateReplInput!) {
+  updateRepl(input: $input) {
+    repl {
+      id
+      ...LovableZipImportFlowRepl
+    }
+  }
+}
+    ${R}`,h=t.gql`
+    subscription LovableImportZipProgress($replId: String!) {
+  importZipProgress(replId: $replId)
+}
+    `;e.s(["LovableZipImportFlowReplFragmentDoc",0,R,"useLovableImportZipProgressSubscription",0,function(e){let t={...g,...e};return m.useSubscription(h,t)},"useLovableZipImportFlowQuery",0,function(e){let t={...g,...e};return l.useQuery(f,t)},"useUpdateReplForLovableZipImportMutation",0,function(e){let t={...g,...e};return s.useMutation(v,t)}],879106);let I=t.gql`
+    fragment ReplEnvironmentDesktopTopLevelHooksRepl on Repl {
+  id
+  slug
+  config {
+    isAgentRepl
+    isExpertMode
+    isInPlanningPhase
+  }
+  org {
+    id
+  }
+  origin {
+    id
+  }
+  language
+  user {
+    id
+    username
+  }
+  authorizations {
+    editFileContents {
+      isAuthorized
+    }
+  }
+}
+    `;e.s(["ReplEnvironmentDesktopTopLevelHooksReplFragmentDoc",0,I],809541)},689736,e=>{"use strict";var t=e.i(351623),r=e.i(319801),n=e.i(344480);e.i(975473);let i={},o=t.gql`
+    fragment HandleReplRedirectionReplRedirect on ReplRedirect {
+  replUrl
+}
+    `,l=t.gql`
+    fragment HandleReplRedirectionSubscriptionExpired on ReplSubscriptionExpired {
+  isOwner
+  replId
+}
+    `,s=t.gql`
+    fragment HandleReplRedirectionRepl on Repl {
+  id
+  isOwner
+  language
+  ...ReplLinkRepl
+  authorizations {
+    connectToWorkspace {
+      isAuthorized
+    }
+  }
+  org {
+    id
+  }
+}
+    ${r.ReplLinkReplFragmentDoc}`,a=t.gql`
+    query HandleReplRedirection($replId: String!) {
+  getRepl(id: $replId) {
+    ... on Repl {
+      ...HandleReplRedirectionRepl
+      heliumMigrationStatus {
+        isUsingHelium
+        shouldMigrateToHelium
+      }
+    }
+    ... on ReplRedirect {
+      ...HandleReplRedirectionReplRedirect
+    }
+    ... on ReplSubscriptionExpired {
+      ...HandleReplRedirectionSubscriptionExpired
+    }
+  }
+}
+    ${s}
+${o}
+${l}`;e.s(["HandleReplRedirectionReplFragmentDoc",0,s,"HandleReplRedirectionReplRedirectFragmentDoc",0,o,"HandleReplRedirectionSubscriptionExpiredFragmentDoc",0,l,"useHandleReplRedirectionQuery",0,function(e){let t={...i,...e};return n.useQuery(a,t)}])},966824,e=>{e.v({contentBounds:"RecentReplsMenu-module__Zg4UXW__contentBounds",defaultText:"RecentReplsMenu-module__Zg4UXW__defaultText",recentReplsLabel:"RecentReplsMenu-module__Zg4UXW__recentReplsLabel"})},345836,913864,280729,e=>{"use strict";var t=e.i(276385),r=e.i(351623),n=e.i(764992),i=e.i(575872),o=e.i(949791),l=e.i(180273),s=e.i(74768),a=e.i(29530),u=e.i(951894),p=e.i(117714),c=e.i(72159),d=e.i(879106),m=e.i(809541),g=e.i(689736);let R=r.gql`
+    fragment ReplEnvironmentDesktopCurrentUser on CurrentUser {
+  id
+  isAdmin: hasRole(role: ADMIN)
+  ...CrosisContextCurrentUser
+  workspacePreferences
+  ...WorkspaceDoGitProviderImportCurrentUser
+  ...AiProviderCurrentUser
+  ...IsUnifiedPlanEnabledPersonalWorkspaceCurrentUser
+}
+    ${n.CrosisContextCurrentUserFragmentDoc}
+${i.WorkspaceDoGitProviderImportCurrentUserFragmentDoc}
+${o.AiProviderCurrentUserFragmentDoc}
+${l.IsUnifiedPlanEnabledPersonalWorkspaceCurrentUserFragmentDoc}`,f=r.gql`
+    fragment ReplAiAuthorizations on ReplAuthorizations {
+  useAdvancedChat: useAiChat(model: advanced) {
+    isAuthorized
+    code
+    message
+  }
+  connectToWorkspace {
+    isAuthorized
+    code
+  }
+}
+    `,v=r.gql`
+    fragment ReplEnvironmentDesktopRepl on Repl {
+  id
+  title
+  layoutState
+  description
+  url
+  origin {
+    id
+  }
+  org {
+    ...IsUnifiedPlanEnabledOrg
+  }
+  config {
+    isAgentStack
+    isInPlanningPhase
+    figmaUrl
+    zealot
+    ...ReplAgentSettingsReplConfig
+  }
+  ...CrosisContextRepl
+  ...PageTitleRepl
+  authorizations {
+    ...ReplAiAuthorizations
+  }
+  ...WorkspaceDoGitProviderImportRepl
+  ...ReplEnvironmentHeaderRepl
+  ...NewPaneRepl
+  ...FigmaImportFlowRepl
+  ...LovableZipImportFlowRepl
+  ...ReplEnvironmentDesktopTopLevelHooksRepl
+  ...HandleReplRedirectionRepl
+}
+    ${l.IsUnifiedPlanEnabledOrgFragmentDoc}
+${s.ReplAgentSettingsReplConfigFragmentDoc}
+${n.CrosisContextReplFragmentDoc}
+${a.PageTitleReplFragmentDoc}
+${f}
+${i.WorkspaceDoGitProviderImportReplFragmentDoc}
+${u.ReplEnvironmentHeaderReplFragmentDoc}
+${p.NewPaneReplFragmentDoc}
+${c.FigmaImportFlowReplFragmentDoc}
+${d.LovableZipImportFlowReplFragmentDoc}
+${m.ReplEnvironmentDesktopTopLevelHooksReplFragmentDoc}
+${g.HandleReplRedirectionReplFragmentDoc}`;e.s(["ReplAiAuthorizationsFragmentDoc",0,f,"ReplEnvironmentDesktopCurrentUserFragmentDoc",0,R,"ReplEnvironmentDesktopReplFragmentDoc",0,v],913864);var h=e.i(344480);e.i(975473);let I={},w=r.gql`
+    fragment SidebarRecentRepl on Repl {
+  id
+  title
+  iconUrl
+  url
+  nextPagePathname
+  ...ReplEnvironmentDesktopRepl
+}
+    ${v}`,C=r.gql`
+    query SidebarRecentRepls($count: Int!) {
+  allRecentRepls: recentRepls(count: $count) {
+    id
+    ...SidebarRecentRepl
+  }
+}
+    ${w}`;function F(e){let t={...I,...e};return h.useQuery(C,t)}let U=r.gql`
+    query SidebarRecentOrgRepls($count: Int!, $orgId: String) {
+  currentUser {
+    id
+    org(orgId: $orgId) {
+      ... on Org {
+        id
+        recentRepls(input: {count: $count}) {
+          items {
+            id
+            ...SidebarRecentRepl
+          }
+        }
+      }
+      ... on Error {
+        message
+      }
+    }
+  }
+}
+    ${w}`;function b(e){let t={...I,...e};return h.useQuery(U,t)}e.s(["useSidebarRecentOrgReplsQuery",0,b,"useSidebarRecentReplsQuery",0,F],280729);var k=e.i(269848),y=e.i(761201),D=e.i(780902);e.i(214847);var $=e.i(864300),x=e.i(965531),E=e.i(295231),P=e.i(8047),T=e.i(61732),S=e.i(921125),q=e.i(365757),A=e.i(966824);let L=({repl:e})=>{let r=(0,S.replLinkProps)(e);return(0,t.jsx)(E.MenuItem,{icon:(0,t.jsx)(q.default,{size:16,iconUrl:e.iconUrl,alt:e.title}),label:e.title,href:r.href,as:r.as})},H=({loading:e,recentRepls:r})=>{let n,i=(0,$.useIntl)(),o=i.formatMessage(y.REPL_DISPLAY_NAME.plural);return n=e&&!r?.length?(0,t.jsx)(T.View,{grow:!0,justify:"center",align:"center",children:(0,t.jsx)(k.default,{})}):r?.length?(0,t.jsxs)(t.Fragment,{children:[(0,t.jsxs)(P.Text,{multiline:!1,variant:"small",color:"dimmer",clsx:A.default.recentReplsLabel,children:["Recent ",o]}),(0,t.jsx)(E.Menu,{"aria-label":`Recent ${o}`,children:r.map(e=>(0,t.jsx)(L,{repl:e},e.id))})]}):(0,t.jsx)(T.View,{grow:!0,justify:"center",align:"center",children:(0,t.jsx)(P.Text,{variant:"small",color:"dimmer",clsx:A.default.defaultText,children:i.formatMessage({id:"home.recentlyViewedEntities",defaultMessage:"Recently viewed {entityName} will show up here"},{entityName:o})})}),(0,t.jsx)(T.View,{grow:!0,clsx:A.default.contentBounds,children:n})};e.s(["OrgSidebarRecentRepls",0,({orgId:e})=>{let{data:r,loading:n}=b({variables:{count:6,orgId:e},ssr:!1,fetchPolicy:"cache-and-network",nextFetchPolicy:"cache-first"}),i=r?.currentUser?.org?.__typename==="Org"?r?.currentUser?.org?.recentRepls.items:void 0;return(0,t.jsx)(H,{loading:n,recentRepls:i})},"RECENT_REPLS_SIDEBAR_MENU_COUNT",0,6,"RecentReplsHoverCard",0,({children:e,content:r})=>{let n=(0,D.useIsMobile)();return(0,t.jsx)(x.HoverCard,{isDisabled:n,openDelayMs:0,placement:"right top",offset:4,opensOnFocus:!1,content:r,children:e})},"SidebarRecentRepls",0,()=>{let{data:e,loading:r}=F({variables:{count:6},ssr:!1,fetchPolicy:"cache-and-network",nextFetchPolicy:"cache-first"});return(0,t.jsx)(H,{loading:r,recentRepls:e?.allRecentRepls})}],345836)}]);
+
+//# debugId=c7e99f02-f977-0976-6ad9-ba7defe3fa38
+//# sourceMappingURL=0u_2-liico0q..js.map
