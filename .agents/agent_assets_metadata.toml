@@ -108,3 +108,15 @@ id = "hn8XT3PjaohhZDTirtlb8"
 uri = "file://artifacts/glimr/public/moments/thankyou.png"
 type = "image"
 title = "thank-you-note"
+
+[[generated]]
+id = "R5QOLhR8Sb3q-3vhjB-uu"
+uri = "file://artifacts/glimr/public/bokeh-bg.png"
+type = "image"
+title = "Cinematic bokeh background"
+
+[[generated]]
+id = "IL-hwVYmFUrM5Bx7VMxvm"
+uri = "file://artifacts/glimr/public/light-leak-bg.png"
+type = "image"
+title = "Warm light leak background"
