@@ -125,3 +125,9 @@ id = "7D1S3OguPzzP5KldYUnpB"
 uri = "file://artifacts/missingcash/public/ellie-email.txt"
 type = "text"
 title = "Email to Ellie — Stratton Integration"
+
+[[outputs]]
+id = "Ya9m0lqICQ1v0b9Jypt_7"
+uri = "file://artifacts/missingcash/public/cloudflare-worker.txt"
+type = "text"
+title = "Cloudflare Worker — paste this in"
