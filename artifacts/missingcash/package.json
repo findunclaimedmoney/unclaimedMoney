@@ -1,0 +1,10 @@
+{
+  "name": "@workspace/missingcash",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node serve.mjs",
+    "typecheck": "echo 'static site — no typecheck'"
+  }
+}
