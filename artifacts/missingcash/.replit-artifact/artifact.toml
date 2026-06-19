@@ -18,13 +18,8 @@ localPort = 23246
 run = "pnpm --filter @workspace/missingcash run dev"
 
 [services.production]
-build = [ "pnpm", "--filter", "@workspace/missingcash", "run", "build" ]
-publicDir = "artifacts/missingcash/dist/public"
+publicDir = "artifacts/missingcash/public"
 serve = "static"
-
-[[services.production.rewrites]]
-from = "/*"
-to = "/index.html"
 
 [services.env]
 PORT = "23246"
