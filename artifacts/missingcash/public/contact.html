@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact Us | MissingCash</title>
+<meta name="description" content="Get in touch with MissingCash. We're here to help you find your lost money.">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Bebas+Neue&display=swap" rel="stylesheet">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-1LLNFV2MEQ"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-1LLNFV2MEQ');</script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:#060E1C;color:#dde8f5;min-height:100vh;}
+.navbar{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:64px;background:rgba(6,14,28,0.95);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,0.07);}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.nav-brand{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:0.06em;color:#fff;}
+.nav-sub{font-size:0.62rem;color:rgba(255,255,255,0.35);margin-top:1px;}
+.nav-links{display:flex;align-items:center;gap:20px;}
+.nav-link{color:rgba(255,255,255,0.6);text-decoration:none;font-size:0.9rem;font-weight:500;transition:color 0.2s;}
+.nav-link:hover{color:#fff;}
+.nav-cta{background:#f5b942;color:#060E1C;font-weight:700;font-size:0.85rem;padding:8px 18px;border-radius:8px;text-decoration:none;}
+@media(max-width:640px){.nav-links .nav-link{display:none;}}
+.hero{padding:80px 24px 48px;background:linear-gradient(180deg,#0A1628,#060E1C);text-align:center;}
+.container{max-width:680px;margin:0 auto;}
+.tag{display:inline-block;background:rgba(245,185,66,0.12);border:1px solid rgba(245,185,66,0.3);border-radius:100px;padding:4px 14px;font-size:0.75rem;font-weight:700;color:#f5b942;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:20px;}
+h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.5rem,6vw,4rem);letter-spacing:0.03em;line-height:1.05;color:#fff;margin-bottom:16px;}
+.hero-sub{color:rgba(255,255,255,0.5);font-size:1.05rem;max-width:500px;margin:0 auto;}
+.content{padding:48px 24px 80px;}
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:48px;}
+@media(max-width:600px){.contact-grid{grid-template-columns:1fr;}}
+.contact-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:8px;}
+.contact-icon{font-size:1.6rem;margin-bottom:4px;}
+.contact-label{font-size:0.75rem;font-weight:700;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:0.1em;}
+.contact-value{color:#fff;font-size:1rem;font-weight:600;}
+.contact-value a{color:#f5b942;text-decoration:none;}
+.contact-note{color:rgba(255,255,255,0.4);font-size:0.82rem;}
+.form-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:20px;padding:36px;}
+.form-card h2{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacing:0.04em;color:#fff;margin-bottom:8px;}
+.form-card p{color:rgba(255,255,255,0.4);font-size:0.9rem;margin-bottom:28px;}
+.form-group{margin-bottom:20px;}
+label{display:block;font-size:0.82rem;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;}
+input,select,textarea{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:12px 16px;color:#fff;font-family:'DM Sans',sans-serif;font-size:0.95rem;outline:none;transition:border-color 0.2s;}
+input:focus,select:focus,textarea:focus{border-color:rgba(245,185,66,0.5);}
+select option{background:#0A1628;color:#fff;}
+textarea{height:120px;resize:vertical;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media(max-width:500px){.form-row{grid-template-columns:1fr;}}
+.btn-submit{width:100%;height:52px;border-radius:12px;background:#f5b942;color:#060E1C;font-weight:800;font-size:0.95rem;letter-spacing:0.06em;border:none;cursor:pointer;margin-top:8px;transition:opacity 0.2s;}
+.btn-submit:hover{opacity:0.9;}
+.success-msg{display:none;background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.3);border-radius:12px;padding:20px;text-align:center;color:rgba(34,197,94,0.9);font-weight:600;margin-top:20px;}
+.faq-section{margin-top:60px;}
+.faq-section h2{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:0.04em;color:#fff;margin-bottom:24px;}
+.faq-item{border-bottom:1px solid rgba(255,255,255,0.07);padding:20px 0;}
+.faq-q{font-weight:700;color:#fff;margin-bottom:8px;}
+.faq-a{color:rgba(255,255,255,0.5);font-size:0.95rem;line-height:1.6;}
+footer{background:rgba(0,0,0,0.4);border-top:1px solid rgba(255,255,255,0.08);padding:20px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;font-size:0.78rem;color:rgba(255,255,255,0.3);}
+footer a{color:rgba(255,255,255,0.4);text-decoration:none;}
+</style>
+</head>
+<body>
+<nav class="navbar">
+  <a class="nav-logo" href="index.html">
+    <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#f5b942,#e8a020);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:0.85rem;color:#060E1C;font-weight:900;">MC</div>
+    <div><div class="nav-brand">MissingCash</div><div class="nav-sub">ABN 52 347 989 391</div></div>
+  </a>
+  <div class="nav-links">
+    <a href="crypto.html" class="nav-link">Crypto</a>
+    <a href="finance.html" class="nav-link">Finance</a>
+    <a href="contact.html" class="nav-link" style="color:#f5b942;">Contact</a>
+    <a href="https://buy.stripe.com/6oUbJ0eCE4FDbAFaYo4c800" class="nav-cta" target="_blank">Get Guide $4.99</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="container">
+    <div class="tag">Get In Touch</div>
+    <h1>We're Here to Help</h1>
+    <p class="hero-sub">Questions about the search process, the guide, or your results? Drop us a message and we'll get back to you.</p>
+  </div>
+</div>
+
+<div class="content">
+  <div class="container">
+    <div class="contact-grid">
+      <div class="contact-card">
+        <div class="contact-icon">📧</div>
+        <div class="contact-label">Email</div>
+        <div class="contact-value"><a href="mailto:hello@missingcash.com.au">hello@missingcash.com.au</a></div>
+        <div class="contact-note">We aim to respond within 1–2 business days</div>
+      </div>
+      <div class="contact-card">
+        <div class="contact-icon">🏢</div>
+        <div class="contact-label">Business</div>
+        <div class="contact-value">MissingCash</div>
+        <div class="contact-note">ABN 52 347 989 391 · Australia</div>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <h2>Send a Message</h2>
+      <p>Fill in the form below and we'll get back to you as soon as possible.</p>
+      <form id="contactForm" action="https://formsubmit.co/hello@missingcash.com.au" method="POST">
+        <input type="hidden" name="_subject" value="MissingCash Contact Form">
+        <input type="hidden" name="_captcha" value="false">
+        <input type="hidden" name="_next" value="https://missingcash.com.au/contact.html?sent=1">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="name">Your Name</label>
+            <input type="text" id="name" name="name" placeholder="Jane Smith" required>
+          </div>
+          <div class="form-group">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" name="email" placeholder="jane@email.com" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="topic">What's it about?</label>
+          <select id="topic" name="topic">
+            <option value="General question">General question</option>
+            <option value="Premium Guide support">Premium Guide support</option>
+            <option value="Search result help">Search result help</option>
+            <option value="Finance assistance">Finance assistance</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="message">Message</label>
+          <textarea id="message" name="message" placeholder="Tell us how we can help..." required></textarea>
+        </div>
+        <button type="submit" class="btn-submit">SEND MESSAGE</button>
+      </form>
+      <div class="success-msg" id="successMsg">✓ Message sent! We'll get back to you within 1–2 business days.</div>
+    </div>
+
+    <div class="faq-section">
+      <h2>Common Questions</h2>
+      <div class="faq-item">
+        <div class="faq-q">Is the search really free?</div>
+        <div class="faq-a">Yes. The basic search using our checklist is completely free. The Premium Guide ($4.99) provides step-by-step claiming instructions for every register, but the initial search itself costs nothing.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">How long does it take to claim money once found?</div>
+        <div class="faq-a">It depends on the register. Super consolidation through myGov can take a few days. State revenue claims may take 2–6 weeks. ASIC share claims are usually processed within 4–8 weeks.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Do I need a financial adviser?</div>
+        <div class="faq-a">For most unclaimed money — super, bank accounts, shares — you can reclaim it yourself directly through the relevant government portal. No adviser needed. Our guide walks you through every step.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">I bought the Premium Guide but haven't received it.</div>
+        <div class="faq-a">Check your spam folder first. If you still can't find it, email us with your purchase details and we'll get it sorted immediately.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var p = new URLSearchParams(window.location.search);
+  if(p.get('sent')==='1'){
+    document.getElementById('contactForm').style.display='none';
+    document.getElementById('successMsg').style.display='block';
+  }
+})();
+</script>
+
+<footer>
+  <div>© 2025 MissingCash · ABN 52 347 989 391</div>
+  <div style="display:flex;gap:16px;">
+    <a href="index.html">Home</a>
+    <a href="contact.html">Contact</a>
+    <a href="privacy.html">Privacy Policy</a>
+  </div>
+</footer>
+</body>
+</html>
