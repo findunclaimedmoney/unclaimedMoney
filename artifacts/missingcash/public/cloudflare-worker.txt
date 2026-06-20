@@ -6,9 +6,12 @@ async function handleRequest(request) {
   const url = new URL(request.url)
   const targetUrl = 'https://code-verification-suite-1.replit.app' + url.pathname + url.search
 
+  const headers = new Headers(request.headers)
+  headers.set('Host', 'code-verification-suite-1.replit.app')
+
   const init = {
     method: request.method,
-    headers: request.headers,
+    headers: headers,
   }
 
   if (request.method !== 'GET' && request.method !== 'HEAD') {
