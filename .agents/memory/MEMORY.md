@@ -1,0 +1,1 @@
+- [MissingCash React conversion](missingcash-react.md) — converted from static Node/HTML to React/Vite; Finance.tsx was truncated in upload, reconstructed manually.
