@@ -235,24 +235,20 @@ export default function Finance() {
             </div>
 
             <div className="flex flex-col items-center gap-6">
-              <div className="relative">
-                <div className="absolute inset-0 rounded-full bg-[#F5B942]/20 blur-3xl scale-125" />
-                <div className="relative w-56 h-56 rounded-full ring-2 ring-[#F5B942]/30 ring-offset-4 ring-offset-[#060E1C] overflow-hidden shadow-2xl">
-                  <img src={MIA_AVATAR} alt="Mia — MissingCash AI Finance Guide" className="w-full h-full object-cover" crossOrigin="anonymous" />
+              <div className="relative w-full rounded-2xl overflow-hidden shadow-[0_8px_60px_rgba(0,0,0,0.6)] border border-[#F5B942]/20 ring-1 ring-white/5">
+                <video
+                  src={`${BASE}stratton-intro.mp4`}
+                  controls
+                  playsInline
+                  poster={STRATTON_LOGO}
+                  className="w-full h-auto block"
+                  style={{ background: "#060E1C" }}
+                >
+                  Your browser does not support video.
+                </video>
+                <div className="absolute top-3 left-3 flex items-center gap-2 bg-black/60 backdrop-blur-sm rounded-full px-3 py-1.5 border border-white/10">
+                  <img src={STRATTON_LOGO} alt="Stratton Finance" className="h-5 w-auto object-contain" />
                 </div>
-                <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 whitespace-nowrap flex items-center gap-1.5 bg-[#060E1C] border border-[#F5B942]/30 rounded-full px-4 py-1.5 shadow-xl">
-                  <Sparkles className="w-3.5 h-3.5 text-[#F5B942]" />
-                  <span className="text-xs font-bold text-[#F5B942] tracking-wide">MIA · AI Finance Guide</span>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-4 mt-4">
-                <span className="text-xs text-white/30 uppercase tracking-widest">powered by</span>
-                <div className="h-px w-12 bg-white/15" />
-              </div>
-
-              <div className="bg-white rounded-2xl px-10 py-6 shadow-[0_8px_40px_rgba(0,0,0,0.4)] border border-white/10">
-                <img src={STRATTON_LOGO} alt="Stratton Finance" className="h-14 w-auto object-contain" crossOrigin="anonymous" />
               </div>
 
               <div className="flex flex-wrap justify-center gap-2">
