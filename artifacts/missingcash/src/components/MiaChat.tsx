@@ -9,7 +9,7 @@ interface Message {
 }
 
 const BASE = import.meta.env.BASE_URL.replace(/\/$/, "");
-const AVATAR = `${import.meta.env.BASE_URL}mia-poster.jpg`;
+const AVATAR = `${import.meta.env.BASE_URL}mia-avatar.png`;
 const AVATAR_VIDEOS = [
   `${import.meta.env.BASE_URL}mia-talk.mp4`,
   `${import.meta.env.BASE_URL}mia.mp4`,

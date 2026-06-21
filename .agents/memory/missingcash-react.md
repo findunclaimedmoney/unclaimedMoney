@@ -24,7 +24,7 @@ description: Notes on converting missingcash from static HTML to React/Vite app.
 
 **Sharp edges:**
 - Finance.tsx was truncated in the user's upload — always check Finance page if rebuilding
-- `mia-avatar.png` does not exist in public/ — MiaChat uses `mia-poster.jpg`; AVATAR_VIDEOS use `mia-talk.mp4` + `mia.mp4`
+- `mia-avatar.png` exists in public/ (903×899 PNG, real headshot); MiaChat AVATAR points to it. AVATAR_VIDEOS use `mia-talk.mp4` + `mia.mp4`
 - Mia chat expects streaming SSE from `POST /api/mia/chat` — not yet built in api-server; fails gracefully
 - Email alerts expect `POST /api/alerts/subscribe` — not yet built
 - framer-motion causes "duplicate React instance" error unless `vite.config.ts` has `resolve.dedupe: ["react", "react-dom", "framer-motion"]` AND `optimizeDeps.include: ["react", "react-dom", "framer-motion"]`
