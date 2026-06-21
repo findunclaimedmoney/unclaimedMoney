@@ -3,206 +3,40 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<title>Thank You — MissingCrypto Recovery</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{
-  --navy:#061826;
-  --card:#0b2a3d;
-  --border:#1a3a52;
-  --teal:#00c9a7;
-  --teal2:#00e5c2;
-  --orange:#f7931a;
-  --orange2:#ffb347;
-  --gold:#f5b942;
-  --green:#00c853;
-  --purple:#7c3aed;
-  --pink:#db2777;
-  --text:#dde8f5;
-  --muted:#7a9ab5;
-  --white:#fff;
-}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Nunito',sans-serif;background:var(--navy);color:var(--text);min-height:100vh;display:flex;flex-direction:column;}
-.top-banner{background:rgba(0,0,0,0.75);border-bottom:1px solid rgba(0,201,167,0.2);text-align:center;padding:10px 16px;font-size:12px;font-weight:700;color:var(--teal);letter-spacing:0.07em;}
-
-/* HERO */
-.hero{position:relative;text-align:center;padding:56px 20px 48px;overflow:hidden;background:linear-gradient(180deg,rgba(0,201,167,0.06) 0%,rgba(6,24,38,0) 100%);}
-.hero::before{content:'';position:absolute;top:-60px;left:50%;transform:translateX(-50%);width:500px;height:500px;background:radial-gradient(circle,rgba(0,201,167,0.08) 0%,transparent 70%);pointer-events:none;}
-.success-ring{width:88px;height:88px;border-radius:50%;background:linear-gradient(135deg,rgba(0,201,167,0.2),rgba(247,147,26,0.15));border:2px solid rgba(0,201,167,0.4);display:flex;align-items:center;justify-content:center;font-size:40px;margin:0 auto 24px;position:relative;z-index:1;}
-.hero-pill{display:inline-flex;align-items:center;gap:7px;background:rgba(0,201,167,0.12);border:1px solid rgba(0,201,167,0.4);color:var(--teal);font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;padding:6px 18px;border-radius:100px;margin-bottom:18px;}
-.hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.8rem,10vw,5rem);line-height:1;color:var(--white);margin-bottom:14px;}
-.hero h1 span{background:linear-gradient(90deg,var(--teal),var(--orange));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-.hero-sub{font-size:16px;color:rgba(255,255,255,0.75);max-width:420px;margin:0 auto;line-height:1.6;}
-
-/* MAIN BODY */
-.page-body{max-width:680px;margin:0 auto;padding:32px 16px 60px;flex:1;width:100%;}
-
-/* DOWNLOAD CARD */
-.download-card{background:linear-gradient(135deg,rgba(0,201,167,0.1),rgba(247,147,26,0.07));border:2px solid rgba(0,201,167,0.35);border-radius:22px;padding:32px 28px;text-align:center;margin-bottom:20px;position:relative;overflow:hidden;}
-.download-card::before{content:'';position:absolute;top:-40px;right:-40px;width:160px;height:160px;background:radial-gradient(circle,rgba(0,201,167,0.1),transparent 70%);pointer-events:none;}
-.download-icon{font-size:48px;margin-bottom:16px;}
-.download-title{font-family:'Bebas Neue',sans-serif;font-size:2rem;color:var(--white);margin-bottom:8px;}
-.download-sub{font-size:14px;color:var(--muted);margin-bottom:24px;line-height:1.5;}
-.btn-download{display:inline-flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:17px 24px;background:linear-gradient(135deg,var(--teal),var(--orange));color:#061826;font-family:'Nunito',sans-serif;font-size:17px;font-weight:900;border:none;border-radius:14px;cursor:pointer;text-decoration:none;box-shadow:0 6px 28px rgba(0,201,167,0.35);transition:transform 0.2s,box-shadow 0.2s;position:relative;overflow:hidden;}
-.btn-download::after{content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.18),transparent);transform:skewX(-20deg);animation:shimmer 2.5s infinite;}
-.btn-download:hover{transform:translateY(-2px);box-shadow:0 8px 36px rgba(0,201,167,0.5);}
-.btn-download-icon{font-size:22px;}
-.secure-note{margin-top:12px;font-size:12px;color:var(--muted);display:flex;align-items:center;justify-content:center;gap:6px;}
-
-/* WHAT'S INSIDE */
-.section-label{text-align:center;font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;display:flex;align-items:center;gap:12px;}
-.section-label::before,.section-label::after{content:'';flex:1;height:1px;background:var(--border);}
-.chapters{display:flex;flex-direction:column;gap:8px;margin-bottom:20px;}
-.chapter{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:11px;padding:11px 14px;}
-.ch-num{font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--teal);min-width:28px;}
-.ch-text{font-size:13px;color:var(--text);font-weight:600;}
-
-/* SUPPORT CARD */
-.support-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:22px;margin-bottom:20px;text-align:center;}
-.support-title{font-size:16px;font-weight:800;color:var(--white);margin-bottom:8px;}
-.support-text{font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.6;}
-.email-link{display:inline-flex;align-items:center;gap:8px;background:rgba(0,201,167,0.08);border:1px solid rgba(0,201,167,0.25);color:var(--teal);font-weight:700;font-size:14px;padding:10px 20px;border-radius:30px;text-decoration:none;transition:background 0.2s;}
-.email-link:hover{background:rgba(0,201,167,0.15);}
-
-/* BACK LINK */
-.back-link{display:flex;align-items:center;justify-content:center;gap:8px;font-size:14px;color:var(--muted);text-decoration:none;margin-bottom:20px;}
-.back-link:hover{color:var(--teal);}
-
-/* SCAM WARNING */
-.scam-box{background:rgba(247,147,26,0.07);border:1px solid rgba(247,147,26,0.2);border-radius:12px;padding:14px 16px;font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:20px;}
-.scam-box strong{color:var(--orange);}
-
-footer{background:rgba(0,0,0,0.4);border-top:1px solid var(--border);padding:20px 24px;text-align:center;font-size:12px;color:var(--muted);line-height:1.8;}
-footer a{color:var(--muted);text-decoration:none;}
-footer a:hover{color:var(--teal);}
-
-@keyframes shimmer{0%{left:-100%;}100%{left:200%;}}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#080d1a;color:#e8edf5;font-family:'Inter',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;}
+.card{background:rgba(255,255,255,0.05);border:1px solid rgba(150,100,255,0.2);border-radius:24px;padding:48px 32px;max-width:500px;width:100%;}
+.icon{font-size:3.5rem;margin-bottom:20px;}
+h1{font-family:'Playfair Display',serif;font-size:2rem;font-weight:700;margin-bottom:14px;background:linear-gradient(135deg,#fff,#9664ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+p{color:#8892a4;line-height:1.7;margin-bottom:28px;font-size:0.95rem;}
+.steps{text-align:left;background:rgba(150,100,255,0.05);border:1px solid rgba(150,100,255,0.2);border-radius:14px;padding:20px 24px;margin-bottom:28px;}
+.steps h3{font-size:0.85rem;font-weight:600;color:#9664ff;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:14px;}
+.step{display:flex;gap:12px;margin-bottom:12px;font-size:0.88rem;}
+.step:last-child{margin-bottom:0;}
+.step-n{width:22px;height:22px;border-radius:50%;background:#9664ff;color:#fff;font-weight:700;font-size:0.75rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.step-text{color:#e8edf5;line-height:1.5;}
+.btn{display:inline-block;padding:14px 32px;background:linear-gradient(135deg,#9664ff,#7040cc);color:#fff;font-weight:700;border-radius:12px;text-decoration:none;font-family:'Inter',sans-serif;transition:opacity 0.2s;}
+.btn:hover{opacity:0.9;}
+a.home{color:#8892a4;font-size:0.85rem;text-decoration:none;margin-top:16px;display:block;}
 </style>
-
-<!-- SEO Meta Tags -->
-<title>Thank You – Your MissingCrypto Guide is Ready</title>
-<meta name="description" content="Download your MissingCrypto Recovery Guide. Step-by-step instructions for CoinSpot, Binance, Coinbase, Swyftx and more.">
-<meta name="robots" content="index, follow">
-<link rel="canonical" href="https://missingcash.com.au/crypto-thank-you.html">
-<!-- Open Graph / Social Preview -->
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://missingcash.com.au/crypto-thank-you.html">
-<meta property="og:title" content="Your MissingCrypto Guide is Ready to Download">
-<meta property="og:description" content="Access your complete crypto recovery guide – all major Australian exchanges covered.">
-<meta property="og:image" content="/missingcash-profile.png">
-<!-- Twitter Card -->
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Your MissingCrypto Guide is Ready to Download">
-<meta name="twitter:description" content="Access your complete crypto recovery guide – all major Australian exchanges covered.">
-
-<style>
-.navbar{display:flex;align-items:center;justify-content:space-between;padding:10px 20px;background:rgba(6,24,38,0.97);border-bottom:1px solid rgba(245,185,66,0.15);position:sticky;top:0;z-index:999;backdrop-filter:blur(10px);}
-.navbar-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
-.navbar-logo img{width:44px;height:44px;border-radius:50%;object-fit:cover;}
-.navbar-brand{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:0.05em;}
-.navbar-abn{font-size:10px;color:#7a9ab5;letter-spacing:0.05em;}
-.navbar-links{display:flex;align-items:center;gap:16px;font-size:12px;font-weight:700;}
-.navbar-links a{color:#7a9ab5;text-decoration:none;transition:color 0.2s;}
-.navbar-links a:hover{color:#dde8f5;}
-</style>
-
-<!-- Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-1LLNFV2MEQ"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-1LLNFV2MEQ');
-</script>
 </head>
 <body>
-<nav class="navbar">
-  <a class="navbar-logo" href="/">
-    <img src="/missingcash-profile.png" alt="MissingCrypto Logo">
-    <div>
-      <div class="navbar-brand" style="color:#00c9a7;">MissingCrypto</div>
-      <div class="navbar-abn">ABN 52 347 989 391</div>
-    </div>
-  </a>
-  <div class="navbar-links">
-    <a href="/">MissingCash</a>
-    <a href="/privacy">Privacy</a>
-    <a href="mailto:admin@missingcash.com.au">Contact</a>
+<div class="card">
+  <div class="icon">🔐</div>
+  <h1>Crypto Recovery Guide Unlocked!</h1>
+  <p>Your MissingCrypto Recovery Guide is ready. Here's what to do next to trace and recover your lost cryptocurrency.</p>
+  <div class="steps">
+    <h3>Recovery Steps</h3>
+    <div class="step"><div class="step-n">1</div><div class="step-text">Check your email for a download link to your full Crypto Recovery Guide PDF.</div></div>
+    <div class="step"><div class="step-n">2</div><div class="step-text">List all wallets, exchanges, and seed phrases you can recall — even partial info helps.</div></div>
+    <div class="step"><div class="step-n">3</div><div class="step-text">Use the guide to search AUSTRAC, Blockchain explorers, and exchange dormant account processes.</div></div>
+    <div class="step"><div class="step-n">4</div><div class="step-text">Follow the step-by-step claim instructions for each exchange (Coinbase, Binance, CoinSpot, etc.).</div></div>
   </div>
-</nav>
+  <a href="crypto.html" class="btn">Back to Crypto Page</a>
+  <a href="/" class="home">Return to MissingCash Home</a>
 </div>
-
-<div class="top-banner">
-  🔒 PAYMENT CONFIRMED &nbsp;•&nbsp; Your guide is ready to download below
-</div>
-
-<div class="hero">
-  <div class="success-ring">🔓</div>
-  <div class="hero-pill">✅ Purchase Complete</div>
-  <h1>Your Guide Is<br><span>Ready!</span></h1>
-  <p class="hero-sub">Thank you for your purchase. Your MissingCrypto Recovery Guide is below — download it now and start recovering your crypto.</p>
-</div>
-
-<div class="page-body">
-
-  <!-- DOWNLOAD -->
-  <div class="download-card">
-    <div class="download-icon">📘</div>
-    <div class="download-title">MissingCrypto Recovery Guide</div>
-    <div class="download-sub">16-page step-by-step guide · CoinSpot, Binance, Coinbase, Swyftx, Independent Reserve &amp; Hardware Wallets · Lifetime access</div>
-    <a class="btn-download" href="/premium-guide.pdf" download="MissingCash_Premium_Guide.pdf">
-      <span class="btn-download-icon">⬇️</span>
-      Download Your Guide Now
-    </a>
-    <div class="secure-note">📄 PDF · Opens instantly · Save to your phone or computer</div>
-  </div>
-
-  <!-- WHAT'S INSIDE -->
-  <div class="section-label">What's Inside Your Guide</div>
-  <div class="chapters">
-    <div class="chapter"><div class="ch-num">01</div><div class="ch-text">How crypto gets lost — and why it's still recoverable</div></div>
-    <div class="chapter"><div class="ch-num">02</div><div class="ch-text">What documents to gather before you start</div></div>
-    <div class="chapter"><div class="ch-num">03</div><div class="ch-text">CoinSpot account recovery — step by step</div></div>
-    <div class="chapter"><div class="ch-num">04</div><div class="ch-text">Binance account recovery — full guide</div></div>
-    <div class="chapter"><div class="ch-num">05</div><div class="ch-text">Coinbase account recovery — full guide</div></div>
-    <div class="chapter"><div class="ch-num">06</div><div class="ch-text">Swyftx recovery — Australian exchange</div></div>
-    <div class="chapter"><div class="ch-num">07</div><div class="ch-text">Independent Reserve recovery guide</div></div>
-    <div class="chapter"><div class="ch-num">08</div><div class="ch-text">Hardware wallet &amp; seed phrase recovery (Ledger &amp; Trezor)</div></div>
-    <div class="chapter"><div class="ch-num">09</div><div class="ch-text">What to do if your exchange has closed down</div></div>
-    <div class="chapter"><div class="ch-num">10</div><div class="ch-text">ATO tax implications of recovered crypto</div></div>
-    <div class="chapter"><div class="ch-num">11</div><div class="ch-text">Scam warning — how to spot and avoid fake recovery services</div></div>
-    <div class="chapter"><div class="ch-num">12</div><div class="ch-text">Printable crypto asset tracker</div></div>
-  </div>
-
-  <!-- SCAM WARNING -->
-  <div class="scam-box">
-    ⚠️ <strong>Reminder:</strong> Never pay anyone upfront or in crypto to recover your account. All recovery steps in this guide go through official exchange support channels only — completely free.
-  </div>
-
-  <!-- SUPPORT -->
-  <div class="support-card">
-    <div class="support-title">Need Help? We've Got You.</div>
-    <div class="support-text">If you have any questions about your guide or need assistance, email us and we'll get back to you as soon as possible.</div>
-    <a class="email-link" href="mailto:admin@missingcash.com.au">
-      ✉️ admin@missingcash.com.au
-    </a>
-  </div>
-
-  <!-- BACK -->
-  <a class="back-link" href="/">← Back to MissingCash</a>
-
-</div>
-
-<footer>
-  © 2025 MissingCash Australia · ABN 52 347 989 391<br>
-  <a href="mailto:admin@missingcash.com.au">admin@missingcash.com.au</a> ·
-  <a href="/privacy">Privacy Policy</a> ·
-  <a href="/">missingcash.com.au</a><br>
-  Not affiliated with any cryptocurrency exchange or government agency. Not financial or legal advice.
-</footer>
-
 </body>
 </html>
