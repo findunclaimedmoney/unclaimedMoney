@@ -1,6 +1,6 @@
-# [Project name]
+# MissingCash
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+An Australian unclaimed-money search service: helps people find money held by the ATO, ASIC, and banks, with guidance on claiming it, a crypto-recovery section, a Stratton Finance loans page, and "Mia", a site-wide AI assistant.
 
 ## Run & Operate
 
@@ -22,15 +22,36 @@ _Replace the heading above with the project's name, and this line with one sente
 
 ## Where things live
 
-_Populate as you build — short repo map plus pointers to the source-of-truth file for DB schema, API contracts, theme files, etc._
+- Frontend (React + Vite + Wouter + Tailwind v4 + shadcn/ui + framer-motion): `artifacts/missingcash/`
+  - Pages: `src/pages/` — Home, Finance, Crypto, Guides, FindMyMoney, DeceasedEstate, LotteryChecker, AustraliaMap, Contact, Privacy, ThankYou, not-found
+  - Components: `src/components/` — NavBar, Footer, MiaChat, TrustTicker, UnclaimedTicker, EmailAlertSignup
+  - SEO: `src/hooks/use-page-seo.ts` — sets title/description/keywords/OG/Twitter meta per page
+  - Theme: navy `#061826` background, gold `#f5b942` primary — defined in `src/index.css` via `@theme`
+- API (Express 5, routed at `/api` via shared proxy): `artifacts/api-server/`
+  - Mia chat route needed: `POST /api/mia/chat` (streaming SSE)
+  - Email alerts route needed: `POST /api/alerts/subscribe`
+  - Finance enquiry route needed: `POST /api/finance/enquiry`
+- Static assets (PDFs, videos, images): `artifacts/missingcash/public/`
 
 ## Architecture decisions
 
-_Populate as you build — non-obvious choices a reader couldn't infer from the code (3-5 bullets)._
+- Mia is a **stateless** assistant: no DB tables for conversations. Client holds history and POSTs full `messages` array; server streams SSE response. Client parses manually (codegen can't model SSE).
+- MiaChat listens to `window.dispatchEvent(new CustomEvent('mia:open', { detail: { message, autoSend } }))` — any page can open it and optionally auto-send a message.
+- Finance.tsx posts enquiries to `/api/finance/enquiry` — Stratton Finance partner (Erin Crofton, Wanneroo WA, 0432 280 181, ACL 364340).
+- Static site assets remain in `public/` and are served by Vite at root paths — PDFs, videos, images all accessible.
+- Finance.tsx was truncated in the original upload at line 320 mid-JSX — it was reconstructed manually with loan calculator + enquiry form.
 
 ## Product
 
-_Describe the high-level user-facing capabilities of this app once they exist._
+- **Home**: hero search + live unclaimed ticker ($2.6B+ ticking up every second), trust signals, FAQ.
+- **Find My Money**: step-by-step search guide across ATO, ASIC, banks, state registers.
+- **Crypto**: lost/inaccessible crypto recovery guidance.
+- **Finance**: Stratton Finance loans page (Erin Crofton, Wanneroo/Perth) with loan calculator and enquiry form.
+- **Guides**: premium PDF guides for sale via Stripe — MissingCash guide, crypto recovery, cyber security, identity theft.
+- **Deceased Estate**: guide for finding unclaimed money in deceased estates.
+- **Lottery Checker**: check old lottery tickets.
+- **Australia Map**: state-by-state guide to unclaimed money registers.
+- **Mia**: site-wide floating AI assistant — floating "Ask Mia" button, streaming chat, animated avatar.
 
 ## User preferences
 
@@ -38,7 +59,9 @@ _Populate as you build — explicit user instructions worth remembering across s
 
 ## Gotchas
 
-_Populate as you build — sharp edges, "always run X before Y" rules._
+- Finance.tsx was truncated in the original file upload (320 lines, cut mid-JSX). If rebuilding, reconstruct manually.
+- `mia-avatar.png` does not exist in `public/` — MiaChat uses `mia-poster.jpg` as the avatar image.
+- MiaChat expects streaming SSE from `POST /api/mia/chat`. Until that endpoint is built it will show an error message gracefully.
 
 ## Pointers
 

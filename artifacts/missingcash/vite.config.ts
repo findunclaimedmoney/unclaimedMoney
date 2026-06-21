@@ -40,7 +40,10 @@ export default defineConfig({
     alias: {
       "@": path.resolve(import.meta.dirname, "src"),
     },
-    dedupe: ["react", "react-dom"],
+    dedupe: ["react", "react-dom", "framer-motion"],
+  },
+  optimizeDeps: {
+    include: ["react", "react-dom", "framer-motion"],
   },
   root: path.resolve(import.meta.dirname),
   build: {

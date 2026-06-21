@@ -15,7 +15,7 @@ description: Notes on converting missingcash from static HTML to React/Vite app.
 - Router: wouter with `<Router base={BASE_URL.replace(/\/$/, "")}>` pattern
 - 12 pages in `src/pages/` — 11 from user zip + Finance.tsx which was truncated in upload and had to be reconstructed manually
 - Finance.tsx: posts to `/api/finance/enquiry`; Stratton Finance partner; Erin Crofton 0432 280 181; tracking URL in STRATTON_QUOTE_URL constant
-- Custom components: `UnclaimedTicker` (live counter from $24.1B base), `EmailAlertSignup` (posts to `/api/alerts/subscribe`), `MiaChat` (floating chat, listens to `mia:open` CustomEvent, posts to `/api/mia/chat`)
+- Custom components: `UnclaimedTicker` ($2.6B base, ticks every 100ms), `EmailAlertSignup` (firstName + state + email, posts to `/api/alerts/subscribe`), `MiaChat` (framer-motion, streaming SSE, video avatar, listens to `mia:open` CustomEvent, posts to `/api/mia/chat`), `TrustTicker` (CSS marquee with trust signals), `NavBar` (shield logo, Sign Up bell, Get Finance CTA)
 - `usePageSEO` hook in `src/hooks/use-page-seo.ts` — sets document.title and meta tags
 - UI components copied from Glimr (`src/components/ui/`)
 - Static assets (PDFs, videos, images) remain in `public/` and are served by Vite at root paths
@@ -24,5 +24,8 @@ description: Notes on converting missingcash from static HTML to React/Vite app.
 
 **Sharp edges:**
 - Finance.tsx was truncated in the user's upload — always check Finance page if rebuilding
-- Mia chat expects `/api/mia/chat` endpoint (not yet built in api-server)
-- Email alerts expect `/api/alerts/subscribe` endpoint (not yet built)
+- `mia-avatar.png` does not exist in public/ — MiaChat uses `mia-poster.jpg`; AVATAR_VIDEOS use `mia-talk.mp4` + `mia.mp4`
+- Mia chat expects streaming SSE from `POST /api/mia/chat` — not yet built in api-server; fails gracefully
+- Email alerts expect `POST /api/alerts/subscribe` — not yet built
+- framer-motion causes "duplicate React instance" error unless `vite.config.ts` has `resolve.dedupe: ["react", "react-dom", "framer-motion"]` AND `optimizeDeps.include: ["react", "react-dom", "framer-motion"]`
+- AVA GENIUS zip extracts to a single 707KB `index.html` → saved as `public/ava-genius.html`

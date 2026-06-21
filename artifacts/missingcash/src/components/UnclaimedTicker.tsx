@@ -1,29 +1,32 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-const BASE_AMOUNT = 24_100_000_000;
-const TICK_MS = 3200;
-const TICK_AMOUNT = 1847;
+const BASE = 2_600_000_000;
+const PER_SECOND = 847;
 
 export default function UnclaimedTicker() {
-  const [amount, setAmount] = useState(BASE_AMOUNT);
+  const [amount, setAmount] = useState(BASE);
+  const startRef = useRef(Date.now());
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setAmount((prev) => prev + TICK_AMOUNT);
-    }, TICK_MS);
-    return () => clearInterval(interval);
+    const id = setInterval(() => {
+      const elapsed = (Date.now() - startRef.current) / 1000;
+      setAmount(Math.floor(BASE + elapsed * PER_SECOND));
+    }, 100);
+    return () => clearInterval(id);
   }, []);
 
-  const formatted = new Intl.NumberFormat("en-AU", {
-    style: "currency",
-    currency: "AUD",
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(amount);
+  const formatted = amount.toLocaleString("en-AU");
 
   return (
-    <span className="text-3xl md:text-4xl font-heading font-bold text-primary tracking-tight gold-glow tabular-nums">
-      {formatted}
-    </span>
+    <div className="inline-flex flex-col items-center gap-1">
+      <div className="flex items-baseline gap-1">
+        <span className="text-2xl md:text-3xl font-bold text-primary tabular-nums tracking-tight">
+          ${formatted}
+        </span>
+      </div>
+      <span className="text-xs text-muted-foreground tracking-widest uppercase">
+        Total unclaimed in Australia — ticking up every second
+      </span>
+    </div>
   );
 }
