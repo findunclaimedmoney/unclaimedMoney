@@ -18,10 +18,14 @@ kind = "web"
   run = "pnpm --filter @workspace/missingcash run dev"
 
   [services.production]
-  publicDir = "artifacts/missingcash/public"
+  build = [ "pnpm", "--filter", "@workspace/missingcash", "run", "build" ]
+  publicDir = "artifacts/missingcash/dist/public"
   serve = "static"
+
+  [[services.production.rewrites]]
+  from = "/*"
+  to = "/index.html"
 
   [services.env]
   PORT = "23246"
   BASE_PATH = "/"
-  
