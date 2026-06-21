@@ -492,17 +492,38 @@ export default function Finance() {
               </div>
             </div>
             <div>
-              <Label htmlFor="message" className="text-white/60 text-sm mb-1.5 block">Message (optional)</Label>
-              <Textarea id="message" name="message" rows={3} placeholder="Tell Erin about your finance needs…" className="bg-white/6 border-white/15 text-white placeholder:text-white/25 resize-none" />
-            </div>
-
-            <div className="bg-[#F5B942]/5 border border-[#F5B942]/15 rounded-xl p-4 text-xs text-white/40 leading-relaxed">
-              Loan type selected: <strong className="text-[#F5B942]">{cfg.label}</strong>
+              <Label className="text-white/60 text-sm mb-1.5 block">What type of finance? *</Label>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                {(Object.entries(LOAN_CONFIG) as [LoanType, typeof LOAN_CONFIG[LoanType]][]).map(([key, config]) => {
+                  const IconComp = config.Icon;
+                  return (
+                    <button
+                      key={key}
+                      type="button"
+                      onClick={() => setLoanType(key)}
+                      className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl border text-sm font-semibold transition-all ${
+                        loanType === key
+                          ? "bg-[#F5B942]/10 border-[#F5B942]/40 text-[#F5B942]"
+                          : "bg-white/5 border-white/10 text-white/60 hover:text-white/80 hover:border-white/20"
+                      }`}
+                    >
+                      <IconComp className="w-4 h-4" />
+                      {config.label}
+                    </button>
+                  );
+                })}
+              </div>
               {showEstimate && (
-                <> · Amount: <strong className="text-[#F5B942]">{fmtAUD(loanAmount)}</strong> over{" "}
-                  <strong className="text-[#F5B942]">{preferredTerm} years</strong> (est. {fmtAUD(calcMonthly(loanAmount, cfg.rate, preferredTerm))}/mo)
-                </>
+                <p className="mt-2 text-xs text-white/40">
+                  Estimate: <strong className="text-[#F5B942]">{fmtAUD(loanAmount)}</strong> over{" "}
+                  <strong className="text-[#F5B942]">{preferredTerm} years</strong> · approx.{" "}
+                  <strong className="text-[#F5B942]">{fmtAUD(calcMonthly(loanAmount, cfg.rate, preferredTerm))}/mo</strong>
+                </p>
               )}
+            </div>
+            <div>
+              <Label htmlFor="message" className="text-white/60 text-sm mb-1.5 block">Message (optional)</Label>
+              <Textarea id="message" name="message" rows={3} placeholder="Anything else Erin should know? (optional)" className="bg-white/6 border-white/15 text-white placeholder:text-white/25 resize-none" />
             </div>
 
             <label className="flex items-start gap-3 cursor-pointer group">
