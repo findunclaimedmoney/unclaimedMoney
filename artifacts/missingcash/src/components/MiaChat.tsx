@@ -11,8 +11,8 @@ interface Message {
 const BASE = import.meta.env.BASE_URL.replace(/\/$/, "");
 const AVATAR = `${import.meta.env.BASE_URL}mia-avatar.png`;
 const AVATAR_VIDEOS = [
-  `${import.meta.env.BASE_URL}mia-talk.mp4`,
-  `${import.meta.env.BASE_URL}mia.mp4`,
+  `${import.meta.env.BASE_URL}mia-welcome.mp4`,
+  `${import.meta.env.BASE_URL}mia-welcome-backup.mp4`,
 ];
 
 const WELCOME =
@@ -46,15 +46,7 @@ function renderMessage(content: string) {
   });
 }
 
-function MiaAvatar({
-  size,
-  active,
-  showStatus = false,
-}: {
-  size: number;
-  active: boolean;
-  showStatus?: boolean;
-}) {
+function MiaAvatar({ size, active, showStatus = false }: { size: number; active: boolean; showStatus?: boolean }) {
   return (
     <div className="relative shrink-0" style={{ width: size, height: size }}>
       <motion.span
@@ -92,9 +84,7 @@ function MiaAvatar({
           src={AVATAR}
           alt="Mia"
           className="relative w-full h-full object-cover"
-          onError={(e) => {
-            e.currentTarget.style.display = "none";
-          }}
+          onError={(e) => { e.currentTarget.style.display = "none"; }}
         />
       </motion.div>
       {showStatus && (
@@ -124,10 +114,7 @@ function MiaWelcomeVideo({ onUnavailable }: { onUnavailable: () => void }) {
     tryPlay();
     const v = ref.current;
     return () => {
-      if (v) {
-        v.pause();
-        v.currentTime = 0;
-      }
+      if (v) { v.pause(); v.currentTime = 0; }
     };
   }, [tryPlay, srcIndex]);
 
@@ -162,7 +149,7 @@ function MiaWelcomeVideo({ onUnavailable }: { onUnavailable: () => void }) {
         src={AVATAR_VIDEOS[srcIndex]}
         playsInline
         autoPlay
-        aria-label="Mia greets you and explains how MissingCash helps find unclaimed money"
+        aria-label="Mia greets you"
         onError={handleError}
         className="relative w-full h-full object-cover rounded-full ring-2 ring-primary/40"
       />
@@ -201,7 +188,6 @@ export default function MiaChat() {
   }, [open]);
 
   const handleVideoUnavailable = useCallback(() => setVideoOk(false), []);
-
   const sendMessageRef = useRef<((text?: string) => void) | null>(null);
 
   const sendMessage = useCallback(
@@ -260,9 +246,7 @@ export default function MiaChat() {
                 );
               }
               if (payload.done || payload.error) break;
-            } catch {
-              /* ignore partial JSON */
-            }
+            } catch { /* ignore partial JSON */ }
           }
         }
       } catch (err) {
@@ -270,7 +254,7 @@ export default function MiaChat() {
           setMessages((prev) =>
             prev.map((m) =>
               m.id === assistantId
-                ? { ...m, content: "Sorry, something went wrong. Please try again, or email admin@missingcash.com.au." }
+                ? { ...m, content: "Sorry, something went wrong. Please try again, or email support@missingcash.com.au." }
                 : m,
             ),
           );
@@ -313,7 +297,6 @@ export default function MiaChat() {
 
   return (
     <>
-      {/* Launcher */}
       <AnimatePresence>
         {!open && (
           <motion.button
@@ -332,7 +315,6 @@ export default function MiaChat() {
         )}
       </AnimatePresence>
 
-      {/* Chat panel */}
       <AnimatePresence>
         {open && (
           <motion.div
@@ -343,12 +325,11 @@ export default function MiaChat() {
             style={{ height: "560px", transformOrigin: "bottom right" }}
             className="fixed bottom-6 right-6 z-50 w-[380px] max-w-[calc(100vw-24px)] flex flex-col rounded-2xl overflow-hidden shadow-2xl shadow-black/60 border border-border bg-card"
           >
-            {/* Header */}
             <div className="flex items-center gap-3 px-4 py-3 bg-secondary border-b border-border shrink-0">
               <MiaAvatar size={40} active={streaming} showStatus />
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-bold text-white">Mia</p>
-                <p className="text-[11px] text-primary flex items-center gap-1">
+                <p className="text-[11px] text-primary">
                   {streaming ? "typing…" : "MissingCash assistant"}
                 </p>
               </div>
@@ -361,7 +342,6 @@ export default function MiaChat() {
               </button>
             </div>
 
-            {/* Messages */}
             <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
               {showSuggestions && (
                 <div className="flex flex-col items-center text-center pt-2 pb-1">
@@ -422,7 +402,6 @@ export default function MiaChat() {
               <div ref={messagesEndRef} />
             </div>
 
-            {/* Input */}
             <div className="border-t border-border p-3 shrink-0 bg-card">
               <div className="flex items-end gap-2">
                 <input
