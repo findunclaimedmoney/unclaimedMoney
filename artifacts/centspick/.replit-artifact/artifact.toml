@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/centspick/"
+title = "CentsPick"
+version = "1.0.0"
+id = "artifacts/centspick"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/centspick/" ]
+localPort = 19430
+
+[services.development]
+run = "pnpm --filter @workspace/centspick run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/centspick", "run", "build" ]
+publicDir = "artifacts/centspick/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "19430"
+BASE_PATH = "/centspick/"

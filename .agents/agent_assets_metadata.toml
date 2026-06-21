@@ -120,6 +120,60 @@ uri = "file://artifacts/glimr/public/light-leak-bg.png"
 type = "image"
 title = "Warm light leak background"
 
+[[generated]]
+id = "0B284nzAHaL5k8FHzlv7k"
+uri = "file://artifacts/centspick/public/images/hands-coins.png"
+type = "image"
+title = "Hands holding coins card"
+
+[[generated]]
+id = "VY9c_hUhwsheGRqv8g5qN"
+uri = "file://artifacts/centspick/public/images/happy-person.png"
+type = "image"
+title = "Happy person smartphone"
+
+[[generated]]
+id = "Kttm0m5K63LGdyvFejfqp"
+uri = "file://artifacts/centspick/public/images/abstract-money.png"
+type = "image"
+title = "Abstract money motif"
+
+[[generated]]
+id = "37eLvrYGUT9Ps8VpHQFjs"
+uri = "file://artifacts/centspick/public/images/espresso-machine.png"
+type = "image"
+title = "espresso machine product photo"
+
+[[generated]]
+id = "mkvFBmEhYnQqfr3Htnb8I"
+uri = "file://artifacts/centspick/public/images/headphones.png"
+type = "image"
+title = "wireless headphones product photo"
+
+[[generated]]
+id = "WXMb4RfN0GaFz0IGAaUDD"
+uri = "file://artifacts/centspick/public/images/smartwatch.png"
+type = "image"
+title = "smartwatch product photo"
+
+[[generated]]
+id = "cmpW8qiyMIfR5EZ_rC7t7"
+uri = "file://artifacts/centspick/public/images/smartphone.png"
+type = "image"
+title = "smartphone product photo"
+
+[[generated]]
+id = "XIawFILbNZHHoxX0vpZqe"
+uri = "file://artifacts/centspick/public/images/laptop.png"
+type = "image"
+title = "gaming laptop product photo"
+
+[[generated]]
+id = "TuPu3THi_42jrJIfdxtph"
+uri = "file://artifacts/centspick/public/images/tv.png"
+type = "image"
+title = "4k tv product photo"
+
 [[outputs]]
 id = "7D1S3OguPzzP5KldYUnpB"
 uri = "file://artifacts/missingcash/public/ellie-email.txt"
