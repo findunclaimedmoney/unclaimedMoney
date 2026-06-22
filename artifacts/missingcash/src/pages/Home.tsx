@@ -283,6 +283,33 @@ export default function Home() {
           </div>
         </DialogContent>
       </Dialog>
+      {/* Marketing Video */}
+      <section className="py-20 border-t border-border">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-10">
+            <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/30 rounded-full px-4 py-1.5 text-sm text-primary font-medium mb-5">
+              <span className="w-2 h-2 rounded-full bg-primary animate-pulse" /> Meet Mia — Australia's First AI Avatar
+            </div>
+            <h2 className="text-4xl md:text-5xl font-heading tracking-wider mb-4 text-white">SEE HOW IT WORKS</h2>
+            <p className="text-muted-foreground max-w-xl mx-auto">Watch Mia walk you through how MissingCash helps Australians find and reclaim what's theirs.</p>
+          </div>
+          <div className="relative max-w-sm mx-auto group">
+            <div className="absolute -inset-1 bg-gradient-to-r from-primary/30 via-primary/10 to-primary/30 rounded-2xl blur-xl opacity-60 group-hover:opacity-90 transition-opacity pointer-events-none" />
+            <div className="relative rounded-2xl overflow-hidden border border-primary/30 shadow-2xl aspect-[9/16]">
+              <iframe
+                src="https://www.youtube.com/embed/uYZQidh8Lcw"
+                title="MissingCash — Meet Mia"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                className="w-full h-full"
+              />
+            </div>
+            <p className="text-center text-xs text-muted-foreground mt-4 tracking-widest uppercase">
+              Watch Mia explain how <span className="text-primary">MissingCash</span> works
+            </p>
+          </div>
+        </div>
+      </section>
       {/* How it works */}
       <section className="py-20 bg-secondary/30 border-y border-border">
         <div className="container mx-auto px-4">
