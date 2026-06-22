@@ -307,6 +307,7 @@ export default function Home() {
                 playsInline
                 preload="metadata"
                 className="w-full h-full object-cover"
+                style={{ objectPosition: "center 15%" }}
                 title="MissingCash — Meet Mia"
               />
             </div>
