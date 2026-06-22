@@ -301,13 +301,12 @@ export default function Home() {
             {/* Video frame */}
             <div className="relative rounded-2xl overflow-hidden border border-primary/30 shadow-2xl aspect-video bg-black">
               <video
-                src="/missingcash-clip.mp4"
-                poster="/mia-poster.jpg"
+                src="/yourvideo.mp4"
+                poster="/yourvideo-poster.jpg"
                 controls
                 playsInline
                 preload="metadata"
                 className="w-full h-full object-cover"
-                style={{ objectPosition: "center 15%" }}
                 title="MissingCash — Meet Mia"
               />
             </div>
