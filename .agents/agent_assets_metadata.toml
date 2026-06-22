@@ -282,6 +282,18 @@ uri = "file://attached_assets/generated_images/bp-promo-70s-story.png"
 type = "image"
 title = "BP promo 1970s retro story"
 
+[[generated]]
+id = "P1C8WzWs51SYHP0QCE-uK"
+uri = "file://attached_assets/generated_images/bp-promo-2026-square.png"
+type = "image"
+title = "BP promo 2026 modern square"
+
+[[generated]]
+id = "87AQSDlLf8_nVT7m92u01"
+uri = "file://attached_assets/generated_images/bp-promo-2026-story.png"
+type = "image"
+title = "BP promo 2026 modern story"
+
 [[outputs]]
 id = "7D1S3OguPzzP5KldYUnpB"
 uri = "file://artifacts/missingcash/public/ellie-email.txt"
@@ -419,3 +431,15 @@ id = "pk6Oj1O7Awx6r2zMHVJiH"
 uri = "file://attached_assets/generated_images/bp-promo-70s-story.png"
 type = "image"
 title = "Vertical story — 1970s style"
+
+[[outputs]]
+id = "-WfsU6vflJKhAPBGKeotp"
+uri = "file://attached_assets/generated_images/bp-promo-2026-square.png"
+type = "image"
+title = "Square post — 2026 modern"
+
+[[outputs]]
+id = "gV5_7lS6n8RtF4dhKueVX"
+uri = "file://attached_assets/generated_images/bp-promo-2026-story.png"
+type = "image"
+title = "Vertical story — 2026 modern"
