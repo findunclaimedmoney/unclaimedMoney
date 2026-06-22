@@ -57,25 +57,32 @@ router.post("/mia/chat", rateLimit, async (req, res): Promise<void> => {
   res.on("close", () => { if (!res.writableEnded) gone = true; });
   const clientGone = () => gone;
 
-  const apiKey = process.env.OPENAI_API_KEY;
+  const integrationBase = process.env.AI_INTEGRATIONS_OPENAI_BASE_URL;
+  const integrationKey = process.env.AI_INTEGRATIONS_OPENAI_API_KEY;
+  const directKey = process.env.OPENAI_API_KEY;
 
-  if (!apiKey) {
-    req.log.info("No OPENAI_API_KEY — using Mia knowledge fallback");
+  const useIntegration = !!(integrationBase && integrationKey);
+  const useDirect = !useIntegration && !!directKey;
+
+  if (!useIntegration && !useDirect) {
+    req.log.info("No AI credentials — using Mia knowledge fallback");
     streamFallback(res, parsed.data.messages, clientGone);
     return;
   }
 
   try {
     const { default: OpenAI } = await import("openai");
-    const openai = new OpenAI({ apiKey });
+    const openai = useIntegration
+      ? new OpenAI({ baseURL: integrationBase, apiKey: integrationKey })
+      : new OpenAI({ apiKey: directKey });
 
     const controller = new AbortController();
     res.on("close", () => controller.abort());
 
     const stream = await openai.chat.completions.create(
       {
-        model: "gpt-4o-mini",
-        max_tokens: 1024,
+        model: useIntegration ? "gpt-5.4" : "gpt-4o-mini",
+        max_completion_tokens: 8192,
         messages: [
           { role: "system", content: MIA_SYSTEM_PROMPT },
           ...parsed.data.messages,
@@ -97,7 +104,7 @@ router.post("/mia/chat", rateLimit, async (req, res): Promise<void> => {
 
     if (clientGone()) return;
     if (!streamedAny) {
-      req.log.warn("OpenAI returned empty stream, using fallback");
+      req.log.warn("AI returned empty stream, using fallback");
       streamFallback(res, parsed.data.messages, clientGone);
       return;
     }
