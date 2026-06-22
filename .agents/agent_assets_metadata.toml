@@ -210,6 +210,18 @@ uri = "file://attached_assets/generated_images/bp-promo-story-v3.png"
 type = "image"
 title = "BP promo compliments from MissingCash story"
 
+[[generated]]
+id = "pa2MfxqkjeFpdiOL8v8Ya"
+uri = "file://attached_assets/generated_images/bp-promo-social-v4.png"
+type = "image"
+title = "BP promo receive $100 square"
+
+[[generated]]
+id = "Fk4u9DuNnsK3p7QdQDe-v"
+uri = "file://attached_assets/generated_images/bp-promo-story-v4.png"
+type = "image"
+title = "BP promo receive $100 story"
+
 [[outputs]]
 id = "7D1S3OguPzzP5KldYUnpB"
 uri = "file://artifacts/missingcash/public/ellie-email.txt"
@@ -275,3 +287,15 @@ id = "5YozLtjdiZSCbvgEJb53c"
 uri = "file://attached_assets/generated_images/bp-promo-story-v3.png"
 type = "image"
 title = "Vertical story — Compliments from MissingCash"
+
+[[outputs]]
+id = "PfSHn7nCnebjI4lvRLSWj"
+uri = "file://attached_assets/generated_images/bp-promo-social-v4.png"
+type = "image"
+title = "Square post — Receive a $100 BP Fuel Voucher"
+
+[[outputs]]
+id = "dHIb3HR-DLkU2zdCVATQE"
+uri = "file://attached_assets/generated_images/bp-promo-story-v4.png"
+type = "image"
+title = "Vertical story — Receive a $100 BP Fuel Voucher"
