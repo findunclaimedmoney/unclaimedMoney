@@ -158,7 +158,7 @@ export default function Home() {
                 <p className="text-xs font-semibold text-primary uppercase tracking-widest mb-0.5">Finance Partner</p>
                 <p className="text-white font-bold text-base leading-snug">Need a car, personal or business loan?</p>
                 <p className="text-muted-foreground text-sm">Speak to our trusted broker — fast approvals, competitive rates.</p>
-                <p className="text-xs font-semibold text-primary mt-1">⚡ Sign up before end of financial year — receive a fuel voucher!</p>
+                <p className="text-xs font-semibold text-primary mt-1">⚡ Sign up before end of financial year — $100 compliments from MissingCash!</p>
               </div>
               {/* Right: CTA */}
               <div className="flex-shrink-0">
