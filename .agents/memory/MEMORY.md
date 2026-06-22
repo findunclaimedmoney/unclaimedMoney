@@ -1,3 +1,3 @@
 - [Stratton Finance integration](stratton-integration.md) — finance-page partner integration: Option 1 = form emailed to integrations@stratton.com.au; required compliance disclaimer; lead from-address must be @missingcash.com.au (not lensflow), gated on Resend domain verification.
-- [Prod DB not connected](missingcash-prod-database.md) — live site has no production database; DB-writing routes (finance enquiry) 500 and lose data; fix = re-publish with prod DB, never script migrations.
-- [Finance lead emails can't send](missingcash-resend-leads.md) — Resend account has 0 verified domains; leads@lensflow is a leftover label; verify missingcash.com.au then switch from-address.
+- [Prod DB via Publish](missingcash-prod-database.md) — prod DB connected through the Publish flow (verified working: finance lead writes + email live); never script prod migrations; re-publish to ship code/schema.
+- [Finance lead emails (Resend)](missingcash-resend-leads.md) — lensflow.com.au verified & sending in prod (emailSent:true); branded missingcash sender + Erin CC gated behind verifying missingcash.com.au + MISSINGCASH_DOMAIN_VERIFIED=true.

@@ -1,14 +1,14 @@
 ---
-name: MissingCash production database not connected
-description: Why DB-writing routes 500 on the live site, and the only correct fix.
+name: MissingCash production database (connected via Publish)
+description: How the prod DB gets connected and the only correct way to change its schema.
 ---
 
-The live (autoscale) deployment of MissingCash has **no production database connected**. The app reads `process.env.DATABASE_URL`, which in the workspace points to a dev-only Postgres (host `helium`, db `heliumdb`) — a single-label host that does not resolve inside deployments. So any route that writes to the DB returns 500 in production and the data is lost. Dev works fine.
+The production database is connected through Replit's **Publish flow** — publishing provisions/migrates the prod DB; the agent must never script prod migrations, add startup DDL, or push schema in the deploy build (see database-migrations-on-publish reference).
 
-**Symptom:** `POST /api/finance/enquiry` on https://missingcash.com.au returns HTTP 500; deployment logs show `getaddrinfo EAI_AGAIN helium`. `executeSql({environment:"production"})` returns PRODUCTION_DATABASE_ERROR. The dev DB has the enquiry rows; prod has none.
+**Verified working in production (June 2026):** prod DB has tables `email_alerts`, `finance_enquiries`, `search_submissions`; a live `POST /api/finance/enquiry` returned `{success,enquiryId,emailSent:true}` and the row landed in the prod DB. So the lead pipeline (DB write + email) works end-to-end on the live site.
 
-**Why:** confirmed by a live test POST (500), DATABASE_URL host parse (`helium`), and the production read-replica erroring.
+**Earlier failure mode to remember (now resolved):** before the prod DB was connected, DB-writing routes 500'd because `DATABASE_URL` pointed at a dev-only single-label host (`helium`/`heliumdb`) that doesn't resolve inside deployments (`getaddrinfo EAI_AGAIN helium`), so leads were lost. The fix was always **re-publish**, never a migration script.
 
-**How to fix:** connect a production database via Replit's Publish flow (the user re-publishes; the publish flow provisions/migrates the prod DB). Do NOT script prod migrations, add startup DDL, or push schema in the deploy build — see the database-migrations-on-publish reference. After the user publishes, re-test the live endpoint and check deployment logs to confirm saves.
+**Also:** a live deployment can serve STALE code/data until re-published (e.g. an old phone number lingered in the live error message after the workspace code was fixed). Re-publishing ships the latest code too.
 
-**Also:** the live deployment can serve STALE code — the live finance error message still showed the old landline `(08) 9446 9893` while the workspace code already has the correct mobile `0432 280 181`. A re-publish also ships the latest code.
+**Note on test data:** prod `finance_enquiries` contains agent test rows (clearly marked TEST/IGNORE). Production is read-only via `executeSql({environment:"production"})`, so the agent cannot DELETE prod rows — cleanup needs a dev-side path or an in-app admin action, not the prod query tool.
