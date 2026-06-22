@@ -174,6 +174,18 @@ uri = "file://artifacts/centspick/public/images/tv.png"
 type = "image"
 title = "4k tv product photo"
 
+[[generated]]
+id = "aZo5nSrI2jFkTjJDSN8eM"
+uri = "file://attached_assets/generated_images/bp-promo-social.png"
+type = "image"
+title = "BP $100 fuel voucher social media post"
+
+[[generated]]
+id = "JuIUPu1AZgpIODTqEE9P-"
+uri = "file://attached_assets/generated_images/bp-promo-story.png"
+type = "image"
+title = "BP $100 fuel voucher story format"
+
 [[outputs]]
 id = "7D1S3OguPzzP5KldYUnpB"
 uri = "file://artifacts/missingcash/public/ellie-email.txt"
@@ -203,3 +215,15 @@ id = "4IpDHF4r-hfy83y75C3YI"
 uri = "file://MissingCash-Guide.txt"
 type = "text"
 title = "MissingCash — Complete Guide (All in One)"
+
+[[outputs]]
+id = "4oeun-T3XyFOCcXS9t3qG"
+uri = "file://attached_assets/generated_images/bp-promo-social.png"
+type = "image"
+title = "Square post (Facebook / Instagram)"
+
+[[outputs]]
+id = "Kkg_nxdwqJTwC4_kIsWMT"
+uri = "file://attached_assets/generated_images/bp-promo-story.png"
+type = "image"
+title = "Vertical story (TikTok / Instagram Stories)"
