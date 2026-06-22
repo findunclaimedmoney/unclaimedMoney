@@ -150,7 +150,11 @@ export default function Home() {
               <div className="text-center sm:text-left flex-1">
                 <p className="text-xs font-semibold text-primary uppercase tracking-widest mb-0.5">Finance Partner</p>
                 <p className="text-white font-bold text-base leading-snug">Need a car, personal or business loan?</p>
-                <p className="text-muted-foreground text-sm">Speak to our trusted broker — fast approvals, competitive rates.</p>
+                <p className="text-muted-foreground text-sm mb-2">Speak to our trusted broker — fast approvals, competitive rates.</p>
+                <div className="inline-flex items-center gap-1.5 bg-primary/15 border border-primary/30 rounded-full px-3 py-1">
+                  <span className="text-lg leading-none">⛽</span>
+                  <span className="text-xs font-bold text-primary">Sign up before end of financial year — receive a $100 fuel voucher, compliments of MissingCash</span>
+                </div>
               </div>
               <div className="flex-shrink-0">
                 <span className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-bold px-5 py-2.5 rounded-full text-sm group-hover:bg-primary/90 transition-colors">
