@@ -258,6 +258,18 @@ uri = "file://attached_assets/generated_images/bp-promo-story-branded.png"
 type = "image"
 title = "BP promo branded colours story"
 
+[[generated]]
+id = "Mt-22xiopjj7dIvIYULiR"
+uri = "file://attached_assets/generated_images/bp-promo-social-noframe.png"
+type = "image"
+title = "BP promo no frame square"
+
+[[generated]]
+id = "DiJQv5ZcUBlmzT-gIuvPv"
+uri = "file://attached_assets/generated_images/bp-promo-story-noframe.png"
+type = "image"
+title = "BP promo no frame story"
+
 [[outputs]]
 id = "7D1S3OguPzzP5KldYUnpB"
 uri = "file://artifacts/missingcash/public/ellie-email.txt"
@@ -371,3 +383,15 @@ id = "6X6S2tCh7p8Zfqb3ka3P8"
 uri = "file://attached_assets/generated_images/bp-promo-story-branded.png"
 type = "image"
 title = "Vertical story — site colours (navy + gold)"
+
+[[outputs]]
+id = "ATSM_q1RIq0YyDPOUE0F0"
+uri = "file://attached_assets/generated_images/bp-promo-social-noframe.png"
+type = "image"
+title = "Square post — no frame"
+
+[[outputs]]
+id = "MedZOmYt0qHYBdlsXnFaQ"
+uri = "file://attached_assets/generated_images/bp-promo-story-noframe.png"
+type = "image"
+title = "Vertical story — no frame"
