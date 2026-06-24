@@ -17,7 +17,7 @@ import FindMyMoney from "@/pages/FindMyMoney";
 import AustraliaMap from "@/pages/AustraliaMap";
 import DeceasedEstate from "@/pages/DeceasedEstate";
 import LotteryChecker from "@/pages/LotteryChecker";
-import Landing from "@/pages/Landing";
+import TikTokLanding from "@/pages/TikTokLanding";
 import MiaResearch from "@/pages/MiaResearch";
 import MiaSearch from "@/pages/MiaSearch";
 import MiaSearchResults from "@/pages/MiaSearchResults";
@@ -33,7 +33,7 @@ function Router() {
       <Route path="/mia-preview" component={MiaPreview} />
       
       {/* Distraction-free marketing landing page — no global nav/footer */}
-      <Route path="/start" component={Landing} />
+      <Route path="/start" component={TikTokLanding} />
       <Route>
         <Layout>
           <Switch>

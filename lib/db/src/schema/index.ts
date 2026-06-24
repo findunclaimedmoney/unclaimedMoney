@@ -67,6 +67,20 @@ export const insertMiaResearchRequestSchema = createInsertSchema(miaResearchRequ
 export type InsertMiaResearchRequest = z.infer<typeof insertMiaResearchRequestSchema>;
 export type MiaResearchRequest = typeof miaResearchRequestsTable.$inferSelect;
 
+export const tiktokLeadsTable = pgTable("tiktok_leads", {
+  id: serial("id").primaryKey(),
+  firstName: text("first_name").notNull(),
+  lastName: text("last_name").notNull(),
+  dob: text("dob").notNull(),
+  email: text("email"),
+  source: text("source"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const insertTiktokLeadSchema = createInsertSchema(tiktokLeadsTable).omit({ id: true, createdAt: true });
+export type InsertTiktokLead = z.infer<typeof insertTiktokLeadSchema>;
+export type TiktokLead = typeof tiktokLeadsTable.$inferSelect;
+
 export const miaFreeSearchesTable = pgTable("mia_free_searches", {
   id: serial("id").primaryKey(),
   email: text("email").notNull(),
