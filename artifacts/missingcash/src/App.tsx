@@ -18,14 +18,14 @@ import LotteryChecker from "@/pages/LotteryChecker";
 import Landing from "@/pages/Landing";
 import MiaResearch from "@/pages/MiaResearch";
 
-// Import VideoTemplate
 import VideoTemplate from "@/components/video/VideoTemplate";
+import MiaPreview from "@/pages/MiaPreview";
 
 function Router() {
   return (
     <Switch>
-      {/* Video Route for rendering the video artifact */}
       <Route path="/video" component={VideoTemplate} />
+      <Route path="/mia-preview" component={MiaPreview} />
       
       {/* Distraction-free marketing landing page — no global nav/footer */}
       <Route path="/start" component={Landing} />
