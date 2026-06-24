@@ -17,6 +17,9 @@ import DeceasedEstate from "@/pages/DeceasedEstate";
 import LotteryChecker from "@/pages/LotteryChecker";
 import Landing from "@/pages/Landing";
 import MiaResearch from "@/pages/MiaResearch";
+import MiaSearch from "@/pages/MiaSearch";
+import MiaSearchResults from "@/pages/MiaSearchResults";
+import MiaSearchPaid from "@/pages/MiaSearchPaid";
 
 import VideoTemplate from "@/components/video/VideoTemplate";
 import MiaPreview from "@/pages/MiaPreview";
@@ -40,6 +43,9 @@ function Router() {
             <Route path="/guides" component={Guides} />
             <Route path="/find-my-money" component={FindMyMoney} />
             <Route path="/mia-research" component={MiaResearch} />
+            <Route path="/mia-search/results" component={MiaSearchResults} />
+            <Route path="/mia-search/paid" component={MiaSearchPaid} />
+            <Route path="/mia-search" component={MiaSearch} />
             <Route path="/unclaimed-money-map" component={AustraliaMap} />
             <Route path="/deceased-estate" component={DeceasedEstate} />
             <Route path="/lottery-checker" component={LotteryChecker} />

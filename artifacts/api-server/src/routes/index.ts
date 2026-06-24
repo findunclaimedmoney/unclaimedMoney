@@ -6,6 +6,7 @@ import financeRouter from "./finance";
 import searchRouter from "./search";
 import alertsRouter from "./alerts";
 import miaResearchRouter from "./mia-research";
+import miaSearchRouter from "./mia-search";
 
 const router: IRouter = Router();
 
@@ -16,5 +17,6 @@ router.use(financeRouter);
 router.use(searchRouter);
 router.use(alertsRouter);
 router.use(miaResearchRouter);
+router.use(miaSearchRouter);
 
 export default router;

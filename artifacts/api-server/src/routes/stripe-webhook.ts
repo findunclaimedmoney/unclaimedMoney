@@ -1,7 +1,10 @@
 import { Router, type IRouter } from "express";
 import Stripe from "stripe";
 import { Resend } from "resend";
-import { db, miaResearchRequestsTable } from "@workspace/db";
+import { db, miaResearchRequestsTable, miaFreeSearchesTable } from "@workspace/db";
+import { eq } from "drizzle-orm";
+import { callOpenAIReport, generateResearchReport } from "../lib/mia-report";
+import type { MoneySmartResults } from "../lib/moneysmart-scraper";
 import { generateGuide } from "../lib/guides-pdf";
 
 const router: IRouter = Router();
@@ -66,6 +69,95 @@ router.post("/stripe/webhook", async (req, res) => {
 
   if (!email) {
     req.log.warn({ sessionId: session.id }, "Stripe webhook: no customer email in session");
+    return;
+  }
+
+  if (session.metadata?.["product"] === "mia-free-search") {
+    const searchId = parseInt(session.metadata?.["searchId"] ?? "", 10);
+    if (isNaN(searchId)) {
+      req.log.warn({ sessionId: session.id }, "Stripe webhook: mia-free-search missing searchId in metadata");
+      return;
+    }
+
+    req.log.info({ searchId, email }, "Mia free-search payment received — generating full report");
+
+    try {
+      const [row] = await db.select().from(miaFreeSearchesTable).where(eq(miaFreeSearchesTable.id, searchId)).limit(1);
+      if (!row) {
+        req.log.error({ searchId }, "Mia free-search: row not found");
+        return;
+      }
+
+      await db.update(miaFreeSearchesTable).set({ status: "paid", stripeSessionId: session.id }).where(eq(miaFreeSearchesTable.id, searchId));
+
+      const details = {
+        firstName: row.firstName,
+        lastName: row.lastName,
+        dob: row.dob,
+        currentAddress: row.currentAddress,
+        previousAddresses: row.previousAddresses ?? "",
+        previousSurnames: row.previousSurnames ?? "",
+      };
+
+      const teaserMatches: { name: string; amount: string; holder: string; state: string }[] =
+        row.teaserMatchesJson ? (JSON.parse(row.teaserMatchesJson) as { name: string; amount: string; holder: string; state: string }[]) : [];
+
+      const liveResults: MoneySmartResults = {
+        matches: teaserMatches,
+        totalScanned: teaserMatches.length,
+        namesSearched: [`${row.firstName} ${row.lastName}`],
+        scraped: teaserMatches.length > 0,
+      };
+
+      const reportText = await callOpenAIReport(details);
+      const pdfBuffer = await generateResearchReport(details, reportText, liveResults);
+
+      const resend = new Resend(process.env.RESEND_API_KEY);
+      await resend.emails.send({
+        from: FROM_ADDRESS,
+        to: email,
+        subject: `⚡ Your Mia Claim Report — ${row.firstName} ${row.lastName}`,
+        html: `
+          <div style="font-family:sans-serif;max-width:600px;margin:0 auto;background:#061826;padding:0;border-radius:12px;overflow:hidden;">
+            <div style="background:#061826;padding:32px 32px 20px;text-align:center;">
+              <h1 style="color:#f5b942;font-size:22px;margin:0;">MissingCash</h1>
+              <p style="color:#94a3b8;font-size:12px;margin:4px 0 0;">Mia Full Claim Report</p>
+            </div>
+            <div style="background:#0f2233;padding:28px 32px;border-top:3px solid #00C1D5;">
+              <h2 style="color:#ffffff;font-size:20px;margin:0 0 16px;">Hi ${row.firstName}, your full claim report is attached ✅</h2>
+              <p style="color:#94a3b8;line-height:1.6;margin:0 0 16px;">Mia has generated your personalised unclaimed money claim report with full step-by-step instructions to recover every dollar found in your name.</p>
+              <div style="background:#061826;border-radius:8px;padding:16px;margin:20px 0;border:1px solid #00C1D5;">
+                <p style="color:#00C1D5;font-weight:bold;margin:0 0 8px;font-size:14px;">📋 Your report includes:</p>
+                <ul style="color:#94a3b8;padding-left:20px;margin:0;font-size:13px;line-height:1.8;">
+                  <li>Exact institution names &amp; account references for every match</li>
+                  <li>Direct claim form links — no searching required</li>
+                  <li>Step-by-step instructions personalised with your details</li>
+                  <li>ATO myGov — Lost super &amp; tax refunds</li>
+                  <li>All 8 state &amp; territory revenue office registers</li>
+                  <li>Computershare &amp; Link share registries</li>
+                  <li>Fair Work unpaid wages</li>
+                </ul>
+              </div>
+              <p style="color:#94a3b8;line-height:1.6;margin:16px 0;">Questions? Open <strong style="color:#00C1D5;">Mia</strong> at <a href="https://missingcash.com.au" style="color:#00C1D5;">missingcash.com.au</a> — she can walk you through any step.</p>
+            </div>
+            <div style="background:#061826;padding:20px 32px;text-align:center;border-top:1px solid #1a2a3a;">
+              <p style="color:#6b7a8d;font-size:11px;margin:0;">© MissingCash | ABN 52 347 989 391 | support@missingcash.com.au</p>
+            </div>
+          </div>`,
+        attachments: [
+          {
+            filename: `mia-claim-report-${row.firstName.toLowerCase()}-${row.lastName.toLowerCase()}.pdf`,
+            content: pdfBuffer.toString("base64"),
+          },
+        ],
+      });
+
+      await db.update(miaFreeSearchesTable).set({ reportSentAt: new Date(), status: "report_sent" }).where(eq(miaFreeSearchesTable.id, searchId));
+
+      req.log.info({ searchId, email }, "Mia free-search full report emailed successfully");
+    } catch (err) {
+      req.log.error({ err, searchId, email }, "Failed to generate or email Mia free-search report");
+    }
     return;
   }
 

@@ -256,9 +256,9 @@ export default function Home() {
                     <p className="text-[10px] text-muted-foreground mt-2">📄 Instant PDF · Search at your own pace</p>
                   </div>
 
-                  {/* Option 2: Mia Speed Research */}
+                  {/* Option 2: Mia Speed Research — free/success-fee model */}
                   <div className="relative border-2 border-[#00C1D5]/60 rounded-2xl p-5 flex flex-col text-center bg-gradient-to-b from-[#00C1D5]/10 to-transparent overflow-hidden">
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#00C1D5] text-white text-[10px] font-bold px-3 py-1 rounded-full tracking-wider whitespace-nowrap">⭐ MOST POPULAR</div>
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#00C1D5] text-white text-[10px] font-bold px-3 py-1 rounded-full tracking-wider whitespace-nowrap">⭐ NO FIND, NO FEE</div>
                     <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-[#00C1D5]/20 border border-[#00C1D5]/40 mx-auto mb-3 mt-1">
                       <Zap className="w-6 h-6 text-[#00C1D5]" />
                     </div>
@@ -266,15 +266,15 @@ export default function Home() {
                     <ul className="text-left text-xs text-muted-foreground space-y-1.5 mb-4 flex-1">
                       <li className="flex items-start gap-1.5"><span className="text-[#00C1D5] mt-0.5">⚡</span><span>Scans <strong className="text-white">100+ pages</strong> of MoneySmart automatically</span></li>
                       <li className="flex items-start gap-1.5"><span className="text-[#00C1D5] mt-0.5">🔍</span><span>Searches <strong className="text-white">10+ databases</strong> — ATO, ASIC, all state offices, share registries, Fair Work &amp; more</span></li>
-                      <li className="flex items-start gap-1.5"><span className="text-[#00C1D5] mt-0.5">📄</span><span>Personalised PDF with <strong className="text-white">your exact name &amp; DOB</strong> pre-filled for every database</span></li>
-                      <li className="flex items-start gap-1.5"><span className="text-[#00C1D5] mt-0.5">📧</span><span>Report <strong className="text-white">emailed to you in minutes</strong> — zero effort on your part</span></li>
+                      <li className="flex items-start gap-1.5"><span className="text-[#00C1D5] mt-0.5">💰</span><span><strong className="text-white">Free to search</strong> — only pay a % if Mia finds money</span></li>
+                      <li className="flex items-start gap-1.5"><span className="text-[#00C1D5] mt-0.5">📧</span><span>Full claim report <strong className="text-white">emailed instantly</strong> after payment</span></li>
                     </ul>
-                    <a href="https://buy.stripe.com/5kQdR82TWdc9eMR2rS4c80i" target="_blank" rel="noopener noreferrer">
+                    <a href="/mia-search">
                       <Button className="w-full font-bold tracking-wider bg-[#00C1D5] hover:bg-[#00C1D5]/90 text-white shadow-[0_4px_14px_rgba(0,193,213,0.35)]">
-                        MIA DO IT — $99
+                        MIA DO IT — FREE TO START
                       </Button>
                     </a>
-                    <p className="text-[10px] text-muted-foreground mt-2">⚡ Report emailed in minutes · No effort required</p>
+                    <p className="text-[10px] text-muted-foreground mt-2">🔒 No upfront cost · Only pay if money is found</p>
                   </div>
                 </div>
               </div>
