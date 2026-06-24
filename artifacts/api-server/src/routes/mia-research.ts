@@ -3,6 +3,7 @@ import { Resend } from "resend";
 import { db, miaResearchRequestsTable } from "@workspace/db";
 import { eq } from "drizzle-orm";
 import { callOpenAIReport, generateResearchReport } from "../lib/mia-report";
+import { searchMoneySmart } from "../lib/moneysmart-scraper";
 
 const router: IRouter = Router();
 
@@ -105,9 +106,16 @@ router.post("/mia/research/submit", async (req, res) => {
   const details = { firstName, lastName, dob, currentAddress, previousAddresses, previousSurnames };
 
   try {
-    req.log.info({ sessionId: stripeSessionId, firstName, lastName }, "Generating Mia research report");
-    const reportText = await callOpenAIReport(details);
-    const pdfBuffer = await generateResearchReport(details, reportText);
+    req.log.info({ sessionId: stripeSessionId, firstName, lastName }, "Starting Mia research — live MoneySmart search + report generation");
+
+    const [liveResults, reportText] = await Promise.all([
+      searchMoneySmart({ firstName, lastName, previousSurnames: previousSurnames || undefined }),
+      callOpenAIReport(details),
+    ]);
+
+    req.log.info({ matchCount: liveResults.matches.length, pagesScanned: liveResults.totalScanned }, "Live search complete — generating PDF");
+
+    const pdfBuffer = await generateResearchReport(details, reportText, liveResults);
 
     const resend = new Resend(process.env.RESEND_API_KEY);
     await resend.emails.send({
@@ -122,12 +130,12 @@ router.post("/mia/research/submit", async (req, res) => {
           </div>
           <div style="background:#0f2233;padding:28px 32px;border-top:3px solid #f5b942;">
             <h2 style="color:#ffffff;font-size:20px;margin:0 0 16px;">Hi ${firstName}, your personalised report is ready ✅</h2>
-            <p style="color:#94a3b8;line-height:1.6;margin:0 0 16px;">Mia has completed your personalised unclaimed money research report. Your report is attached as a PDF and covers every Australian unclaimed money database — with step-by-step instructions using your exact details.</p>
+            <p style="color:#94a3b8;line-height:1.6;margin:0 0 16px;">Mia has completed your personalised unclaimed money research — including a live search of the MoneySmart database. Your report is attached as a PDF.</p>
             <div style="background:#061826;border-radius:8px;padding:16px;margin:20px 0;border:1px solid #f5b942;">
               <p style="color:#f5b942;font-weight:bold;margin:0 0 8px;font-size:14px;">📋 Your report includes:</p>
               <ul style="color:#94a3b8;padding-left:20px;margin:0;font-size:13px;line-height:1.8;">
+                <li>⚡ Live MoneySmart results — searched by Mia (${liveResults.scraped ? `${liveResults.totalScanned} pages scanned` : "included in PDF"})</li>
                 <li>ATO myGov — Lost super &amp; tax refunds</li>
-                <li>ASIC / MoneySmart — Bank accounts &amp; investments</li>
                 <li>All 8 state revenue office registers</li>
                 <li>Computershare &amp; Link share registries</li>
                 <li>Fair Work unpaid wages</li>

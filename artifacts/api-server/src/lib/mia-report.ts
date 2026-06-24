@@ -1,5 +1,6 @@
 import PDFDocument from "pdfkit";
 import { logger } from "./logger";
+import type { MoneySmartResults } from "./moneysmart-scraper";
 
 interface ResearchDetails {
   firstName: string;
@@ -71,7 +72,50 @@ function highlight(doc: InstanceType<typeof PDFDocument>, label: string, value: 
   doc.moveDown(0.2);
 }
 
-export async function generateResearchReport(details: ResearchDetails, reportText: string): Promise<Buffer> {
+function liveResultsSection(doc: InstanceType<typeof PDFDocument>, results: MoneySmartResults, fullName: string) {
+  section(doc, "⚡ LIVE MONEYSMART RESULTS — SEARCHED BY MIA");
+
+  if (results.matches.length === 0) {
+    body(doc, `Mia searched MoneySmart across ${results.totalScanned} pages for the name${results.namesSearched.length > 1 ? "s" : ""}: ${results.namesSearched.join(", ")}. No exact matches were found for ${fullName} in today's ASIC database. This does NOT mean there is no money — ASIC updates records monthly and some entries use name abbreviations. Follow the manual steps in the ASIC section below to double-check with variations.`);
+    return;
+  }
+
+  body(doc, `Mia found ${results.matches.length} potential match${results.matches.length !== 1 ? "es" : ""} for ${fullName} on MoneySmart after scanning ${results.totalScanned} pages. Review each entry below and follow the claim steps in the ASIC section.`);
+  doc.moveDown(0.4);
+
+  const colWidths = [180, 80, 170, 50];
+  const tableX = 55;
+  const pageWidth = doc.page.width - 110;
+  const rowH = 22;
+
+  doc.rect(tableX, doc.y, pageWidth, rowH).fill(NAVY);
+  const hdrY = doc.y + 6;
+  const headers = ["NAME ON FILE", "AMOUNT", "INSTITUTION", "STATE"];
+  let hx = tableX + 6;
+  for (let i = 0; i < headers.length; i++) {
+    doc.fillColor(GOLD).font("Helvetica-Bold").fontSize(8).text(headers[i]!, hx, hdrY, { width: colWidths[i]! - 4, lineBreak: false });
+    hx += colWidths[i]!;
+  }
+  doc.y += rowH + 2;
+
+  for (const [idx, match] of results.matches.entries()) {
+    const rowY = doc.y;
+    const bg = idx % 2 === 0 ? "#f0f4f8" : "#ffffff";
+    doc.rect(tableX, rowY, pageWidth, rowH).fill(bg);
+    const cells = [match.name, match.amount || "—", match.holder || "—", match.state || "—"];
+    let cx = tableX + 6;
+    for (let i = 0; i < cells.length; i++) {
+      doc.fillColor(DARK).font("Helvetica").fontSize(8).text(cells[i]!, cx, rowY + 6, { width: colWidths[i]! - 8, lineBreak: false });
+      cx += colWidths[i]!;
+    }
+    doc.y += rowH;
+  }
+
+  doc.moveDown(0.6);
+  body(doc, "⚠️  To claim any match above: scroll to the ASIC/MoneySmart section in this report for the exact lodgement steps.");
+}
+
+export async function generateResearchReport(details: ResearchDetails, reportText: string, liveResults?: MoneySmartResults): Promise<Buffer> {
   const fullName = `${details.firstName} ${details.lastName}`;
 
   return buildPDF((doc) => {
@@ -83,6 +127,11 @@ export async function generateResearchReport(details: ResearchDetails, reportTex
     });
 
     reportHeader(doc, fullName);
+
+    if (liveResults?.scraped) {
+      liveResultsSection(doc, liveResults, fullName);
+      doc.moveDown(0.6);
+    }
 
     section(doc, "YOUR RESEARCH PROFILE");
     highlight(doc, "Full Name", fullName);
