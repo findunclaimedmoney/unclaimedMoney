@@ -63,6 +63,8 @@ function Router() {
 function App() {
   const [showSplash, setShowSplash] = useState(() => {
     try {
+      const forceIntro = new URLSearchParams(window.location.search).get("intro") === "1";
+      if (forceIntro) return true;
       return !localStorage.getItem("mc_intro_seen");
     } catch {
       return false;
