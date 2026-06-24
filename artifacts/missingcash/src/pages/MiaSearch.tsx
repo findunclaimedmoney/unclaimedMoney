@@ -75,6 +75,15 @@ export default function MiaSearch() {
           </p>
         </div>
 
+        <div className="rounded-2xl overflow-hidden mb-8 border border-border shadow-[0_4px_30px_rgba(0,193,213,0.15)]">
+          <video
+            src="/mia-does-it.mp4"
+            controls
+            playsInline
+            className="w-full"
+          />
+        </div>
+
         <div className="grid grid-cols-3 gap-3 mb-8">
           {[
             { icon: Search, label: "Free search", sub: "No upfront cost" },
