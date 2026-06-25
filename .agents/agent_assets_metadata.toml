@@ -455,3 +455,9 @@ id = "eI2qZhD5qylqluXaheKRW"
 uri = "file://attached_assets/generated_images/branded-story-final.jpg"
 type = "image"
 title = "Vertical story — exact website colours & fonts"
+
+[[outputs]]
+id = "z0qQoKfKu6i2IbJTHDYkM"
+uri = "file://handover.md"
+type = "text"
+title = "MissingCash Agent Handover"
