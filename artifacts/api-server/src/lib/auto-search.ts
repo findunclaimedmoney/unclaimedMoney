@@ -373,8 +373,170 @@ async function runAutoSearch() {
   }
 }
 
+const REPORT_EMAIL = process.env.ADMIN_REPORT_EMAIL ?? "admin@missingcash.com.au";
+
+const OUTREACH_TEMPLATE = `
+Hi [NAME],
+
+My name is [Your Name] from MissingCash — Australia's unclaimed money search service (www.missingcash.com.au).
+
+I searched the national unclaimed money registers on your behalf and found [AMOUNT] that appears to belong to you. This money is held by an Australian government register and is legitimately yours to claim.
+
+To unlock your full step-by-step claim report with exact institution names and claim form links, visit:
+https://missingcash.com.au/mia-search
+
+Our fee is [FEE] ([FEE%]% of the recovered amount) — only payable once you choose to proceed. No recovery, no charge.
+
+Reply to this email if you have any questions.
+
+Best regards,
+[Your Name]
+MissingCash
+admin@missingcash.com.au | www.missingcash.com.au
+ABN 52 347 989 391
+`.trim();
+
+async function sendDailyReport() {
+  const resendKey = process.env.RESEND_API_KEY;
+  if (!resendKey) {
+    logger.warn("daily-report: no RESEND_API_KEY — skipping");
+    return;
+  }
+
+  const since = new Date(Date.now() - 24 * 60 * 60 * 1000);
+
+  const allResults = await db
+    .select()
+    .from(autoSearchResultsTable)
+    .where(gte(autoSearchResultsTable.searchedAt, since));
+
+  const hits = allResults.filter(
+    (r) =>
+      r.status === "found" &&
+      r.email &&
+      !r.email.includes("missingcash.com.au") &&
+      !r.email.includes("lensflow.com.au") &&
+      !r.email.includes("test.") &&
+      !r.email.includes("example.com")
+  );
+
+  const totalSearches = allResults.filter(
+    (r) =>
+      r.email &&
+      !r.email.includes("missingcash.com.au") &&
+      !r.email.includes("lensflow.com.au") &&
+      !r.email.includes("test.") &&
+      !r.email.includes("example.com")
+  ).length;
+
+  const totalFoundCents = hits.reduce((sum, r) => sum + (r.totalAmountCents ?? 0), 0);
+  const dateStr = new Date().toLocaleDateString("en-AU", { weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: "Australia/Perth" });
+
+  const hitRows = hits.map((r) => {
+    const amt = fmtAUD(r.totalAmountCents ?? 0);
+    const feePercent = calcFeePercent((r.totalAmountCents ?? 0) / 100);
+    const fee = fmtAUD(calcFeeCents(r.totalAmountCents ?? 0));
+    const outreach = OUTREACH_TEMPLATE
+      .replace(/\[NAME\]/g, r.firstName)
+      .replace(/\[AMOUNT\]/g, amt)
+      .replace(/\[FEE\]/g, fee)
+      .replace(/\[FEE%\]/g, String(feePercent));
+    return `
+      <tr style="border-bottom:1px solid #1a2a3a;">
+        <td style="padding:12px;color:#fff;font-weight:bold;">${r.firstName} ${r.lastName}</td>
+        <td style="padding:12px;color:#94a3b8;">${r.email}</td>
+        <td style="padding:12px;color:#f5b942;font-weight:bold;">${amt}</td>
+        <td style="padding:12px;color:#94a3b8;">${fee} (${feePercent}%)</td>
+        <td style="padding:12px;">
+          <details>
+            <summary style="cursor:pointer;color:#00C1D5;font-size:12px;">Copy template ▼</summary>
+            <pre style="background:#061826;color:#e2e8f0;font-size:11px;padding:10px;border-radius:6px;white-space:pre-wrap;margin-top:8px;border:1px solid #1a2a3a;">${outreach.replace(/</g, "&lt;")}</pre>
+          </details>
+        </td>
+      </tr>`;
+  }).join("");
+
+  const noHitsRow = hits.length === 0
+    ? `<tr><td colspan="5" style="padding:24px;text-align:center;color:#6b7a8d;">No hits today — ${totalSearches} people searched, none found money yet. Keep the ads running.</td></tr>`
+    : "";
+
+  const html = `
+<div style="font-family:sans-serif;max-width:700px;margin:0 auto;background:#061826;padding:0;border-radius:12px;overflow:hidden;">
+  <div style="background:#061826;padding:28px 32px 16px;text-align:center;">
+    <h1 style="color:#f5b942;font-size:22px;margin:0;letter-spacing:2px;">MissingCash</h1>
+    <p style="color:#94a3b8;font-size:12px;margin:4px 0 0;">Daily Mia Search Report</p>
+  </div>
+  <div style="background:#0f2233;padding:24px 32px;border-top:3px solid #f5b942;">
+    <h2 style="color:#ffffff;font-size:18px;margin:0 0 4px;">${dateStr}</h2>
+    <p style="color:#94a3b8;font-size:13px;margin:0 0 20px;">Mia's overnight results — real users only, test traffic excluded</p>
+    <div style="display:flex;gap:16px;margin-bottom:24px;flex-wrap:wrap;">
+      <div style="background:#061826;border:1px solid #1a2a3a;border-radius:8px;padding:16px 24px;flex:1;min-width:120px;">
+        <div style="color:#94a3b8;font-size:11px;text-transform:uppercase;letter-spacing:1px;">Searches run</div>
+        <div style="color:#fff;font-size:32px;font-weight:bold;">${totalSearches}</div>
+      </div>
+      <div style="background:#061826;border:1px solid #1a2a3a;border-radius:8px;padding:16px 24px;flex:1;min-width:120px;">
+        <div style="color:#94a3b8;font-size:11px;text-transform:uppercase;letter-spacing:1px;">Hits found</div>
+        <div style="color:#00C1D5;font-size:32px;font-weight:bold;">${hits.length}</div>
+      </div>
+      <div style="background:#061826;border:1px solid #1a2a3a;border-radius:8px;padding:16px 24px;flex:1;min-width:120px;">
+        <div style="color:#94a3b8;font-size:11px;text-transform:uppercase;letter-spacing:1px;">Total found</div>
+        <div style="color:#f5b942;font-size:32px;font-weight:bold;">${fmtAUD(totalFoundCents)}</div>
+      </div>
+    </div>
+    <table style="width:100%;border-collapse:collapse;background:#061826;border-radius:8px;overflow:hidden;">
+      <thead>
+        <tr style="background:#0a1f30;">
+          <th style="padding:10px 12px;text-align:left;color:#94a3b8;font-size:11px;text-transform:uppercase;letter-spacing:1px;">Name</th>
+          <th style="padding:10px 12px;text-align:left;color:#94a3b8;font-size:11px;text-transform:uppercase;letter-spacing:1px;">Email</th>
+          <th style="padding:10px 12px;text-align:left;color:#94a3b8;font-size:11px;text-transform:uppercase;letter-spacing:1px;">Found</th>
+          <th style="padding:10px 12px;text-align:left;color:#94a3b8;font-size:11px;text-transform:uppercase;letter-spacing:1px;">Our Fee</th>
+          <th style="padding:10px 12px;text-align:left;color:#94a3b8;font-size:11px;text-transform:uppercase;letter-spacing:1px;">Outreach</th>
+        </tr>
+      </thead>
+      <tbody>${hitRows}${noHitsRow}</tbody>
+    </table>
+    <p style="color:#6b7a8d;font-size:11px;margin-top:16px;text-align:center;">
+      Each row has a pre-filled outreach template — click "Copy template" to expand it, then paste into your email client.<br>
+      View full dashboard: <a href="https://missingcash.com.au/admin" style="color:#00C1D5;">missingcash.com.au/admin</a>
+    </p>
+  </div>
+  <div style="background:#061826;padding:16px 32px;text-align:center;border-top:1px solid #1a2a3a;">
+    <p style="color:#6b7a8d;font-size:11px;margin:0;">© MissingCash | ABN 52 347 989 391 | Sent daily at 8am AWST</p>
+  </div>
+</div>`;
+
+  try {
+    const resend = new Resend(resendKey);
+    await resend.emails.send({
+      from: FROM_ADDRESS,
+      to: REPORT_EMAIL,
+      subject: `MissingCash Daily Report — ${hits.length} hit${hits.length !== 1 ? "s" : ""} from ${totalSearches} searches — ${dateStr}`,
+      html,
+    });
+    logger.info({ hits: hits.length, totalSearches, totalFoundCents }, "daily-report: sent");
+  } catch (err) {
+    logger.error({ err }, "daily-report: failed to send");
+  }
+}
+
+let lastReportDate = "";
+
+function scheduleDailyReport() {
+  setInterval(() => {
+    const now = new Date();
+    // Fire at 00:00 UTC = 08:00 AWST
+    const isReportTime = now.getUTCHours() === 0 && now.getUTCMinutes() < 5;
+    const todayKey = now.toISOString().slice(0, 10);
+    if (isReportTime && lastReportDate !== todayKey) {
+      lastReportDate = todayKey;
+      void sendDailyReport();
+    }
+  }, 60_000);
+}
+
 export function startAutoSearch() {
   logger.info({ intervalMs: INTERVAL_MS, dailyLimit: DAILY_LIMIT }, "auto-search: scheduler started");
   void runAutoSearch();
   setInterval(() => { void runAutoSearch(); }, INTERVAL_MS);
+  scheduleDailyReport();
 }
