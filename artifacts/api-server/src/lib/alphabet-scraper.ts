@@ -2,6 +2,7 @@ import { db } from "@workspace/db";
 import { prospectsTable, alphabetCrawlProgressTable } from "@workspace/db/schema";
 import { eq, and, sql, isNull } from "drizzle-orm";
 import { Resend } from "resend";
+import Stripe from "stripe";
 import { logger } from "./logger";
 import { findContact, parseName } from "./contact-finder";
 
@@ -155,22 +156,9 @@ async function insertProspects(letter: string, matches: RawMatch[]): Promise<num
 
 // ---------- contact search ----------
 
-const OUTREACH_TEMPLATE = (name: string, amount: string, feeStr: string, feePct: number) => `Hi ${name},
-
-My name is [Your Name] from MissingCash — Australia's unclaimed money search service (www.missingcash.com.au).
-
-I searched the national unclaimed money registers on your behalf and found ${amount} that appears to belong to you. This money is held by an Australian government register and is legitimately yours to claim.
-
-To unlock your full step-by-step claim report with exact institution names and claim form links, visit:
-https://missingcash.com.au/mia-search
-
-Our fee is ${feeStr} (${feePct}% of the recovered amount) — only payable once you choose to proceed. No recovery, no charge.
-
-Reply to this email if you have any questions.
-
-Best regards,
-[Your Name]
-MissingCash | www.missingcash.com.au`;
+const SITE_BASE = process.env.REPLIT_DOMAINS
+  ? `https://${process.env.REPLIT_DOMAINS.split(",")[0]}`
+  : "https://missingcash.com.au";
 
 function parseAmountDollars(amount: string): number {
   const m = amount.match(/\$?([\d,]+)/);
@@ -178,31 +166,100 @@ function parseAmountDollars(amount: string): number {
   return parseFloat(m[1].replace(/,/g, "")) || 0;
 }
 
-function calcFee(dollars: number): { pct: number; str: string } {
+function calcFee(dollars: number): { pct: number; cents: number; str: string } {
   const pct = dollars <= 1000 ? 5 : dollars <= 5000 ? 10 : dollars <= 30000 ? 15 : dollars <= 100000 ? 20 : 33;
-  const fee = Math.max(Math.round(dollars * pct) / 100, 1);
-  return { pct, str: `$${fee.toLocaleString("en-AU", { maximumFractionDigits: 0 })}` };
+  const cents = Math.max(Math.round(dollars * pct), 100);
+  return { pct, cents, str: `$${(cents / 100).toLocaleString("en-AU", { maximumFractionDigits: 0 })}` };
 }
 
-async function sendOutreachEmail(email: string, name: string, amount: string): Promise<boolean> {
+async function sendOutreachEmail(
+  email: string,
+  name: string,
+  amount: string,
+  holder: string | null,
+  prospectId: number,
+): Promise<boolean> {
   const resendKey = process.env.RESEND_API_KEY;
-  if (!resendKey) return false;
+  const stripeKey = process.env.STRIPE_SECRET_KEY;
+  if (!resendKey || !stripeKey) return false;
 
   const parsed = parseName(name);
   const firstName = parsed?.firstName ?? name.split(" ")[0] ?? name;
   const dollars = parseAmountDollars(amount);
-  const { pct, str: feeStr } = calcFee(dollars);
-  const body = OUTREACH_TEMPLATE(firstName, amount, feeStr, pct);
+  const { pct, cents, str: feeStr } = calcFee(dollars);
+  const holderName = holder || "an Australian government register";
+
+  // Create Stripe checkout — fee paid BEFORE claim details are revealed
+  let checkoutUrl: string;
+  try {
+    const stripe = new Stripe(stripeKey);
+    const session = await stripe.checkout.sessions.create({
+      mode: "payment",
+      customer_email: email,
+      line_items: [{
+        price_data: {
+          currency: "aud",
+          unit_amount: cents,
+          product_data: {
+            name: `MissingCash Claim Report — ${pct}% success fee`,
+            description: `Mia found ${amount} held by ${holderName}. Pay ${feeStr} to unlock your personalised step-by-step claim instructions.`,
+          },
+        },
+        quantity: 1,
+      }],
+      metadata: { product: "prospect-outreach", prospectId: String(prospectId) },
+      success_url: `${SITE_BASE}/mia-search/paid?prospect=${prospectId}`,
+      cancel_url: `${SITE_BASE}/`,
+    });
+    checkoutUrl = session.url!;
+  } catch (err) {
+    logger.error({ err, email, name }, "alphabet-scraper: Stripe session failed");
+    return false;
+  }
+
+  const html = `
+<div style="font-family:sans-serif;max-width:600px;margin:0 auto;background:#061826;padding:0;border-radius:12px;overflow:hidden;">
+  <div style="background:#061826;padding:28px 32px 16px;text-align:center;">
+    <h1 style="color:#f5b942;font-size:22px;margin:0;letter-spacing:2px;">MissingCash</h1>
+    <p style="color:#94a3b8;font-size:12px;margin:4px 0 0;">Australia's Unclaimed Money Service</p>
+  </div>
+  <div style="background:#0f2233;padding:28px 32px;border-top:3px solid #f5b942;">
+    <h2 style="color:#ffffff;font-size:20px;margin:0 0 6px;">Hi ${firstName},</h2>
+    <p style="color:#94a3b8;font-size:14px;margin:0 0 20px;">
+      We searched the national unclaimed money registers and found money that appears to belong to you.
+    </p>
+    <div style="background:#061826;border:1px solid #f5b942;border-radius:10px;padding:20px;text-align:center;margin-bottom:24px;">
+      <p style="color:#94a3b8;font-size:12px;margin:0 0 4px;text-transform:uppercase;letter-spacing:1px;">Amount found in your name</p>
+      <p style="color:#f5b942;font-size:36px;font-weight:900;margin:0;">${amount}</p>
+      <p style="color:#6b7a8d;font-size:12px;margin:6px 0 0;">Held by ${holderName}</p>
+    </div>
+    <div style="background:#0a1f30;border:1px solid #1a2a3a;border-radius:8px;padding:14px;margin-bottom:24px;">
+      <p style="color:#94a3b8;font-size:13px;margin:0;">
+        🔒 <strong style="color:#fff;">Claim instructions are locked</strong> — the exact account references, claim forms, and step-by-step process are in your paid report. Pay once, get everything you need to claim your ${amount}.
+      </p>
+    </div>
+    <div style="text-align:center;margin:28px 0;">
+      <a href="${checkoutUrl}" style="background:#f5b942;color:#061826;padding:18px 40px;border-radius:10px;text-decoration:none;font-weight:bold;font-size:17px;display:inline-block;letter-spacing:1px;">
+        🔓 Unlock My Claim Report — ${feeStr}
+      </a>
+      <p style="color:#6b7a8d;font-size:11px;margin:12px 0 0;">${pct}% of ${amount} · Secure Stripe payment · Report delivered instantly after payment</p>
+    </div>
+    <p style="color:#6b7a8d;font-size:11px;text-align:center;">Questions? Reply to this email or contact support@missingcash.com.au</p>
+  </div>
+  <div style="background:#061826;padding:16px 32px;text-align:center;border-top:1px solid #1a2a3a;">
+    <p style="color:#6b7a8d;font-size:11px;margin:0;">© MissingCash | ABN 52 347 989 391 | support@missingcash.com.au</p>
+  </div>
+</div>`;
 
   try {
     const resend = new Resend(resendKey);
     await resend.emails.send({
       from: FROM_ADDRESS,
       to: email,
-      subject: `We found ${amount} in your name — MissingCash`,
-      text: body,
+      subject: `⚡ We found ${amount} in your name — unlock your claim report`,
+      html,
     });
-    logger.info({ email, name, amount }, "alphabet-scraper: outreach email sent");
+    logger.info({ email, name, amount, prospectId }, "alphabet-scraper: outreach email sent");
     return true;
   } catch (err) {
     logger.error({ err, email, name }, "alphabet-scraper: outreach email failed");
@@ -240,7 +297,7 @@ async function contactSearchLetter(letter: string): Promise<{ found: number; ema
 
       let outreachSentAt: Date | null = null;
       if (contact.email) {
-        const sent = await sendOutreachEmail(contact.email, prospect.name, prospect.amount);
+        const sent = await sendOutreachEmail(contact.email, prospect.name, prospect.amount, prospect.holder ?? null, prospect.id);
         if (sent) {
           emailed++;
           outreachSentAt = new Date();
