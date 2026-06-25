@@ -1,14 +1,24 @@
 import { Router, type IRouter } from "express";
 import Stripe from "stripe";
+import { Resend } from "resend";
 import { db, miaFreeSearchesTable } from "@workspace/db";
 import { eq } from "drizzle-orm";
 import { searchAllSources } from "../lib/multi-scraper";
+import { logger } from "../lib/logger";
 
 const router: IRouter = Router();
 
 const SITE_BASE = process.env.REPLIT_DOMAINS
   ? `https://${process.env.REPLIT_DOMAINS.split(",")[0]}`
   : "https://missingcash.com.au";
+
+const FROM_ADDRESS = process.env.MISSINGCASH_DOMAIN_VERIFIED === "true"
+  ? "MissingCash <leads@missingcash.com.au>"
+  : "MissingCash <leads@lensflow.com.au>";
+
+function fmtAUD(cents: number) {
+  return (cents / 100).toLocaleString("en-AU", { style: "currency", currency: "AUD", maximumFractionDigits: 0 });
+}
 
 function parseAmountCents(amountStr: string): number {
   const match = amountStr.match(/\$?([\d,]+(?:\.\d{1,2})?)/);
@@ -18,7 +28,6 @@ function parseAmountCents(amountStr: string): number {
 }
 
 function calcFeePercent(totalDollars: number): number {
-  if (totalDollars < 250) return 5;
   if (totalDollars <= 1000) return 5;
   if (totalDollars <= 5000) return 10;
   if (totalDollars <= 30000) return 15;
@@ -31,6 +40,147 @@ function calcFeeCents(totalAmountCents: number): number {
   const pct = calcFeePercent(totalDollars);
   const fee = Math.round(totalAmountCents * pct / 100);
   return Math.max(fee, 100);
+}
+
+async function sendFoundEmail(opts: {
+  searchId: number;
+  email: string;
+  firstName: string;
+  lastName: string;
+  totalAmountCents: number;
+  teaserMatches: { name: string; holder: string; state: string; amount: string; source?: string }[];
+}) {
+  const stripeKey = process.env.STRIPE_SECRET_KEY;
+  const resendKey = process.env.RESEND_API_KEY;
+  if (!stripeKey || !resendKey) {
+    logger.warn({ searchId: opts.searchId }, "Skipping found-email: missing STRIPE_SECRET_KEY or RESEND_API_KEY");
+    return;
+  }
+
+  const { searchId, email, firstName, lastName, totalAmountCents, teaserMatches } = opts;
+  const feePercent = calcFeePercent(totalAmountCents / 100);
+  const feeCents = calcFeeCents(totalAmountCents);
+  const totalStr = fmtAUD(totalAmountCents);
+  const feeStr = fmtAUD(feeCents);
+
+  let checkoutUrl: string;
+  try {
+    const stripe = new Stripe(stripeKey);
+    const session = await stripe.checkout.sessions.create({
+      mode: "payment",
+      customer_email: email,
+      line_items: [
+        {
+          price_data: {
+            currency: "aud",
+            unit_amount: feeCents,
+            product_data: {
+              name: `Mia Full Claim Report — ${feePercent}% success fee`,
+              description: `Mia found ${totalStr} in your name. Pay ${feeStr} (${feePercent}%) to unlock your personalised step-by-step claim report.`,
+            },
+          },
+          quantity: 1,
+        },
+      ],
+      metadata: {
+        product: "mia-free-search",
+        searchId: String(searchId),
+      },
+      success_url: `${SITE_BASE}/mia-search/paid?id=${searchId}`,
+      cancel_url: `${SITE_BASE}/mia-search/results?id=${searchId}`,
+    });
+    checkoutUrl = session.url!;
+  } catch (err) {
+    logger.error({ err, searchId }, "Failed to create Stripe checkout session for found-email");
+    return;
+  }
+
+  const matchRows = teaserMatches.slice(0, 3).map((m) => {
+    const label = m.source || m.holder || "Institution on file";
+    const loc = m.state ? ` · ${m.state}` : "";
+    const amt = m.amount ? `<strong style="color:#00C1D5;">${m.amount}</strong>` : `<em style="color:#6b7a8d;">Amount on file</em>`;
+    return `
+      <tr>
+        <td style="padding:10px 12px;border-bottom:1px solid #1a2a3a;">
+          <div style="color:#ffffff;font-size:14px;font-weight:bold;">${m.name}</div>
+          <div style="color:#6b7a8d;font-size:12px;">${label}${loc}</div>
+        </td>
+        <td style="padding:10px 12px;border-bottom:1px solid #1a2a3a;text-align:right;">
+          ${amt}
+          <div style="color:#6b7a8d;font-size:10px;margin-top:2px;">🔒 Claim steps locked</div>
+        </td>
+      </tr>`;
+  }).join("");
+
+  const extraNote = teaserMatches.length > 3
+    ? `<p style="color:#6b7a8d;font-size:12px;text-align:center;margin:8px 0 0;">+ ${teaserMatches.length - 3} more match${teaserMatches.length - 3 !== 1 ? "es" : ""} in your full report</p>`
+    : "";
+
+  const html = `
+<div style="font-family:sans-serif;max-width:600px;margin:0 auto;background:#061826;padding:0;border-radius:12px;overflow:hidden;">
+  <div style="background:#061826;padding:32px 32px 20px;text-align:center;">
+    <h1 style="color:#f5b942;font-size:24px;margin:0;letter-spacing:2px;">MissingCash</h1>
+    <p style="color:#94a3b8;font-size:12px;margin:4px 0 0;">Mia Free Search — Results Ready</p>
+  </div>
+  <div style="background:#0f2233;padding:28px 32px;border-top:3px solid #00C1D5;">
+    <h2 style="color:#00C1D5;font-size:22px;margin:0 0 8px;">⚡ Mia found unclaimed money in your name!</h2>
+    <p style="color:#ffffff;font-size:28px;font-weight:900;margin:0 0 4px;">${totalStr} found</p>
+    <p style="color:#94a3b8;font-size:13px;margin:0 0 24px;">across ${teaserMatches.length} match${teaserMatches.length !== 1 ? "es" : ""} in Australian government databases</p>
+
+    <table style="width:100%;border-collapse:collapse;background:#061826;border-radius:8px;overflow:hidden;margin-bottom:8px;">
+      <thead>
+        <tr style="background:#0a1f30;">
+          <th style="padding:10px 12px;text-align:left;color:#94a3b8;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;">Match</th>
+          <th style="padding:10px 12px;text-align:right;color:#94a3b8;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;">Amount</th>
+        </tr>
+      </thead>
+      <tbody>${matchRows}</tbody>
+    </table>
+    ${extraNote}
+
+    <div style="background:#00C1D5/10;border:1px solid #00C1D5;border-radius:8px;padding:14px;margin:20px 0;text-align:center;">
+      <p style="color:#94a3b8;font-size:12px;margin:0 0 6px;">🔒 Exact institution names, account references, claim form links and step-by-step instructions are in your full report</p>
+    </div>
+
+    <div style="text-align:center;margin:28px 0;">
+      <a href="${checkoutUrl}" style="background:#00C1D5;color:#ffffff;padding:18px 40px;border-radius:10px;text-decoration:none;font-weight:bold;font-size:17px;display:inline-block;letter-spacing:1px;">
+        🔓 Unlock My Full Report — ${feeStr}
+      </a>
+      <p style="color:#6b7a8d;font-size:11px;margin:12px 0 0;">${feePercent}% of ${totalStr} found · Secure payment via Stripe · Report emailed instantly</p>
+    </div>
+
+    <div style="background:#061826;border-radius:8px;padding:14px;margin:16px 0;border:1px solid #1a2a3a;">
+      <p style="color:#94a3b8;font-weight:bold;margin:0 0 8px;font-size:13px;">📋 Your full report includes:</p>
+      <ul style="color:#94a3b8;padding-left:18px;margin:0;font-size:12px;line-height:1.9;">
+        <li>Exact institution names &amp; account references for every match</li>
+        <li>Direct claim form links — no searching required</li>
+        <li>Step-by-step claim instructions personalised to your details</li>
+        <li>ATO myGov — Lost super &amp; tax refunds</li>
+        <li>All 8 state &amp; territory revenue registers</li>
+        <li>Computershare &amp; Link share registries</li>
+        <li>Fair Work unpaid wages</li>
+      </ul>
+    </div>
+
+    <p style="color:#6b7a8d;font-size:11px;margin:16px 0 0;text-align:center;">No charge has been made. You only pay if you choose to unlock your report.<br>Questions? Ask <a href="${SITE_BASE}" style="color:#00C1D5;">Mia</a> or email support@missingcash.com.au</p>
+  </div>
+  <div style="background:#061826;padding:20px 32px;text-align:center;border-top:1px solid #1a2a3a;">
+    <p style="color:#6b7a8d;font-size:11px;margin:0;">© MissingCash | ABN 52 347 989 391 | support@missingcash.com.au</p>
+  </div>
+</div>`;
+
+  try {
+    const resend = new Resend(resendKey);
+    await resend.emails.send({
+      from: FROM_ADDRESS,
+      to: email,
+      subject: `⚡ Mia found ${totalStr} in your name, ${firstName} — unlock your report`,
+      html,
+    });
+    logger.info({ searchId, email, totalAmountCents }, "Found-email with payment link sent");
+  } catch (err) {
+    logger.error({ err, searchId, email }, "Failed to send found-email");
+  }
 }
 
 router.post("/mia/search/start", async (req, res) => {
@@ -102,6 +252,10 @@ router.post("/mia/search/start", async (req, res) => {
       }).where(eq(miaFreeSearchesTable.id, searchId));
 
       req.log.info({ searchId, status, matchCount: validMatches.length, totalAmountCents, sourcesSearched: results.sourceResults.length }, "Multi-source search complete");
+
+      if (hasMatches) {
+        await sendFoundEmail({ searchId, email, firstName, lastName, totalAmountCents, teaserMatches });
+      }
     } catch (err) {
       req.log.error({ err, searchId }, "Free search failed");
       try {
@@ -178,8 +332,8 @@ router.post("/mia/search/checkout", async (req, res) => {
   const totalAmountCents = row.totalAmountCents ?? 0;
   const feeCents = totalAmountCents > 0 ? calcFeeCents(totalAmountCents) : 100;
   const feePercent = calcFeePercent(totalAmountCents / 100);
-  const totalDollars = (totalAmountCents / 100).toLocaleString("en-AU", { style: "currency", currency: "AUD" });
-  const feeDollars = (feeCents / 100).toLocaleString("en-AU", { style: "currency", currency: "AUD" });
+  const totalStr = fmtAUD(totalAmountCents);
+  const feeStr = fmtAUD(feeCents);
 
   const stripeKey = process.env.STRIPE_SECRET_KEY;
   if (!stripeKey) {
@@ -199,7 +353,7 @@ router.post("/mia/search/checkout", async (req, res) => {
             unit_amount: feeCents,
             product_data: {
               name: `Mia Full Claim Report — ${feePercent}% success fee`,
-              description: `Mia found ${totalDollars} in your name. Pay ${feeDollars} (${feePercent}%) to unlock your full personalised claim report with step-by-step instructions for every database.`,
+              description: `Mia found ${totalStr} in your name. Pay ${feeStr} (${feePercent}%) to unlock your full personalised claim report with step-by-step instructions for every database.`,
             },
           },
           quantity: 1,
