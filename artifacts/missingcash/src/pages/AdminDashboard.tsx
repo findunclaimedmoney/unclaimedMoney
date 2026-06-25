@@ -21,15 +21,41 @@ interface Analytics {
   }[];
 }
 
+interface ProspectStats {
+  total: number;
+  byLetter: { letter: string; count: number; found: number; emailed: number }[];
+  progress: {
+    letter: string;
+    status: string;
+    prospectCount: number;
+    contactsFound: number;
+    outreachSent: number;
+    startedAt: string | null;
+    completedAt: string | null;
+  }[];
+}
+
+interface Prospect {
+  id: number;
+  name: string;
+  amount: string;
+  holder: string | null;
+  state: string | null;
+  letter: string;
+  contactStatus: string;
+  contactEmail: string | null;
+  contactPhone: string | null;
+  contactAddress: string | null;
+  contactSource: string | null;
+  outreachSentAt: string | null;
+}
+
 function Bar({ value, max, color }: { value: number; max: number; color: string }) {
   const pct = max > 0 ? Math.round((value / max) * 100) : 0;
   return (
     <div className="flex items-end gap-1 h-16">
       <div className="w-full bg-white/5 rounded-sm relative" style={{ height: "100%" }}>
-        <div
-          className={`absolute bottom-0 left-0 right-0 rounded-sm transition-all duration-500 ${color}`}
-          style={{ height: `${Math.max(pct, 2)}%` }}
-        />
+        <div className={`absolute bottom-0 left-0 right-0 rounded-sm transition-all duration-500 ${color}`} style={{ height: `${Math.max(pct, 2)}%` }} />
       </div>
     </div>
   );
@@ -78,28 +104,55 @@ function buildChartDays(data: { day: string; count: number }[]): { label: string
   return days;
 }
 
+const STATUS_COLOR: Record<string, string> = {
+  pending: "text-white/30",
+  crawling: "text-yellow-400 animate-pulse",
+  searching: "text-blue-400 animate-pulse",
+  done: "text-green-400",
+};
+
+const STATUS_LABEL: Record<string, string> = {
+  pending: "—",
+  crawling: "Crawling MoneySmart…",
+  searching: "Finding contacts…",
+  done: "✓ Done",
+};
+
+const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+
 export default function AdminDashboard() {
   const [password, setPassword] = useState(() => sessionStorage.getItem("mc_admin_pw") ?? "");
   const [input, setInput] = useState("");
   const [authed, setAuthed] = useState(false);
   const [data, setData] = useState<Analytics | null>(null);
+  const [prospects, setProspects] = useState<ProspectStats | null>(null);
+  const [foundProspects, setFoundProspects] = useState<Prospect[]>([]);
   const [error, setError] = useState("");
   const [lastRefresh, setLastRefresh] = useState<Date | null>(null);
   const [loading, setLoading] = useState(false);
+  const [pipelineMsg, setPipelineMsg] = useState("");
+  const [activeTab, setActiveTab] = useState<"traffic" | "pipeline">("traffic");
 
   const fetchData = useCallback(async (pw: string) => {
     setLoading(true);
     try {
-      const res = await fetch(`${BASE}api/admin/analytics`, {
-        headers: { "x-admin-password": pw },
-      });
-      if (res.status === 401) {
-        setError("Wrong password");
-        setAuthed(false);
-        return;
-      }
-      const json = await res.json() as Analytics;
-      setData(json);
+      const [analyticsRes, statsRes, prospectsRes] = await Promise.all([
+        fetch(`${BASE}api/admin/analytics`, { headers: { "x-admin-password": pw } }),
+        fetch(`${BASE}api/admin/prospect-stats`, { headers: { "x-admin-password": pw } }),
+        fetch(`${BASE}api/admin/prospects?page=1`, { headers: { "x-admin-password": pw } }),
+      ]);
+
+      if (analyticsRes.status === 401) { setError("Wrong password"); setAuthed(false); return; }
+
+      const [analytics, stats, prospectData] = await Promise.all([
+        analyticsRes.json() as Promise<Analytics>,
+        statsRes.ok ? statsRes.json() as Promise<ProspectStats> : Promise.resolve(null),
+        prospectsRes.ok ? prospectsRes.json() as Promise<{ prospects: Prospect[] }> : Promise.resolve({ prospects: [] }),
+      ]);
+
+      setData(analytics);
+      if (stats) setProspects(stats);
+      setFoundProspects(prospectData.prospects.filter((p) => p.contactStatus === "found"));
       setAuthed(true);
       setError("");
       setLastRefresh(new Date());
@@ -111,15 +164,27 @@ export default function AdminDashboard() {
     }
   }, []);
 
-  useEffect(() => {
-    if (password) fetchData(password);
-  }, []);
+  useEffect(() => { if (password) fetchData(password); }, []);
 
   useEffect(() => {
     if (!authed || !password) return;
     const id = setInterval(() => fetchData(password), 30_000);
     return () => clearInterval(id);
   }, [authed, password, fetchData]);
+
+  async function startPipeline() {
+    setPipelineMsg("Starting…");
+    try {
+      const res = await fetch(`${BASE}api/admin/pipeline-start`, {
+        method: "POST",
+        headers: { "x-admin-password": password },
+      });
+      const json = await res.json() as { status: string };
+      setPipelineMsg(json.status === "started" ? "✓ Pipeline running — crawling A first" : "Error starting pipeline");
+    } catch {
+      setPipelineMsg("Error — check server");
+    }
+  }
 
   if (!authed) {
     return (
@@ -136,10 +201,7 @@ export default function AdminDashboard() {
             onKeyDown={(e) => { if (e.key === "Enter") { setPassword(input); fetchData(input); } }}
             className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white placeholder:text-white/30 mb-4 outline-none focus:border-primary"
           />
-          <button
-            onClick={() => { setPassword(input); fetchData(input); }}
-            className="w-full bg-primary text-black font-bold py-3 rounded-lg hover:bg-primary/90 transition-colors"
-          >
+          <button onClick={() => { setPassword(input); fetchData(input); }} className="w-full bg-primary text-black font-bold py-3 rounded-lg hover:bg-primary/90 transition-colors">
             Enter
           </button>
         </div>
@@ -150,7 +212,7 @@ export default function AdminDashboard() {
   if (!data) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#061826]">
-        <div className="text-white/40 animate-pulse">Loading analytics…</div>
+        <div className="text-white/40 animate-pulse">Loading…</div>
       </div>
     );
   }
@@ -161,97 +223,232 @@ export default function AdminDashboard() {
   const srMax = Math.max(...srDays.map((d) => d.count), 1);
   const foundPct = data.searches.total > 0 ? Math.round((data.searches.found / data.searches.total) * 100) : 0;
 
+  // Build alphabet progress map
+  const progressMap = Object.fromEntries((prospects?.progress ?? []).map((p) => [p.letter, p]));
+
   return (
     <div className="min-h-screen bg-[#061826] text-white p-6">
       <div className="max-w-5xl mx-auto">
-        <div className="flex items-center justify-between mb-8">
+
+        {/* Header */}
+        <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-3xl font-bold text-white">Live Traffic</h1>
+            <h1 className="text-3xl font-bold text-white">MissingCash Admin</h1>
             <p className="text-white/40 text-sm mt-1">
-              Real users only · Auto-refreshes every 30s
+              Auto-refreshes every 30s
               {lastRefresh && ` · Last: ${lastRefresh.toLocaleTimeString("en-AU")}`}
             </p>
           </div>
-          <button
-            onClick={() => fetchData(password)}
-            disabled={loading}
-            className="text-xs text-white/40 border border-white/10 rounded-lg px-3 py-2 hover:border-white/30 transition-colors disabled:opacity-50"
-          >
-            {loading ? "Refreshing…" : "Refresh now"}
+          <button onClick={() => fetchData(password)} disabled={loading} className="text-xs text-white/40 border border-white/10 rounded-lg px-3 py-2 hover:border-white/30 transition-colors disabled:opacity-50">
+            {loading ? "Refreshing…" : "Refresh"}
           </button>
         </div>
 
-        {/* Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <Card label="Page Views Today" today={data.pageViews.today} week={data.pageViews.week} total={data.pageViews.total} color="text-white" />
-          <Card label="Mia Searches Today" today={data.searches.today} week={data.searches.week} total={data.searches.total} color="text-blue-400" />
-          <Card label="Finance Leads Today" today={data.finance.today} week={data.finance.week} total={data.finance.total} color="text-yellow-400" />
-          <Card label="Email Signups Today" today={data.emailAlerts.today} week={data.emailAlerts.week} total={data.emailAlerts.total} color="text-green-400" />
+        {/* Tabs */}
+        <div className="flex gap-2 mb-6">
+          {(["traffic", "pipeline"] as const).map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${activeTab === tab ? "bg-primary text-black" : "bg-white/5 text-white/50 hover:text-white"}`}
+            >
+              {tab === "traffic" ? "📊 Live Traffic" : "🤖 Mia Alphabet Pipeline"}
+            </button>
+          ))}
         </div>
 
-        {/* Money found stat */}
-        <div className="bg-primary/10 border border-primary/30 rounded-xl p-5 mb-8 flex items-center gap-6">
-          <div>
-            <p className="text-xs text-primary/60 uppercase tracking-widest mb-1">Mia Success Rate</p>
-            <p className="text-5xl font-bold text-primary">{foundPct}%</p>
-          </div>
-          <div className="text-white/50 text-sm">
-            <p><span className="text-white">{data.searches.found}</span> of <span className="text-white">{data.searches.total}</span> real searches found money</p>
-            <p className="mt-1 text-xs">Tests and internal searches excluded</p>
-          </div>
-        </div>
+        {/* ───── TAB: TRAFFIC ───── */}
+        {activeTab === "traffic" && (
+          <div className="space-y-6">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <Card label="Page Views Today" today={data.pageViews.today} week={data.pageViews.week} total={data.pageViews.total} color="text-white" />
+              <Card label="Mia Searches Today" today={data.searches.today} week={data.searches.week} total={data.searches.total} color="text-blue-400" />
+              <Card label="Finance Leads Today" today={data.finance.today} week={data.finance.week} total={data.finance.total} color="text-yellow-400" />
+              <Card label="Email Signups Today" today={data.emailAlerts.today} week={data.emailAlerts.week} total={data.emailAlerts.total} color="text-green-400" />
+            </div>
 
-        {/* Charts */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          <div className="bg-white/5 border border-white/10 rounded-xl p-5">
-            <p className="text-xs text-white/40 uppercase tracking-widest mb-4">Page Views — Last 7 Days</p>
-            <div className="grid grid-cols-7 gap-1">
-              {pvDays.map((d) => (
-                <div key={d.label} className="flex flex-col items-center gap-1">
-                  <Bar value={d.count} max={pvMax} color="bg-white/40" />
-                  <span className="text-[10px] text-white/30">{d.label}</span>
-                  <span className="text-[10px] text-white/60">{d.count}</span>
+            <div className="bg-primary/10 border border-primary/30 rounded-xl p-5 flex items-center gap-6">
+              <div>
+                <p className="text-xs text-primary/60 uppercase tracking-widest mb-1">Mia Success Rate</p>
+                <p className="text-5xl font-bold text-primary">{foundPct}%</p>
+              </div>
+              <div className="text-white/50 text-sm">
+                <p><span className="text-white">{data.searches.found}</span> of <span className="text-white">{data.searches.total}</span> real searches found money</p>
+                <p className="mt-1 text-xs">Tests and internal searches excluded</p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="bg-white/5 border border-white/10 rounded-xl p-5">
+                <p className="text-xs text-white/40 uppercase tracking-widest mb-4">Page Views — Last 7 Days</p>
+                <div className="grid grid-cols-7 gap-1">
+                  {pvDays.map((d) => (
+                    <div key={d.label} className="flex flex-col items-center gap-1">
+                      <Bar value={d.count} max={pvMax} color="bg-white/40" />
+                      <span className="text-[10px] text-white/30">{d.label}</span>
+                      <span className="text-[10px] text-white/60">{d.count}</span>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-          </div>
-          <div className="bg-white/5 border border-white/10 rounded-xl p-5">
-            <p className="text-xs text-white/40 uppercase tracking-widest mb-4">Mia Searches — Last 7 Days</p>
-            <div className="grid grid-cols-7 gap-1">
-              {srDays.map((d) => (
-                <div key={d.label} className="flex flex-col items-center gap-1">
-                  <Bar value={d.count} max={srMax} color="bg-blue-400/60" />
-                  <span className="text-[10px] text-white/30">{d.label}</span>
-                  <span className="text-[10px] text-white/60">{d.count}</span>
+              </div>
+              <div className="bg-white/5 border border-white/10 rounded-xl p-5">
+                <p className="text-xs text-white/40 uppercase tracking-widest mb-4">Mia Searches — Last 7 Days</p>
+                <div className="grid grid-cols-7 gap-1">
+                  {srDays.map((d) => (
+                    <div key={d.label} className="flex flex-col items-center gap-1">
+                      <Bar value={d.count} max={srMax} color="bg-blue-400/60" />
+                      <span className="text-[10px] text-white/30">{d.label}</span>
+                      <span className="text-[10px] text-white/60">{d.count}</span>
+                    </div>
+                  ))}
                 </div>
-              ))}
+              </div>
+            </div>
+
+            <div className="bg-white/5 border border-white/10 rounded-xl p-5">
+              <p className="text-xs text-white/40 uppercase tracking-widest mb-4">Recent Activity (Real Users)</p>
+              {data.recentActivity.length === 0 ? (
+                <p className="text-white/30 text-sm text-center py-8">No real user activity yet — traffic will appear here the moment it starts</p>
+              ) : (
+                <div className="space-y-3">
+                  {data.recentActivity.map((a, i) => {
+                    const { label, bg } = typeLabel(a.type);
+                    return (
+                      <div key={i} className="flex items-center gap-3 py-2 border-b border-white/5 last:border-0">
+                        <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${bg}`}>{label}</span>
+                        <span className="text-white/80 text-sm flex-1">{a.first_name} {a.last_name}<span className="text-white/30 ml-2">· {a.email}</span></span>
+                        <span className="text-white/30 text-xs">{timeAgo(a.created_at)}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           </div>
-        </div>
+        )}
 
-        {/* Activity feed */}
-        <div className="bg-white/5 border border-white/10 rounded-xl p-5">
-          <p className="text-xs text-white/40 uppercase tracking-widest mb-4">Recent Activity (Real Users)</p>
-          {data.recentActivity.length === 0 ? (
-            <p className="text-white/30 text-sm text-center py-8">No real user activity yet — traffic will appear here the moment it starts</p>
-          ) : (
-            <div className="space-y-3">
-              {data.recentActivity.map((a, i) => {
-                const { label, bg } = typeLabel(a.type);
-                return (
-                  <div key={i} className="flex items-center gap-3 py-2 border-b border-white/5 last:border-0">
-                    <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${bg}`}>{label}</span>
-                    <span className="text-white/80 text-sm flex-1">
-                      {a.first_name} {a.last_name}
-                      <span className="text-white/30 ml-2">· {a.email}</span>
-                    </span>
-                    <span className="text-white/30 text-xs">{timeAgo(a.created_at)}</span>
-                  </div>
-                );
-              })}
+        {/* ───── TAB: PIPELINE ───── */}
+        {activeTab === "pipeline" && (
+          <div className="space-y-6">
+
+            {/* Start button */}
+            <div className="bg-white/5 border border-white/10 rounded-xl p-5 flex items-center justify-between gap-4">
+              <div>
+                <p className="text-white font-semibold">A–Z Alphabet Pipeline</p>
+                <p className="text-white/40 text-sm mt-0.5">
+                  Mia searches MoneySmart for every letter, finds contact details, and sends outreach emails automatically.
+                  Wipes each letter when done and moves to the next.
+                </p>
+                {pipelineMsg && <p className="text-green-400 text-sm mt-2">{pipelineMsg}</p>}
+              </div>
+              <button
+                onClick={startPipeline}
+                className="shrink-0 bg-primary text-black font-bold px-5 py-3 rounded-lg hover:bg-primary/90 transition-colors text-sm"
+              >
+                ▶ Start / Resume
+              </button>
             </div>
-          )}
-        </div>
+
+            {/* Summary stats */}
+            {prospects && (
+              <div className="grid grid-cols-3 gap-4">
+                <div className="bg-white/5 border border-white/10 rounded-xl p-4 text-center">
+                  <p className="text-xs text-white/40 uppercase tracking-widest mb-1">Prospects Found</p>
+                  <p className="text-3xl font-bold text-white">{prospects.total.toLocaleString()}</p>
+                </div>
+                <div className="bg-white/5 border border-white/10 rounded-xl p-4 text-center">
+                  <p className="text-xs text-white/40 uppercase tracking-widest mb-1">Contacts Found</p>
+                  <p className="text-3xl font-bold text-blue-400">
+                    {prospects.progress.reduce((s, p) => s + p.contactsFound, 0).toLocaleString()}
+                  </p>
+                </div>
+                <div className="bg-white/5 border border-white/10 rounded-xl p-4 text-center">
+                  <p className="text-xs text-white/40 uppercase tracking-widest mb-1">Outreach Sent</p>
+                  <p className="text-3xl font-bold text-green-400">
+                    {prospects.progress.reduce((s, p) => s + p.outreachSent, 0).toLocaleString()}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* A–Z grid */}
+            <div className="bg-white/5 border border-white/10 rounded-xl p-5">
+              <p className="text-xs text-white/40 uppercase tracking-widest mb-4">Letter Progress</p>
+              <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-9 gap-2">
+                {LETTERS.map((letter) => {
+                  const prog = progressMap[letter];
+                  const status = prog?.status ?? "pending";
+                  return (
+                    <div
+                      key={letter}
+                      className={`rounded-lg border p-2 text-center text-xs transition-all ${
+                        status === "done"
+                          ? "border-green-500/40 bg-green-500/10"
+                          : status === "crawling" || status === "searching"
+                          ? "border-yellow-400/40 bg-yellow-400/10"
+                          : "border-white/5 bg-white/5"
+                      }`}
+                    >
+                      <div className="text-lg font-bold text-white">{letter}</div>
+                      <div className={`text-[9px] mt-0.5 ${STATUS_COLOR[status] ?? "text-white/30"}`}>
+                        {STATUS_LABEL[status] ?? status}
+                      </div>
+                      {prog && prog.status === "done" && (
+                        <div className="text-[9px] text-white/40 mt-0.5">
+                          {prog.prospectCount} found<br />{prog.contactsFound} contacts
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Found contacts table */}
+            <div className="bg-white/5 border border-white/10 rounded-xl p-5">
+              <p className="text-xs text-white/40 uppercase tracking-widest mb-4">
+                People with Contact Details Found 🎯
+              </p>
+              {foundProspects.length === 0 ? (
+                <p className="text-white/30 text-sm text-center py-8">
+                  No contacts found yet — start the pipeline above to begin
+                </p>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b border-white/10">
+                        <th className="text-left text-white/40 font-normal pb-2 pr-4">Name</th>
+                        <th className="text-left text-white/40 font-normal pb-2 pr-4">Amount</th>
+                        <th className="text-left text-white/40 font-normal pb-2 pr-4">Phone</th>
+                        <th className="text-left text-white/40 font-normal pb-2 pr-4">Email</th>
+                        <th className="text-left text-white/40 font-normal pb-2 pr-4">Address</th>
+                        <th className="text-left text-white/40 font-normal pb-2">Outreach</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {foundProspects.map((p) => (
+                        <tr key={p.id} className="border-b border-white/5 last:border-0">
+                          <td className="py-2 pr-4 text-white font-medium">{p.name}</td>
+                          <td className="py-2 pr-4 text-primary font-bold">{p.amount}</td>
+                          <td className="py-2 pr-4 text-blue-300">{p.contactPhone ?? "—"}</td>
+                          <td className="py-2 pr-4 text-blue-300 text-xs">{p.contactEmail ?? "—"}</td>
+                          <td className="py-2 pr-4 text-white/40 text-xs">{p.contactAddress ?? "—"}</td>
+                          <td className="py-2">
+                            {p.outreachSentAt
+                              ? <span className="text-green-400 text-xs">✓ Sent {timeAgo(p.outreachSentAt)}</span>
+                              : <span className="text-white/30 text-xs">Email not found — call</span>}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+
+          </div>
+        )}
 
         <p className="text-center text-white/20 text-xs mt-6">
           Bookmark this page · Password stored in session

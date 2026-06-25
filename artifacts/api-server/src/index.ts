@@ -1,6 +1,7 @@
 import app from "./app";
 import { logger } from "./lib/logger";
 import { startAutoSearch } from "./lib/auto-search";
+import { startAlphabetPipeline } from "./lib/alphabet-scraper";
 
 const rawPort = process.env["PORT"];
 
@@ -24,4 +25,7 @@ app.listen(port, (err) => {
 
   logger.info({ port }, "Server listening");
   startAutoSearch();
+  if (process.env.ALPHABET_PIPELINE_ENABLED === "true") {
+    void startAlphabetPipeline();
+  }
 });

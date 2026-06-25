@@ -2,7 +2,7 @@ import { Router } from "express";
 import { db } from "@workspace/db";
 import { prospectsTable } from "@workspace/db/schema";
 import { eq, like, sql, desc } from "drizzle-orm";
-import { crawlLetter, getProspectStats, isLetterInProgress } from "../lib/alphabet-scraper";
+import { crawlLetter, getProspectStats, isLetterInProgress, startAlphabetPipeline } from "../lib/alphabet-scraper";
 import { logger } from "../lib/logger";
 
 const router = Router();
@@ -77,6 +77,13 @@ router.get("/admin/prospect-stats", async (req, res): Promise<void> => {
   } catch (err) {
     res.status(500).json({ error: "query failed" });
   }
+});
+
+// POST /api/admin/pipeline-start — start the full A-Z auto-pipeline
+router.post("/admin/pipeline-start", async (req, res): Promise<void> => {
+  if (!checkAuth(req)) { res.status(401).json({ error: "Unauthorized" }); return; }
+  void startAlphabetPipeline();
+  res.json({ status: "started" });
 });
 
 export default router;
