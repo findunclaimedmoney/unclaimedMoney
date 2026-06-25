@@ -295,12 +295,11 @@ export default function Home() {
           <div className="relative max-w-sm mx-auto group">
             <div className="absolute -inset-1 bg-gradient-to-r from-primary/30 via-primary/10 to-primary/30 rounded-2xl blur-xl opacity-60 group-hover:opacity-90 transition-opacity pointer-events-none" />
             <div className="relative rounded-2xl overflow-hidden border border-primary/30 shadow-2xl aspect-[9/16]">
-              <iframe
-                src="https://www.youtube.com/embed/uYZQidh8Lcw"
-                title="MissingCash — Meet Mia"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                className="w-full h-full"
+              <video
+                src="/missingcash-hero.mp4"
+                controls
+                playsInline
+                className="w-full h-full object-cover"
               />
             </div>
             <p className="text-center text-xs text-muted-foreground mt-4 tracking-widest uppercase">
