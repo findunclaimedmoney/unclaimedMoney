@@ -81,6 +81,7 @@ function Router() {
 function App() {
   const [showSplash, setShowSplash] = useState(() => {
     try {
+      if (window.location.pathname.includes("/admin")) return false;
       const forceIntro = new URLSearchParams(window.location.search).get("intro") === "1";
       if (forceIntro) return true;
       return !localStorage.getItem("mc_intro_seen");
