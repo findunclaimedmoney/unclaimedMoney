@@ -100,6 +100,20 @@ export const miaFreeSearchesTable = pgTable("mia_free_searches", {
 
 export type MiaFreeSearch = typeof miaFreeSearchesTable.$inferSelect;
 
+export const prospectsTable = pgTable("prospects", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  amount: text("amount").notNull(),
+  holder: text("holder"),
+  state: text("state"),
+  source: text("source").notNull(),
+  sourceKey: text("source_key").notNull(),
+  letter: text("letter").notNull(),
+  scrapedAt: timestamp("scraped_at").notNull().defaultNow(),
+});
+
+export type Prospect = typeof prospectsTable.$inferSelect;
+
 export const pageViewsTable = pgTable("page_views", {
   id: serial("id").primaryKey(),
   path: text("path").notNull(),
