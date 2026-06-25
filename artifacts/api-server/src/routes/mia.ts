@@ -144,13 +144,13 @@ router.post("/mia/chat", rateLimit, async (req, res): Promise<void> => {
 
       const callFn = "function" in call ? call.function : null;
       if (callFn?.name === "search_unclaimed_money") {
-        let args: { firstName?: string; lastName?: string; address?: string } = {};
+        let args: { firstName?: string; lastName?: string; address?: string; dob?: string } = {};
         try { args = JSON.parse(callFn.arguments) as typeof args; } catch { /* ignore */ }
 
         const firstName = args.firstName ?? "";
         const lastName = args.lastName ?? "";
 
-        write(`🔍 Searching 11 Australian databases for **${firstName} ${lastName}**...\n\n`);
+        write(`🔍 Searching 13 Australian databases for **${firstName} ${lastName}**...\n\n`);
 
         req.log.info({ firstName, lastName }, "Mia triggered live database search");
 
@@ -158,6 +158,7 @@ router.post("/mia/chat", rateLimit, async (req, res): Promise<void> => {
           firstName,
           lastName,
           address: args.address,
+          dob: args.dob,
         });
 
         if (clientGone()) return;
