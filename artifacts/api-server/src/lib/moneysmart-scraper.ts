@@ -113,9 +113,9 @@ function hasNextPage(html: string, currentPage: number): boolean {
 function buildSearchUrl(name: string, page: number): string {
   const encoded = encodeURIComponent(name);
   if (page === 1) {
-    return `https://moneysmart.gov.au/unclaimed-money?search=${encoded}`;
+    return `https://moneysmart.gov.au/find-unclaimed-money?name=${encoded}`;
   }
-  return `https://moneysmart.gov.au/unclaimed-money?search=${encoded}&page=${page}`;
+  return `https://moneysmart.gov.au/find-unclaimed-money?name=${encoded}&page=${page}`;
 }
 
 async function scrapeForName(
