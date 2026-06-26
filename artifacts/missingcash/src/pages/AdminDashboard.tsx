@@ -127,6 +127,7 @@ export default function AdminDashboard() {
   const [data, setData] = useState<Analytics | null>(null);
   const [prospects, setProspects] = useState<ProspectStats | null>(null);
   const [foundProspects, setFoundProspects] = useState<Prospect[]>([]);
+  const [allProspects, setAllProspects] = useState<Prospect[]>([]);
   const [error, setError] = useState("");
   const [lastRefresh, setLastRefresh] = useState<Date | null>(null);
   const [loading, setLoading] = useState(false);
@@ -152,6 +153,7 @@ export default function AdminDashboard() {
 
       setData(analytics);
       if (stats) setProspects(stats);
+      setAllProspects(prospectData.prospects);
       setFoundProspects(prospectData.prospects.filter((p) => p.contactStatus === "found"));
       setAuthed(true);
       setError("");
@@ -404,14 +406,55 @@ export default function AdminDashboard() {
               </div>
             </div>
 
+            {/* All scraped prospects — verification table */}
+            <div className="bg-white/5 border border-white/10 rounded-xl p-5">
+              <p className="text-xs text-white/40 uppercase tracking-widest mb-1">All Scraped Prospects 🔍</p>
+              <p className="text-white/30 text-xs mb-4">Every record Mia pulled from MoneySmart — verify names & amounts are real before contact search runs</p>
+              {allProspects.length === 0 ? (
+                <p className="text-white/30 text-sm text-center py-8">
+                  No prospects yet — start the pipeline above to begin scraping
+                </p>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b border-white/10">
+                        <th className="text-left text-white/40 font-normal pb-2 pr-4">Name on MoneySmart</th>
+                        <th className="text-left text-white/40 font-normal pb-2 pr-4">Amount</th>
+                        <th className="text-left text-white/40 font-normal pb-2 pr-4">Holder</th>
+                        <th className="text-left text-white/40 font-normal pb-2 pr-4">State</th>
+                        <th className="text-left text-white/40 font-normal pb-2">Contact Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {allProspects.map((p) => (
+                        <tr key={p.id} className="border-b border-white/5 last:border-0">
+                          <td className="py-2 pr-4 text-white font-medium">{p.name}</td>
+                          <td className="py-2 pr-4 text-primary font-bold">{p.amount}</td>
+                          <td className="py-2 pr-4 text-white/50 text-xs">{p.holder ?? "—"}</td>
+                          <td className="py-2 pr-4 text-white/50 text-xs">{p.state ?? "—"}</td>
+                          <td className="py-2">
+                            {p.contactStatus === "found" && <span className="text-green-400 text-xs font-medium">✓ Contact found</span>}
+                            {p.contactStatus === "pending" && <span className="text-yellow-400/70 text-xs">⏳ Awaiting contact search</span>}
+                            {p.contactStatus === "not_found" && <span className="text-white/30 text-xs">✗ No contact</span>}
+                            {!["found","pending","not_found"].includes(p.contactStatus) && <span className="text-white/30 text-xs">{p.contactStatus}</span>}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+
             {/* Found contacts table */}
             <div className="bg-white/5 border border-white/10 rounded-xl p-5">
               <p className="text-xs text-white/40 uppercase tracking-widest mb-4">
-                People with Contact Details Found 🎯
+                Contacts Found + Outreach Sent 🎯
               </p>
               {foundProspects.length === 0 ? (
                 <p className="text-white/30 text-sm text-center py-8">
-                  No contacts found yet — start the pipeline above to begin
+                  No contacts found yet — pipeline will populate this once it finds phone/email details
                 </p>
               ) : (
                 <div className="overflow-x-auto">
@@ -437,7 +480,7 @@ export default function AdminDashboard() {
                           <td className="py-2">
                             {p.outreachSentAt
                               ? <span className="text-green-400 text-xs">✓ Sent {timeAgo(p.outreachSentAt)}</span>
-                              : <span className="text-white/30 text-xs">Email not found — call</span>}
+                              : <span className="text-white/30 text-xs">Email not found — manual call needed</span>}
                           </td>
                         </tr>
                       ))}
