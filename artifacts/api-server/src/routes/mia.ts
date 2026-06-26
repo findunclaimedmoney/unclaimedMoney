@@ -111,8 +111,8 @@ async function lookupProspects(
             },
           ],
           metadata: { product: "mia-prospect-lookup", prospectId: String(row.id) },
-          success_url: `${SITE_BASE}/thank-you`,
-          cancel_url: `${SITE_BASE}/`,
+          success_url: `${SITE_BASE}/claim-report?pid=${row.id}&session_id={CHECKOUT_SESSION_ID}`,
+          cancel_url: `${SITE_BASE}/claim-report?pid=${row.id}`,
         });
         checkoutUrl = session.url ?? "";
       } catch {

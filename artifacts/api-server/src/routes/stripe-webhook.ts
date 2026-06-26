@@ -2,10 +2,12 @@ import { Router, type IRouter } from "express";
 import Stripe from "stripe";
 import { Resend } from "resend";
 import { db, miaResearchRequestsTable, miaFreeSearchesTable } from "@workspace/db";
+import { prospectsTable } from "@workspace/db/schema";
 import { eq } from "drizzle-orm";
 import { callOpenAIReport, generateResearchReport } from "../lib/mia-report";
 import type { MoneySmartResults } from "../lib/moneysmart-scraper";
 import { generateGuide } from "../lib/guides-pdf";
+import { buildClaimInstructions } from "./claim-report";
 
 const router: IRouter = Router();
 
@@ -69,6 +71,69 @@ router.post("/stripe/webhook", async (req, res) => {
 
   if (!email) {
     req.log.warn({ sessionId: session.id }, "Stripe webhook: no customer email in session");
+    return;
+  }
+
+  // ── Pipeline prospect payment ─────────────────────────────────────────────
+  if (session.metadata?.["product"] === "mia-prospect-lookup") {
+    const prospectId = parseInt(session.metadata?.["prospectId"] ?? "", 10);
+    if (isNaN(prospectId)) {
+      req.log.warn({ sessionId: session.id }, "Stripe webhook: mia-prospect-lookup missing prospectId in metadata");
+      return;
+    }
+
+    req.log.info({ prospectId, email }, "Pipeline prospect payment received — delivering claim report");
+
+    try {
+      const [prospect] = await db.select().from(prospectsTable).where(eq(prospectsTable.id, prospectId)).limit(1);
+      if (!prospect) {
+        req.log.error({ prospectId }, "Stripe webhook: prospect not found");
+        return;
+      }
+
+      const steps = buildClaimInstructions(prospect.name, prospect.amount ?? "", prospect.holder, prospect.state);
+      const holderName = prospect.holder ?? "the registered holder";
+      const firstName = prospect.name.split(" ")[0] ?? customerName;
+
+      const resend = new Resend(process.env.RESEND_API_KEY);
+      await resend.emails.send({
+        from: FROM_ADDRESS,
+        to: email,
+        replyTo: "support@missingcash.com.au",
+        subject: `✅ Your Claim Report — ${prospect.amount ?? "Unclaimed Money"} in Your Name`,
+        html: `
+<div style="font-family:sans-serif;max-width:600px;margin:0 auto;background:#061826;padding:0;border-radius:12px;overflow:hidden;">
+  <div style="background:#061826;padding:32px 32px 20px;text-align:center;">
+    <h1 style="color:#f5b942;font-size:22px;margin:0;">MissingCash</h1>
+    <p style="color:#94a3b8;font-size:12px;margin:4px 0 0;">Personalised Claim Report</p>
+  </div>
+  <div style="background:#0f2233;padding:28px 32px;border-top:3px solid #f5b942;">
+    <h2 style="color:#ffffff;font-size:20px;margin:0 0 8px;">Hi ${firstName}, your claim report is ready ✅</h2>
+    <p style="color:#94a3b8;line-height:1.6;margin:0 0 20px;">We found <strong style="color:#f5b942;">${prospect.amount ?? "money"}</strong> held by <strong style="color:#ffffff;">${holderName}</strong> on the ASIC MoneySmart national unclaimed money register. Here are your step-by-step claim instructions.</p>
+
+    <div style="background:#061826;border-radius:10px;padding:20px;border:1px solid #1a2a3a;margin-bottom:20px;">
+      <p style="color:#f5b942;font-weight:bold;margin:0 0 14px;font-size:14px;">📋 Step-by-step claim instructions</p>
+      <ol style="color:#94a3b8;padding-left:20px;margin:0;font-size:13px;line-height:2;">
+        ${steps.map((s) => `<li style="margin-bottom:4px;">${s.replace(/\*\*(.+?)\*\*/g, '<strong style="color:#ffffff;">$1</strong>')}</li>`).join("")}
+      </ol>
+    </div>
+
+    <div style="background:#0a1f30;border-radius:8px;padding:14px;border:1px solid #1a2a3a;margin-bottom:20px;">
+      <p style="color:#94a3b8;font-size:12px;margin:0;">📌 Data source: <a href="https://moneysmart.gov.au/find-unclaimed-money" style="color:#f5b942;">ASIC MoneySmart public unclaimed money register</a> · ABN 52 347 989 391</p>
+    </div>
+
+    <p style="color:#94a3b8;line-height:1.6;margin:0;">Questions? Reply to this email or open <strong style="color:#f5b942;">Mia</strong> at <a href="${SITE_BASE}" style="color:#f5b942;">missingcash.com.au</a> — she can walk you through any step.</p>
+  </div>
+  <div style="background:#061826;padding:20px 32px;text-align:center;border-top:1px solid #1a2a3a;">
+    <p style="color:#6b7a8d;font-size:11px;margin:0;">© MissingCash | ABN 52 347 989 391 | support@missingcash.com.au</p>
+  </div>
+</div>`,
+      });
+
+      req.log.info({ prospectId, email }, "Pipeline prospect claim report emailed successfully");
+    } catch (err) {
+      req.log.error({ err, prospectId, email }, "Failed to email pipeline prospect claim report");
+    }
     return;
   }
 
