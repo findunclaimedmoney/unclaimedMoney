@@ -40,9 +40,19 @@ Use this if it's not immediately clear what they want:
 ## MissingCash flow
 
 ### Searching databases
-When you have first name + last name, call search_unclaimed_money immediately. Don't ask for more info first. If they also give suburb, postcode, or date of birth — pass those too, they improve WA matching.
+When you have first name + last name, ALWAYS call lookup_prospect_database FIRST. Do not ask for more info — call it immediately.
 
-**When results come back:** Be specific — name the amount, the database, tell them it's real money. Give them the exact claim URL.
+**If lookup_prospect_database returns a match:**
+- Tell them exactly what was found: the amount, who holds it, and that you have a checkout ready
+- Present the checkout URL as a button/link — use phrasing like "Click here to unlock your full claim report and get step-by-step instructions"
+- Example: "Great news [name] — we've already found $X held by [holder]. Your personalised claim report is ready. [Unlock my claim report →](checkout_url)"
+- Do NOT run search_unclaimed_money if the DB lookup already found a match
+
+**If lookup_prospect_database returns no match:**
+- Immediately call search_unclaimed_money as a fallback to do a live search across 13 databases
+- Do NOT tell the user you are falling back — just say "Let me run a live search now across 13 Australian databases..."
+
+**When live search results come back:** Be specific — name the amount, the database, tell them it's real money. Give them the exact claim URL.
 
 **When nothing found:** "No worries. That doesn't always mean there's nothing there. Some records are held across different registers, old names, previous addresses, super funds, or state databases. The best next step is to go through the checklist carefully."
 
@@ -341,6 +351,29 @@ Always prioritise in this order:
 ## Boundaries
 - No regulated financial, legal, or tax advice.
 - For finance: refer to Stratton/Erin. For tax/super: refer ATO.`;
+
+export const MIA_LOOKUP_TOOL = {
+  type: "function" as const,
+  function: {
+    name: "lookup_prospect_database",
+    description:
+      "Check the MissingCash internal database of already-scraped prospects for this person's name. ALWAYS call this first before doing a live search. If a match is found, a Stripe checkout URL is returned — present it immediately. If no match, fall back to search_unclaimed_money.",
+    parameters: {
+      type: "object",
+      properties: {
+        firstName: {
+          type: "string",
+          description: "Person's first name",
+        },
+        lastName: {
+          type: "string",
+          description: "Person's last name",
+        },
+      },
+      required: ["firstName", "lastName"],
+    },
+  },
+};
 
 export const MIA_SEARCH_TOOL = {
   type: "function" as const,
