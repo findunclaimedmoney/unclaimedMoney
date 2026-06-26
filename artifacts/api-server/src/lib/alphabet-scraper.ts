@@ -28,15 +28,25 @@ async function fetchPage(url: string, apiKey: string): Promise<string> {
     premium_proxy: "true",
     block_ads: "true",
     country_code: "au",
-    wait: "3000",
+    wait: "5000",
   });
-  const res = await fetch(`${SCRAPINGBEE_API}?${params.toString()}`, {
-    signal: AbortSignal.timeout(55_000),
-  });
-  if (!res.ok && res.status !== 404) {
-    throw new Error(`ScrapingBee ${res.status}`);
+
+  let lastErr: Error | null = null;
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      const res = await fetch(`${SCRAPINGBEE_API}?${params.toString()}`, {
+        signal: AbortSignal.timeout(60_000),
+      });
+      if (res.status === 404) return res.text();
+      if (!res.ok) throw new Error(`ScrapingBee ${res.status}`);
+      return res.text();
+    } catch (err) {
+      lastErr = err instanceof Error ? err : new Error(String(err));
+      logger.warn({ url, attempt, err: lastErr.message }, "alphabet-scraper: fetch attempt failed, retrying");
+      if (attempt < 3) await new Promise((r) => setTimeout(r, 3000 * attempt));
+    }
   }
-  return res.text();
+  throw lastErr!;
 }
 
 interface RawMatch {
@@ -380,8 +390,15 @@ async function runPipeline() {
         await upsertProgress(letter, { status: "crawling", startedAt: new Date() });
 
         const { matches, pages } = await crawlMoneySmartLetter(letter, apiKey);
-        const inserted = await insertProspects(letter, matches);
 
+        if (pages === 0) {
+          // Crawl failed entirely — reset to pending so it retries next run
+          logger.warn({ letter }, "alphabet-pipeline: crawl returned 0 pages, resetting to pending for retry");
+          await upsertProgress(letter, { status: "pending", startedAt: null });
+          break;
+        }
+
+        const inserted = await insertProspects(letter, matches);
         logger.info({ letter, inserted, pages }, "alphabet-pipeline: crawl done");
         await upsertProgress(letter, { status: "searching", prospectCount: inserted });
       }
