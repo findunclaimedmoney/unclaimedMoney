@@ -60,7 +60,7 @@ An Australian unclaimed-money search service: helps people find money held by th
 
 ## User preferences
 
-_Populate as you build — explicit user instructions worth remembering across sessions._
+- The user's name is **Zac**. Address them as Zac.
 
 ## Integrations
 
