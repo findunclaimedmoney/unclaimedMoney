@@ -161,6 +161,40 @@ async function searchYellowPages(firstName: string, lastName: string, state: str
   }
 }
 
+// ---------- source 4: White Pages AU ----------
+
+async function searchWhitePages(firstName: string, lastName: string, state: string | null, apiKey: string): Promise<FoundContact | null> {
+  const suburb = state ? state.replace(/\s+\d{4}$/, "").trim() : "";
+  const name = encodeURIComponent(`${firstName} ${lastName}`);
+  const loc = encodeURIComponent(suburb);
+  const url = `https://www.whitepages.com.au/residential?name=${name}${loc ? `&location=${loc}` : ""}`;
+
+  try {
+    const html = await sbFetch(url, apiKey, true);
+    const text = stripHtml(html);
+
+    const phones = extractPhones(text);
+    const emails = extractEmails(text);
+    const addrMatch = text.match(/\d+\s+[A-Za-z][\w\s]+(?:Street|St|Road|Rd|Avenue|Ave|Drive|Dr|Court|Ct|Way|Close|Cl|Place|Pl)[,\s]+[A-Za-z\s]+(?:NSW|VIC|QLD|WA|SA|TAS|ACT|NT)\s+\d{4}/i);
+
+    if (phones.length === 0 && emails.length === 0 && !addrMatch) return null;
+
+    if (emails.length > 0) {
+      logger.info({ firstName, lastName, email: emails[0] }, "contact-finder: White Pages email hit");
+    }
+
+    return {
+      phone: phones[0],
+      email: emails[0],
+      address: addrMatch?.[0],
+      source: "White Pages",
+    };
+  } catch (err) {
+    logger.warn({ err, firstName, lastName }, "contact-finder: White Pages search failed");
+    return null;
+  }
+}
+
 // ---------- main export ----------
 
 export async function findContact(
@@ -188,7 +222,15 @@ export async function findContact(
     return ddg;
   }
 
-  await new Promise((r) => setTimeout(r, 500));
+  await new Promise((r) => setTimeout(r, 400));
+
+  const wp = await searchWhitePages(firstName, lastName, state, apiKey);
+  if (wp?.email || wp?.phone) {
+    logger.info({ name, phone: wp.phone, email: wp.email, source: wp.source }, "contact-finder: hit");
+    return wp;
+  }
+
+  await new Promise((r) => setTimeout(r, 400));
 
   const yp = await searchYellowPages(firstName, lastName, state, apiKey);
   if (yp?.phone) {
@@ -196,7 +238,7 @@ export async function findContact(
     return yp;
   }
 
-  await new Promise((r) => setTimeout(r, 500));
+  await new Promise((r) => setTimeout(r, 400));
 
   const abn = await searchABN(`${firstName} ${lastName}`, apiKey);
   if (abn?.address) {
