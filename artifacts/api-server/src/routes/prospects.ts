@@ -79,6 +79,50 @@ router.get("/admin/prospect-stats", async (req, res): Promise<void> => {
   }
 });
 
+// GET /api/admin/audit-export — dated CSV of every outreach sent (for compliance/audit)
+router.get("/admin/audit-export", async (req, res): Promise<void> => {
+  if (!checkAuth(req)) { res.status(401).json({ error: "Unauthorized" }); return; }
+
+  try {
+    const rows = await db
+      .select()
+      .from(prospectsTable)
+      .where(sql`outreach_sent_at is not null`)
+      .orderBy(prospectsTable.outreachSentAt);
+
+    const dateStr = new Date().toISOString().slice(0, 10);
+    const filename = `missingcash-audit-${dateStr}.csv`;
+
+    const header = [
+      "id","name","amount","holder","state","source","letter",
+      "contact_email","contact_phone","contact_address","contact_source","contact_searched_at",
+      "outreach_sent_at","outreach_subject","stripe_session_id","outreach_body_text","scraped_at"
+    ].join(",");
+
+    function csvCell(v: unknown): string {
+      if (v === null || v === undefined) return "";
+      const s = String(v).replace(/"/g, '""');
+      return `"${s}"`;
+    }
+
+    const lines = rows.map((r) => [
+      r.id, csvCell(r.name), csvCell(r.amount), csvCell(r.holder), csvCell(r.state),
+      csvCell(r.source), csvCell(r.letter),
+      csvCell(r.contactEmail), csvCell(r.contactPhone), csvCell(r.contactAddress), csvCell(r.contactSource),
+      csvCell(r.contactSearchedAt?.toISOString()),
+      csvCell(r.outreachSentAt?.toISOString()), csvCell(r.outreachSubject), csvCell(r.stripeSessionId),
+      csvCell(r.outreachBodyText), csvCell(r.scrapedAt?.toISOString()),
+    ].join(","));
+
+    res.setHeader("Content-Type", "text/csv");
+    res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
+    res.send([header, ...lines].join("\n"));
+  } catch (err) {
+    logger.error({ err }, "audit-export: failed");
+    res.status(500).json({ error: "export failed" });
+  }
+});
+
 // POST /api/admin/pipeline-start — start the full A-Z auto-pipeline
 router.post("/admin/pipeline-start", async (req, res): Promise<void> => {
   if (!checkAuth(req)) { res.status(401).json({ error: "Unauthorized" }); return; }

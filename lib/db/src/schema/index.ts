@@ -116,6 +116,9 @@ export const prospectsTable = pgTable("prospects", {
   contactSource: text("contact_source"),
   contactSearchedAt: timestamp("contact_searched_at"),
   outreachSentAt: timestamp("outreach_sent_at"),
+  stripeSessionId: text("stripe_session_id"),
+  outreachSubject: text("outreach_subject"),
+  outreachBodyText: text("outreach_body_text"),
   scrapedAt: timestamp("scraped_at").notNull().defaultNow(),
 });
 

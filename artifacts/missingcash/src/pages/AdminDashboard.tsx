@@ -174,6 +174,14 @@ export default function AdminDashboard() {
     return () => clearInterval(id);
   }, [authed, password, fetchData]);
 
+  function downloadAudit() {
+    const pw = password;
+    const url = `${BASE}api/admin/audit-export?p=${encodeURIComponent(pw)}`;
+    const a = document.createElement("a");
+    a.href = url;
+    a.click();
+  }
+
   async function startPipeline() {
     setPipelineMsg("Starting…");
     try {
@@ -343,12 +351,21 @@ export default function AdminDashboard() {
                 </p>
                 {pipelineMsg && <p className="text-green-400 text-sm mt-2">{pipelineMsg}</p>}
               </div>
-              <button
-                onClick={startPipeline}
-                className="shrink-0 bg-primary text-black font-bold px-5 py-3 rounded-lg hover:bg-primary/90 transition-colors text-sm"
-              >
-                ▶ Start / Resume
-              </button>
+              <div className="flex gap-2 shrink-0">
+                <button
+                  onClick={downloadAudit}
+                  className="bg-white/10 border border-white/20 text-white/70 font-medium px-4 py-3 rounded-lg hover:bg-white/15 transition-colors text-sm"
+                  title="Download dated CSV of every outreach email sent — for compliance & audit"
+                >
+                  ⬇ Audit CSV
+                </button>
+                <button
+                  onClick={startPipeline}
+                  className="bg-primary text-black font-bold px-5 py-3 rounded-lg hover:bg-primary/90 transition-colors text-sm"
+                >
+                  ▶ Start / Resume
+                </button>
+              </div>
             </div>
 
             {/* Summary stats */}

@@ -235,10 +235,10 @@ async function sendOutreachEmail(
   amount: string,
   holder: string | null,
   prospectId: number,
-): Promise<boolean> {
+): Promise<{ sent: boolean; stripeSessionId?: string; subject?: string; bodyText?: string }> {
   const resendKey = process.env.RESEND_API_KEY;
   const stripeKey = process.env.STRIPE_SECRET_KEY;
-  if (!resendKey || !stripeKey) return false;
+  if (!resendKey || !stripeKey) return { sent: false };
 
   const parsed = parseName(name);
   const firstName = parsed?.firstName ?? name.split(" ")[0] ?? name;
@@ -248,6 +248,7 @@ async function sendOutreachEmail(
 
   // Create Stripe checkout — fee paid BEFORE claim details are revealed
   let checkoutUrl: string;
+  let stripeSessionId: string;
   try {
     const stripe = new Stripe(stripeKey);
     const session = await stripe.checkout.sessions.create({
@@ -269,10 +270,40 @@ async function sendOutreachEmail(
       cancel_url: `${SITE_BASE}/`,
     });
     checkoutUrl = session.url!;
+    stripeSessionId = session.id;
   } catch (err) {
     logger.error({ err, email, name }, "alphabet-scraper: Stripe session failed");
-    return false;
+    return { sent: false };
   }
+
+  const subject = `⚡ We found ${amount} in your name — unlock your claim report`;
+
+  // Plain-text version stored for audit trail
+  const bodyText = [
+    `To: ${email}`,
+    `From: ${FROM_ADDRESS}`,
+    `Subject: ${subject}`,
+    `Date: ${new Date().toISOString()}`,
+    `Stripe Session: ${stripeSessionId}`,
+    ``,
+    `Hi ${firstName},`,
+    ``,
+    `We searched the national unclaimed money registers and found money that appears to belong to you.`,
+    ``,
+    `Amount found in your name: ${amount}`,
+    `Held by: ${holderName}`,
+    ``,
+    `Data source: ASIC MoneySmart public register (https://moneysmart.gov.au/find-unclaimed-money)`,
+    `Fee: ${pct}% of ${amount} = ${feeStr} (paid before claim instructions are released)`,
+    ``,
+    `Claim instructions are locked — the exact account references, claim forms, and step-by-step process are in your paid report.`,
+    ``,
+    `Checkout URL: ${checkoutUrl}`,
+    ``,
+    `${dollars > 20000 ? `Stratton Finance option included (amount > $20,000). ACL 364340. Subject to credit assessment.` : ""}`,
+    ``,
+    `© MissingCash | ABN 52 347 989 391 | support@missingcash.com.au`,
+  ].join("\n");
 
   const html = `
 <div style="font-family:sans-serif;max-width:600px;margin:0 auto;background:#061826;padding:0;border-radius:12px;overflow:hidden;">
@@ -319,17 +350,12 @@ async function sendOutreachEmail(
 
   try {
     const resend = new Resend(resendKey);
-    await resend.emails.send({
-      from: FROM_ADDRESS,
-      to: email,
-      subject: `⚡ We found ${amount} in your name — unlock your claim report`,
-      html,
-    });
-    logger.info({ email, name, amount, prospectId }, "alphabet-scraper: outreach email sent");
-    return true;
+    await resend.emails.send({ from: FROM_ADDRESS, to: email, subject, html });
+    logger.info({ email, name, amount, prospectId, stripeSessionId }, "alphabet-scraper: outreach email sent");
+    return { sent: true, stripeSessionId, subject, bodyText };
   } catch (err) {
     logger.error({ err, email, name }, "alphabet-scraper: outreach email failed");
-    return false;
+    return { sent: false };
   }
 }
 
@@ -362,11 +388,17 @@ async function contactSearchLetter(letter: string): Promise<{ found: number; ema
       found++;
 
       let outreachSentAt: Date | null = null;
+      let stripeSessionId: string | null = null;
+      let outreachSubject: string | null = null;
+      let outreachBodyText: string | null = null;
       if (contact.email) {
-        const sent = await sendOutreachEmail(contact.email, prospect.name, prospect.amount, prospect.holder ?? null, prospect.id);
-        if (sent) {
+        const result = await sendOutreachEmail(contact.email, prospect.name, prospect.amount, prospect.holder ?? null, prospect.id);
+        if (result.sent) {
           emailed++;
           outreachSentAt = new Date();
+          stripeSessionId = result.stripeSessionId ?? null;
+          outreachSubject = result.subject ?? null;
+          outreachBodyText = result.bodyText ?? null;
         }
       }
 
@@ -380,6 +412,9 @@ async function contactSearchLetter(letter: string): Promise<{ found: number; ema
           contactSource: contact.source,
           contactSearchedAt: new Date(),
           outreachSentAt,
+          stripeSessionId,
+          outreachSubject,
+          outreachBodyText,
         })
         .where(eq(prospectsTable.id, prospect.id));
     } else {
