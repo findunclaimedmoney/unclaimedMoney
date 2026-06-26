@@ -124,6 +124,16 @@ export const prospectsTable = pgTable("prospects", {
 
 export type Prospect = typeof prospectsTable.$inferSelect;
 
+export const unsubscribesTable = pgTable("unsubscribes", {
+  id: serial("id").primaryKey(),
+  email: text("email").notNull().unique(),
+  unsubscribedAt: timestamp("unsubscribed_at").notNull().defaultNow(),
+  prospectId: integer("prospect_id"),
+  reason: text("reason"),
+});
+
+export type Unsubscribe = typeof unsubscribesTable.$inferSelect;
+
 export const alphabetCrawlProgressTable = pgTable("alphabet_crawl_progress", {
   letter: text("letter").primaryKey(),
   status: text("status").notNull().default("pending"),

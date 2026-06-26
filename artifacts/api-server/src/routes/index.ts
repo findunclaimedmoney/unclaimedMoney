@@ -11,6 +11,7 @@ import leadsRouter from "./leads";
 import batchSearchRouter from "./batch-search";
 import analyticsRouter from "./analytics";
 import prospectsRouter from "./prospects";
+import unsubscribeRouter from "./unsubscribe";
 
 const router: IRouter = Router();
 
@@ -26,5 +27,6 @@ router.use(leadsRouter);
 router.use(batchSearchRouter);
 router.use(analyticsRouter);
 router.use(prospectsRouter);
+router.use(unsubscribeRouter);
 
 export default router;

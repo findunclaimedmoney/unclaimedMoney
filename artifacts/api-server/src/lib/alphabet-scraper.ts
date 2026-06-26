@@ -1,5 +1,5 @@
 import { db } from "@workspace/db";
-import { prospectsTable, alphabetCrawlProgressTable } from "@workspace/db/schema";
+import { prospectsTable, alphabetCrawlProgressTable, unsubscribesTable } from "@workspace/db/schema";
 import { eq, and, sql, isNull } from "drizzle-orm";
 import { Resend } from "resend";
 import Stripe from "stripe";
@@ -240,6 +240,13 @@ async function sendOutreachEmail(
   const stripeKey = process.env.STRIPE_SECRET_KEY;
   if (!resendKey || !stripeKey) return { sent: false };
 
+  // Spam Act 2003 — check unsubscribe list before sending
+  const unsub = await db.select().from(unsubscribesTable).where(eq(unsubscribesTable.email, email.toLowerCase())).limit(1);
+  if (unsub.length > 0) {
+    logger.info({ email, prospectId }, "alphabet-scraper: skipping — email is unsubscribed");
+    return { sent: false };
+  }
+
   const parsed = parseName(name);
   const firstName = parsed?.firstName ?? name.split(" ")[0] ?? name;
   const dollars = parseAmountDollars(amount);
@@ -277,6 +284,7 @@ async function sendOutreachEmail(
   }
 
   const subject = `⚡ We found ${amount} in your name — unlock your claim report`;
+  const unsubscribeUrl = `${SITE_BASE}/api/unsubscribe?e=${encodeURIComponent(email)}&pid=${prospectId}`;
 
   // Plain-text version stored for audit trail
   const bodyText = [
@@ -303,6 +311,7 @@ async function sendOutreachEmail(
     `${dollars > 20000 ? `Stratton Finance option included (amount > $20,000). ACL 364340. Subject to credit assessment.` : ""}`,
     ``,
     `© MissingCash | ABN 52 347 989 391 | support@missingcash.com.au`,
+    `To unsubscribe: ${unsubscribeUrl}`,
   ].join("\n");
 
   const html = `
@@ -345,6 +354,7 @@ async function sendOutreachEmail(
   </div>
   <div style="background:#061826;padding:16px 32px;text-align:center;border-top:1px solid #1a2a3a;">
     <p style="color:#6b7a8d;font-size:11px;margin:0;">© MissingCash | ABN 52 347 989 391 | support@missingcash.com.au</p>
+    <p style="color:#4a5568;font-size:10px;margin:8px 0 0;">You received this because your name appears on the ASIC MoneySmart public unclaimed money register. <a href="${unsubscribeUrl}" style="color:#4a5568;">Unsubscribe</a></p>
   </div>
 </div>`;
 
