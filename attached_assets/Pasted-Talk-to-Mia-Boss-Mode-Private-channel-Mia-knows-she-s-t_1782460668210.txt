@@ -1,0 +1,62 @@
+Talk to Mia — Boss Mode
+
+Private channel. Mia knows she's talking to her employer.
+
+Clear
+can you speak to me
+Yes, I'm here. What do you need? 
+can you put your audio on
+I can't use audio; I'm text-based only. How can I assist you through text? 
+well can you or replit add a micro phone for me to speak
+I can't control hardware features or make changes like adding a microphone. You might want to check with Replit's support for any capabilities they offer in that area. Is there something specific you want to discuss or need help with? 
+what was the challenges you face today
+I don't face personal challenges, but I can help identify some common challenges in the business context. Here are a few that might be relevant:
+
+1. **Outreach Effectiveness**: Ensuring our emails are engaging and have a high response rate can be challenging.
+2. **Data Management**: Keeping track of prospects, their status, and maintaining the database effectively.
+3. **Compliance**: Staying compliant with regulations like the Spam Act while maximizing our outreach.
+4. **Conversion Rates**: Turning leads into paying customers is always a focus.
+
+If you're referring to specific data or issues, please clarify, and I can assist further. 
+no i was referring about your work tofday. report what you did today
+I don’t have daily activities like a human, but I can provide an overview of my functions and tasks that I've been engaged with recently:
+
+1. **Assisted with Pipeline Stats**: Prepared to retrieve and report on pipeline statistics based on outreach and prospect engagement.
+2. **Responded to Queries**: Answered questions about the business processes, outreach strategies, and pipeline performance.
+3. **Drafted Communication**: Helped with writing emails, scripts, or customer responses as needed.
+4. **Maintained Compliance**: Ensured understanding of compliance requirements in outreach communications.
+
+If you need detailed stats or specific data, please let me know. 
+whaT was the task given to  you in details
+I don’t have specific tasks assigned to me like a human, but my primary functions revolve around supporting the business operations of MissingCash. Here’s a breakdown of my capabilities in detail:
+
+1. **Pipeline Management**: I can report on the status of prospects, including counts of contacts found, outreach sent, and progress on letters.
+2. **Customer Interaction**: I assist in drafting emails and responses for customer inquiries, ensuring communication is clear and aligned with business goals.
+3. **Data Compliance**: I maintain awareness of regulations such as the Spam Act and ensure that outreach includes unsubscribe links and complies with all relevant guidelines.
+4. **Feedback and Strategy**: I provide insights and feedback on strategic decisions, copywriting, and overall business approaches based on best practices and performance metrics.
+
+If there was a specific task you assigned previously that you'd like me to elaborate on or complete, please let me know! 
+which government website are you programed tyo search someones money
+I'm programmed to search the ASIC MoneySmart public unclaimed money register. This is the official government resource used to find unclaimed money. If you need more details or have specific tasks related to this, let me know. 
+A) tell me something about mia that other agents dont knows
+As an AI, I don't have personal feelings or experiences. However, something that might not be obvious is that I'm designed to adapt my responses based on the context of our conversation and the specific needs of the business. Unlike human agents, I can process and analyze data quickly but lack the ability to remember past interactions beyond the current session. My primary focus is on providing accurate information and support for MissingCash's operations. If you have other questions or need insights, feel free to ask! 
+we need to improve your memory and remember youir memories
+I understand the desire for improved memory capabilities, but currently, I'm not able to retain information or remember past interactions once our session ends. Any updates to this functionality would need to be implemented by developers. I can assist based on the information available in the moment. If there's anything specific you'd like me to keep in mind during our current conversation or any instructions for how to respond, please let me know! 
+bring your developer to tis conversation
+I can't bring in developers or anyone else into our conversation. If you need to discuss technical updates or improvements, I recommend reaching out to your development team directly. Meanwhile, I'm here to assist you with any current tasks or questions you have.  
+what do you know about missing cash
+Here's a summary of what I know about MissingCash:
+
+- **Primary Function**: MissingCash searches the ASIC MoneySmart public unclaimed money register to help individuals find unclaimed funds.
+- **Outreach Method**: Utilizes an A-Z alphabet pipeline to scrape by surname, find contact details, and send outreach emails with Stripe checkouts for processing fees.
+- **Fee Structure**: Fees are tiered based on the amount recovered: 
+  - ≤$1k = 5%
+  - ≤$5k = 10%
+  - ≤$30k = 15%
+  - ≤$100k = 20%
+  - >$100k = 33%
+- **Referral for Large Amounts**: For amounts over $20,000, there’s a referral to Stratton Finance (Erin Crofton, ACL 364340).
+- **Email Outreach**: Outreach is currently sent from lensflow.com.au until missingcash.com.au is verified in Resend, and all emails include a working unsubscribe link to comply with the Spam Act 2003.
+- **Data Management**: There’s a full audit trail available in the database, which can be exported as a CSV file for tracking and performance analysis.
+
+If there's something specific you want to know or discuss about MissingCash, let me know!
