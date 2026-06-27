@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 
+
 const BASE = import.meta.env.BASE_URL;
 
 interface Analytics {
@@ -138,6 +139,9 @@ export default function AdminDashboard() {
   const [miaMsgs, setMiaMsgs] = useState<{ role: "user" | "assistant"; content: string }[]>([]);
   const [miaInput, setMiaInput] = useState("");
   const [miaStreaming, setMiaStreaming] = useState(false);
+  const [isListening, setIsListening] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const recognitionRef = useRef<any>(null);
   const miaChatRef = useRef<HTMLDivElement>(null);
 
   // Mia Lab state
@@ -194,6 +198,37 @@ export default function AdminDashboard() {
     const a = document.createElement("a");
     a.href = url;
     a.click();
+  }
+
+  function toggleMic() {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const w = window as any;
+    const SR = w.SpeechRecognition ?? w.webkitSpeechRecognition;
+    if (!SR) { alert("Speech recognition is not supported in this browser. Try Chrome."); return; }
+
+    if (isListening) {
+      recognitionRef.current?.stop();
+      setIsListening(false);
+      return;
+    }
+
+    const recognition = new SR();
+    recognition.lang = "en-AU";
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+    recognitionRef.current = recognition;
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    recognition.onresult = (e: any) => {
+      const transcript = (e.results[0]?.[0]?.transcript as string) ?? "";
+      setMiaInput(transcript);
+      setIsListening(false);
+    };
+    recognition.onerror = () => setIsListening(false);
+    recognition.onend = () => setIsListening(false);
+
+    recognition.start();
+    setIsListening(true);
   }
 
   async function sendMiaMessage() {
@@ -694,12 +729,23 @@ export default function AdminDashboard() {
 
             {/* Input */}
             <div className="px-4 py-3 border-t border-white/10 flex gap-2">
+              <button
+                onClick={toggleMic}
+                title={isListening ? "Stop listening" : "Speak to Mia"}
+                className={`flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center transition-all text-lg ${
+                  isListening
+                    ? "bg-red-500 text-white animate-pulse"
+                    : "bg-white/10 text-white/50 hover:bg-white/20 hover:text-white border border-white/20"
+                }`}
+              >
+                {isListening ? "⏹" : "🎙️"}
+              </button>
               <input
                 type="text"
                 value={miaInput}
                 onChange={(e) => setMiaInput(e.target.value)}
                 onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); void sendMiaMessage(); } }}
-                placeholder="Ask Mia anything about the business…"
+                placeholder={isListening ? "Listening…" : "Ask Mia anything, or tap 🎙️ to speak…"}
                 disabled={miaStreaming}
                 className="flex-1 bg-white/10 border border-white/20 rounded-xl px-4 py-2.5 text-white placeholder:text-white/30 text-sm outline-none focus:border-primary disabled:opacity-50"
               />
