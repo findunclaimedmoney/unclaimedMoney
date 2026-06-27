@@ -4,5 +4,5 @@ services:
     env: node
     plan: standard
     region: singapore
-    buildCommand: pnpm install && pnpm --filter @workspace/missingcash... --filter @workspace/api-server... run build
+    buildCommand: pnpm install && pnpm --filter @workspace/missingcash... --filter @workspace/api-server... run build && mkdir -p artifacts/api-server/dist/public && cp -r artifacts/missingcash/dist/public/* artifacts/api-server/dist/public/
     startCommand: cd artifacts/api-server && node --enable-source-maps ./dist/index.mjs
