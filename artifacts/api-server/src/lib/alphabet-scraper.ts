@@ -127,30 +127,49 @@ async function crawlMoneySmartLetter(letter: string, _apiKey: string): Promise<{
   const surnames = SURNAMES_BY_LETTER[letter] ?? [letter];
   const seen = new Set<string>();
 
+  const addMatch = (m: RawMatch) => {
+    const key = `${m.name.toLowerCase()}|${m.amount}`;
+    if (!seen.has(key)) {
+      seen.add(key);
+      allMatches.push(m);
+    }
+  };
+
   for (const surname of surnames) {
-    logger.info({ letter, surname }, "alphabet-scraper: fetching MoneySmart national register");
-
-    const results = await searchMoneySmartBySurname(surname);
-    totalPages++;
-
-    for (const m of results) {
-      const key = `${m.name.toLowerCase()}|${m.amount}`;
-      if (!seen.has(key)) {
-        seen.add(key);
-        allMatches.push({
-          name: m.name,
-          amount: m.amount,
-          holder: m.holder,
-          state: m.state,
-          description: "",
-          holderEmail: "",
-          holderPhone: "",
-          holderContactName: "",
-        });
-      }
+    // Source 1: WA DTF — free direct Elasticsearch API, no proxy needed
+    logger.info({ letter, surname }, "alphabet-scraper: fetching WA DTF");
+    let from = 0;
+    let totalHits = -1;
+    while (from / WA_PAGE_SIZE < MAX_PAGES) {
+      const result = await fetchWAPage(surname, from);
+      if (!result) break;
+      if (from === 0) totalHits = result.total;
+      totalPages++;
+      for (const m of result.items) addMatch(m);
+      if (result.items.length === 0) break;
+      from += WA_PAGE_SIZE;
+      if (totalHits >= 0 && from >= totalHits) break;
+      await new Promise((r) => setTimeout(r, 300));
     }
 
-    await new Promise((r) => setTimeout(r, 1000));
+    // Source 2: MoneySmart national register — broader coverage across all states
+    logger.info({ letter, surname }, "alphabet-scraper: fetching MoneySmart national register");
+    const msResults = await searchMoneySmartBySurname(surname);
+    totalPages++;
+    for (const m of msResults) {
+      addMatch({
+        name: m.name,
+        amount: m.amount,
+        holder: m.holder,
+        state: m.state,
+        description: "",
+        holderEmail: "",
+        holderPhone: "",
+        holderContactName: "",
+      });
+    }
+
+    await new Promise((r) => setTimeout(r, 800));
   }
 
   return { matches: allMatches, pages: totalPages };
