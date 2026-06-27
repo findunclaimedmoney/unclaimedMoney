@@ -177,11 +177,16 @@ async function insertProspects(letter: string, matches: RawMatch[]): Promise<num
   );
 
   const seen = new Set<string>();
+  const MIN_AMOUNT_DOLLARS = 5000;
+
   const rows = matches
     .filter((m) => {
       const key = `${normalise(m.name)}|${m.amount}`;
       if (seen.has(key)) return false;
       seen.add(key);
+      // Skip amounts below minimum threshold — not worth outreach cost
+      const dollars = parseAmountDollars(m.amount);
+      if (dollars < MIN_AMOUNT_DOLLARS) return false;
       return true;
     })
     .map((m) => ({
