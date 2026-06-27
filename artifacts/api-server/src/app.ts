@@ -39,7 +39,7 @@ app.use("/api", router);
 
 const clientDir = path.join(import.meta.dirname, "public");
 app.use(express.static(clientDir));
-app.get("*", (req, res, next) => {
+app.use((req, res, next) => {
     if (req.path.startsWith("/api")) return next();
     res.sendFile(path.join(clientDir, "index.html"));
 });
