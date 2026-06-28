@@ -2,7 +2,7 @@ import { Router } from "express";
 import { db } from "@workspace/db";
 import { prospectsTable } from "@workspace/db/schema";
 import { eq, like, sql, desc } from "drizzle-orm";
-import { crawlLetter, getProspectStats, isLetterInProgress, startAlphabetPipeline } from "../lib/alphabet-scraper";
+import { crawlLetter, getProspectStats, isLetterInProgress, startAlphabetPipeline, runHighValueCrawl, isHighValueRunning } from "../lib/alphabet-scraper";
 import { logger } from "../lib/logger";
 
 const router = Router();
@@ -12,6 +12,21 @@ function checkAuth(req: Parameters<Parameters<typeof router.get>[1]>[0]): boolea
   const auth = req.headers["x-admin-password"] ?? req.query["p"];
   return auth === password;
 }
+
+// POST /api/admin/prospect-crawl/high-value — seed $20k+ WA prospects and run contact search
+router.post("/admin/prospect-crawl/high-value", async (req, res): Promise<void> => {
+  if (!checkAuth(req)) { res.status(401).json({ error: "Unauthorized" }); return; }
+  if (isHighValueRunning()) {
+    res.json({ status: "already_running" }); return;
+  }
+  logger.info("prospect-crawl/high-value: triggered");
+  runHighValueCrawl().then((result) => {
+    logger.info(result, "prospect-crawl/high-value: completed");
+  }).catch((err) => {
+    logger.error({ err }, "prospect-crawl/high-value: failed");
+  });
+  res.json({ status: "started", message: "Fetching WA $20k+ records, running contact search + outreach. Check logs." });
+});
 
 // POST /api/admin/prospect-crawl — trigger a letter crawl (runs async)
 router.post("/admin/prospect-crawl", async (req, res): Promise<void> => {

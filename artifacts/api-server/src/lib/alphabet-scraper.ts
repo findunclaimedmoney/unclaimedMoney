@@ -625,6 +625,203 @@ async function runPipeline() {
   }
 }
 
+// ---------- high-value WA seeder ----------
+// Directly queries WA DTF for records >= $20,000, seeds the prospects table,
+// runs contact search, and sends outreach — bypassing the slow A-Z surname crawl.
+
+const HV_LETTER = "HV";
+const HV_MIN_DOLLARS = 20000;
+const HV_SKIP_TERMS = ["DEC'D", "DECEASED", "ESTATE OF", "PTY LTD", "PTY.", " LTD", "INC.", "CORP.", "HOLDINGS", "VARIOUS", "& SONS", "& ASSOCIATES", "DEPARTMENT", "GOVERNMENT"];
+const HV_SKIP_ADDRESS = ["CHINA", "USA", "U.S.A", "UK", "UNITED KINGDOM", "NEW ZEALAND", "SINGAPORE", "HONG KONG", "CANADA", "INDIA", "MALAYSIA"];
+const AU_STATES = ["WA", "NSW", "VIC", "QLD", "SA", "TAS", "NT", "ACT"];
+
+function isHighValueActionable(name: string, addr2: string): boolean {
+  const nameUp = name.toUpperCase();
+  const addrUp = addr2.toUpperCase();
+  if (HV_SKIP_TERMS.some((t) => nameUp.includes(t))) return false;
+  if (HV_SKIP_ADDRESS.some((t) => addrUp.includes(t))) return false;
+  const hasAuAddress = AU_STATES.some((s) => addrUp.includes(s));
+  return hasAuAddress;
+}
+
+async function fetchHighValueWAPage(from: number): Promise<{ items: RawMatch[]; total: number } | null> {
+  const body = JSON.stringify({
+    from,
+    size: 50,
+    query: { range: { amount_unclaimed: { gte: HV_MIN_DOLLARS } } },
+    sort: [{ amount_unclaimed: "desc" }],
+  });
+
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      const res = await fetch(WA_API, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body,
+        signal: AbortSignal.timeout(20_000),
+      });
+      if (!res.ok) throw new Error(`WA API HTTP ${res.status}`);
+      const data = await res.json() as { hits: { total: { value: number }; hits: Array<{ _source: Record<string, string> }> } };
+      const total = data.hits?.total?.value ?? 0;
+      const items: RawMatch[] = (data.hits?.hits ?? [])
+        .map(({ _source: s }) => ({
+          name: (s.payee_name ?? "").trim(),
+          amount: s.amount_unclaimed ? `$${parseFloat(s.amount_unclaimed).toFixed(2)}` : "",
+          holder: (s["payer_/_source"] ?? "").trim(),
+          state: (s.address_2 ?? "").trim(),
+          description: (s.description ?? "").trim(),
+          holderEmail: "",
+          holderPhone: "",
+          holderContactName: "",
+        }))
+        .filter((m) => m.name.length > 0 && m.amount.length > 1 && isHighValueActionable(m.name, m.state));
+      return { items, total };
+    } catch (err) {
+      logger.warn({ from, attempt, err: err instanceof Error ? err.message : String(err) }, "hv-seeder: WA fetch failed");
+      if (attempt < 3) await new Promise((r) => setTimeout(r, 2000 * attempt));
+    }
+  }
+  return null;
+}
+
+async function insertHighValueProspects(matches: RawMatch[]): Promise<number> {
+  if (matches.length === 0) return 0;
+  await db.delete(prospectsTable).where(eq(prospectsTable.letter, HV_LETTER));
+
+  const seen = new Set<string>();
+  const rows = matches.filter((m) => {
+    const key = `${m.name.toLowerCase()}|${m.amount}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  }).map((m) => ({
+    name: m.name,
+    amount: m.amount,
+    holder: m.holder || null,
+    state: m.state || null,
+    source: "WA Unclaimed Monies (High Value)",
+    sourceKey: "wa-dtf-hv",
+    letter: HV_LETTER,
+    contactStatus: "pending",
+  }));
+
+  for (let i = 0; i < rows.length; i += 100) {
+    await db.insert(prospectsTable).values(rows.slice(i, i + 100));
+  }
+  return rows.length;
+}
+
+async function contactSearchHighValue(): Promise<{ found: number; emailed: number }> {
+  let found = 0;
+  let emailed = 0;
+
+  const pending = await db
+    .select()
+    .from(prospectsTable)
+    .where(and(eq(prospectsTable.letter, HV_LETTER), eq(prospectsTable.contactStatus, "pending")))
+    .orderBy(sql`CAST(REPLACE(REPLACE(REGEXP_REPLACE(COALESCE(amount,'0'), '[^0-9.]', '', 'g'), ',', ''), '$', '') AS NUMERIC) DESC`);
+
+  logger.info({ count: pending.length }, "hv-seeder: starting contact search");
+
+  for (const prospect of pending) {
+    const contact = await findContact(prospect.name, prospect.state ?? null);
+
+    if (contact && (contact.phone || contact.email || contact.address)) {
+      found++;
+      let outreachSentAt: Date | null = null;
+      let stripeSessionId: string | null = null;
+      let outreachSubject: string | null = null;
+      let outreachBodyText: string | null = null;
+
+      if (contact.email) {
+        const result = await sendOutreachEmail(contact.email, prospect.name, prospect.amount, prospect.holder ?? null, prospect.id);
+        if (result.sent) {
+          emailed++;
+          outreachSentAt = new Date();
+          stripeSessionId = result.stripeSessionId ?? null;
+          outreachSubject = result.subject ?? null;
+          outreachBodyText = result.bodyText ?? null;
+          logger.info({ name: prospect.name, amount: prospect.amount, email: contact.email }, "hv-seeder: outreach sent");
+        }
+      } else if (contact.phone) {
+        const result = await sendOutreachSms(contact.phone, prospect.name, prospect.amount, prospect.holder ?? null, prospect.id);
+        if (result.sent) {
+          emailed++;
+          outreachSentAt = new Date();
+          stripeSessionId = result.stripeSessionId ?? null;
+          outreachSubject = `SMS to ${contact.phone}`;
+          outreachBodyText = result.bodyText ?? null;
+          logger.info({ name: prospect.name, amount: prospect.amount, phone: contact.phone }, "hv-seeder: SMS sent");
+        }
+      }
+
+      await db.update(prospectsTable).set({
+        contactStatus: "found",
+        contactEmail: contact.email ?? null,
+        contactPhone: contact.phone ?? null,
+        contactAddress: contact.address ?? null,
+        contactSource: contact.source,
+        contactSearchedAt: new Date(),
+        outreachSentAt,
+        stripeSessionId,
+        outreachSubject,
+        outreachBodyText,
+      }).where(eq(prospectsTable.id, prospect.id));
+    } else {
+      await db.update(prospectsTable).set({
+        contactStatus: "not_found",
+        contactSearchedAt: new Date(),
+      }).where(eq(prospectsTable.id, prospect.id));
+      logger.info({ name: prospect.name }, "hv-seeder: no contact found");
+    }
+
+    await new Promise((r) => setTimeout(r, 1500));
+  }
+
+  return { found, emailed };
+}
+
+let hvRunning = false;
+
+export async function runHighValueCrawl(): Promise<{ seeded: number; found: number; emailed: number; error?: string }> {
+  if (hvRunning) return { seeded: 0, found: 0, emailed: 0, error: "already_running" };
+  hvRunning = true;
+
+  try {
+    logger.info("hv-seeder: starting high-value WA crawl");
+    const allMatches: RawMatch[] = [];
+    let from = 0;
+    let total = -1;
+
+    while (true) {
+      const page = await fetchHighValueWAPage(from);
+      if (!page) break;
+      if (total < 0) total = page.items.length > 0 ? 999 : 0;
+      allMatches.push(...page.items);
+      if (page.items.length < 50) break;
+      from += 50;
+      if (from >= 400) break; // cap at 400 raw records
+      await new Promise((r) => setTimeout(r, 400));
+    }
+
+    logger.info({ raw: allMatches.length }, "hv-seeder: WA fetch complete");
+    const seeded = await insertHighValueProspects(allMatches);
+    logger.info({ seeded }, "hv-seeder: prospects inserted");
+
+    const { found, emailed } = await contactSearchHighValue();
+    logger.info({ seeded, found, emailed }, "hv-seeder: complete");
+
+    return { seeded, found, emailed };
+  } catch (err) {
+    logger.error({ err }, "hv-seeder: error");
+    return { seeded: 0, found: 0, emailed: 0, error: err instanceof Error ? err.message : String(err) };
+  } finally {
+    hvRunning = false;
+  }
+}
+
+export function isHighValueRunning(): boolean { return hvRunning; }
+
 // ---------- public API ----------
 
 export async function crawlLetter(letter: string): Promise<{ inserted: number; pages: number; error?: string }> {
