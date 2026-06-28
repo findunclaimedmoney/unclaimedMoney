@@ -2,7 +2,7 @@ import { Router } from "express";
 import { db } from "@workspace/db";
 import { prospectsTable } from "@workspace/db/schema";
 import { eq, like, sql, desc } from "drizzle-orm";
-import { crawlLetter, getProspectStats, isLetterInProgress, startAlphabetPipeline, runHighValueCrawl, isHighValueRunning } from "../lib/alphabet-scraper";
+import { crawlLetter, getProspectStats, isLetterInProgress, startAlphabetPipeline, runHighValueCrawl, isHighValueRunning, sendUnfoundHVReport } from "../lib/alphabet-scraper";
 import { logger } from "../lib/logger";
 
 const router = Router();
@@ -26,6 +26,13 @@ router.post("/admin/prospect-crawl/high-value", async (req, res): Promise<void> 
     logger.error({ err }, "prospect-crawl/high-value: failed");
   });
   res.json({ status: "started", message: "Fetching WA $20k+ records, running contact search + outreach. Check logs." });
+});
+
+// POST /api/admin/unfound-report — send today's unfound HV report to Zac immediately
+router.post("/admin/unfound-report", async (req, res): Promise<void> => {
+  if (!checkAuth(req)) { res.status(401).json({ error: "Unauthorized" }); return; }
+  const result = await sendUnfoundHVReport();
+  res.json(result);
 });
 
 // POST /api/admin/prospect-crawl — trigger a letter crawl (runs async)

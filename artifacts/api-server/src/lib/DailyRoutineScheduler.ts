@@ -149,6 +149,16 @@ async function endOfDay(): Promise<void> {
     await failTask(id, String(err), started);
     logger.error({ err }, "DailyScheduler: end-of-day failed");
   }
+
+  // Send Zac the daily list of high-value prospects Mia couldn't find
+  try {
+    const { sendUnfoundHVReport } = await import("./alphabet-scraper");
+    const { sent, count } = await sendUnfoundHVReport();
+    if (sent) logger.info({ count }, "DailyScheduler: unfound HV report sent to Zac");
+    else logger.info({ count }, "DailyScheduler: unfound HV report — nothing to send");
+  } catch (err) {
+    logger.error({ err }, "DailyScheduler: unfound HV report failed");
+  }
 }
 
 // ── 12:00 AM ── maintenance

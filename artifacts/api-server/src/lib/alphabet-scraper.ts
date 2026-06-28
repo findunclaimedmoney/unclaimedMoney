@@ -822,6 +822,90 @@ export async function runHighValueCrawl(): Promise<{ seeded: number; found: numb
 
 export function isHighValueRunning(): boolean { return hvRunning; }
 
+// ---------- daily unfound report ----------
+// Called by DailyRoutineScheduler at 11 PM: emails Zac every HV prospect
+// Mia couldn't find contact details for so he can manually locate them.
+
+export async function sendUnfoundHVReport(): Promise<{ sent: boolean; count: number }> {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) { logger.warn("unfound-report: RESEND_API_KEY not set"); return { sent: false, count: 0 }; }
+
+  const unfound = await db
+    .select()
+    .from(prospectsTable)
+    .where(and(eq(prospectsTable.letter, HV_LETTER), eq(prospectsTable.contactStatus, "not_found")))
+    .orderBy(sql`CAST(REPLACE(REPLACE(COALESCE(amount,'0'), '$', ''), ',', '') AS NUMERIC) DESC`);
+
+  if (unfound.length === 0) {
+    logger.info("unfound-report: no unfound HV prospects — skipping email");
+    return { sent: false, count: 0 };
+  }
+
+  const domainVerified = process.env.MISSINGCASH_DOMAIN_VERIFIED === "true";
+  const from = domainVerified
+    ? "MissingCash <leads@missingcash.com.au>"
+    : "MissingCash <leads@lensflow.com.au>";
+
+  const dateStr = new Date().toLocaleDateString("en-AU", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+
+  const rows = unfound.map((p) => `
+    <tr>
+      <td style="padding:8px 12px;border-bottom:1px solid #e2e8f0;">${p.name}</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #e2e8f0;font-weight:bold;color:#16a34a;">${p.amount}</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #e2e8f0;">${p.holder ?? "—"}</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #e2e8f0;">${p.state ?? "—"}</td>
+    </tr>`).join("");
+
+  const textRows = unfound.map((p) => `  ${p.name.padEnd(42)} ${p.amount.padStart(14)}  ${p.state ?? "—"}`).join("\n");
+
+  const html = `
+<div style="font-family:Arial,sans-serif;color:#0f172a;max-width:700px;">
+  <h2 style="color:#061826;">MissingCash — High-Value Unfound Contacts</h2>
+  <p style="color:#475569;">${dateStr}</p>
+  <p>Mia searched for contact details for <strong>${unfound.length} high-value WA prospect${unfound.length !== 1 ? "s" : ""}</strong> today and couldn't locate them through public directories. Here they are for you to find manually:</p>
+  <table style="border-collapse:collapse;width:100%;margin-top:16px;font-size:14px;">
+    <thead>
+      <tr style="background:#061826;color:#f5b942;">
+        <th style="padding:10px 12px;text-align:left;">Name</th>
+        <th style="padding:10px 12px;text-align:left;">Amount</th>
+        <th style="padding:10px 12px;text-align:left;">Holder</th>
+        <th style="padding:10px 12px;text-align:left;">State/Location</th>
+      </tr>
+    </thead>
+    <tbody>${rows}</tbody>
+  </table>
+  <p style="margin-top:20px;color:#64748b;font-size:13px;">Source: WA Unclaimed Monies register — amounts ≥ $20,000. These records are live on <a href="https://www.wa.gov.au/organisation/department-of-treasury/unclaimed-monies" style="color:#f5b942;">WA DTF</a>.</p>
+</div>`;
+
+  const text = [
+    `MissingCash — High-Value Unfound Contacts — ${dateStr}`,
+    "",
+    `Mia couldn't find contact details for ${unfound.length} prospect(s):`,
+    "",
+    textRows,
+    "",
+    "Source: WA Unclaimed Monies register (≥ $20,000).",
+  ].join("\n");
+
+  try {
+    const { Resend } = await import("resend");
+    const resend = new Resend(apiKey);
+    const res = await resend.emails.send({
+      from,
+      to: ["admin@missingcash.com.au"],
+      subject: `${unfound.length} high-value unfound contacts — ${dateStr}`,
+      html,
+      text,
+    });
+    if (res.error) throw new Error(res.error.message);
+    logger.info({ count: unfound.length }, "unfound-report: daily email sent to Zac");
+    return { sent: true, count: unfound.length };
+  } catch (err) {
+    logger.error({ err }, "unfound-report: Resend failed");
+    return { sent: false, count: unfound.length };
+  }
+}
+
 // ---------- public API ----------
 
 export async function crawlLetter(letter: string): Promise<{ inserted: number; pages: number; error?: string }> {
