@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Send, Volume2, VolumeX } from "lucide-react";
+import { X, Send, Volume2, VolumeX, FileText } from "lucide-react";
 
 interface Message {
   id: string;
@@ -59,6 +59,32 @@ function renderMessage(content: string) {
       );
     return <span key={i}>{part}</span>;
   });
+}
+
+function downloadTranscript(messages: Message[]) {
+  const date = new Date().toLocaleDateString("en-AU", { day: "numeric", month: "long", year: "numeric" });
+  const time = new Date().toLocaleTimeString("en-AU", { hour: "2-digit", minute: "2-digit" });
+  const lines = [
+    `MissingCash — Chat with Mia`,
+    `${date} at ${time}`,
+    `${"─".repeat(40)}`,
+    "",
+    ...messages.map((m) => {
+      const label = m.role === "assistant" ? "Mia" : "You";
+      const clean = m.content.replace(/\*\*([^*]+)\*\*/g, "$1").replace(/\[(.+?)\]\((https?:\/\/.+?)\)/g, "$1 ($2)");
+      return `${label}:\n${clean}`;
+    }),
+    "",
+    `${"─".repeat(40)}`,
+    `missingcash.com.au`,
+  ];
+  const blob = new Blob([lines.join("\n\n")], { type: "text/plain" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `mia-chat-${new Date().toISOString().slice(0, 10)}.txt`;
+  a.click();
+  URL.revokeObjectURL(url);
 }
 
 function stripForSpeech(content: string): string {
@@ -464,6 +490,14 @@ export default function MiaChat() {
                 title={voiceOn ? "Mia's voice: on" : "Mia's voice: off"}
               >
                 {voiceOn ? <Volume2 size={18} /> : <VolumeX size={18} />}
+              </button>
+              <button
+                onClick={() => downloadTranscript(messages)}
+                className="text-muted-foreground hover:text-white transition-colors p-1 rounded-lg hover:bg-white/10"
+                aria-label="Download chat transcript"
+                title="Download transcript"
+              >
+                <FileText size={18} />
               </button>
               <button
                 onClick={() => { stopSpeaking(); setOpen(false); }}
