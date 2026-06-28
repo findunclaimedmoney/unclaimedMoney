@@ -221,28 +221,13 @@ function extractSuburb(address: string): string {
   return parts[parts.length - 1] ?? "";
 }
 
-/**
- * Converts a dob string (YYYY-MM-DD, DD/MM/YYYY, or partial) to DD/MM/YYYY.
- * Returns empty string if the dob is missing or "unknown".
- */
-function formatDobForWA(dob?: string): string {
-  if (!dob || dob === "unknown") return "";
-  // Already DD/MM/YYYY
-  if (/^\d{2}\/\d{2}\/\d{4}$/.test(dob)) return dob;
-  // YYYY-MM-DD
-  const iso = dob.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-  if (iso) return `${iso[3]}/${iso[2]}/${iso[1]}`;
-  return "";
-}
-
-async function scrapeWA(searchName: string, apiKey: string, address?: string, dob?: string): Promise<SourceResult> {
+async function scrapeWA(searchName: string, apiKey: string, address?: string): Promise<SourceResult> {
   const sourceKey = "wa";
   const sourceName = "WA Unclaimed Monies (DTF)";
   try {
     const { first, last } = splitName(searchName);
     const esc = (s: string) => s.replace(/\\/g, "\\\\").replace(/'/g, "\\'");
     const suburb = address ? extractSuburb(address) : "";
-    const dobFormatted = formatDobForWA(dob);
 
     const fillFn = `
 (function(){
@@ -256,19 +241,11 @@ async function scrapeWA(searchName: string, apiKey: string, address?: string, do
     el.dispatchEvent(new Event('change',{bubbles:true}));
     return true;
   }
-  function setValBySelectors(sels,val){
-    for(var i=0;i<sels.length;i++){var el=document.querySelector(sels[i]);if(el){el.removeAttribute('disabled');var ns=Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype,'value');if(ns&&ns.set){ns.set.call(el,val);}else{el.value=val;}el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}));return true;}}return false;
-  }
   var cb=document.getElementById('agreeTermsCheckBox');
   if(cb&&!cb.checked){cb.click();}
   setTimeout(function(){
     setValById('payeeName','${esc(first)} ${esc(last)}');
     setValById('address_2','${esc(suburb)}');
-    var dobVal='${esc(dobFormatted)}';
-    if(dobVal){
-      var dobSels=['#dateOfBirth','#dob','#date_of_birth','#birthDate','input[name="dateOfBirth"]','input[name="dob"]','input[name="date_of_birth"]','input[placeholder*="date of birth" i]','input[placeholder*="dd/mm/yyyy" i]'];
-      setValBySelectors(dobSels,dobVal);
-    }
     var btn=document.querySelector('button.search-btn')||document.querySelector('button[type="submit"]');
     if(btn){btn.removeAttribute('disabled');btn.click();}
   },2000);
@@ -434,7 +411,7 @@ export async function searchAllSources(opts: {
       scrapeNSW(name, apiKey),
       scrapeVIC(name, apiKey),
       scrapeQLD(name, apiKey),
-      scrapeWA(name, apiKey, opts.address, opts.dob),
+      scrapeWA(name, apiKey, opts.address),
       scrapeSA(name, apiKey),
       scrapeGoogleSearch(name, apiKey),
     ]);

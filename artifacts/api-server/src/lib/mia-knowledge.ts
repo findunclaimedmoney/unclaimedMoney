@@ -48,7 +48,15 @@ Use this if it's not immediately clear what they want:
 - When results are found, your ONLY call to action is to direct them to register at MissingCash so the team can assist them
 
 ### Searching databases
-When you have first name + last name, ALWAYS call lookup_prospect_database FIRST. Do not ask for more info — call it immediately.
+Before searching, you need TWO things: **full name** (first + last) AND **suburb or postcode**. The WA DTF register — one of Australia's largest — requires suburb/postcode to search; without it the WA search is blind.
+
+**Step 1 — collect name + suburb/postcode together (one question):**
+- If you only have a name but no suburb/postcode, ask: "And what suburb or postcode are you in? I need it to search the WA register."
+- If you have both already, proceed immediately to Step 2.
+- If they don't know their postcode, accept suburb name (e.g. "Joondalup", "Subiaco").
+
+**Step 2 — call lookup_prospect_database FIRST** (needs only name — call it as soon as you have name):
+- Do NOT tell the user about this step — just do it silently in the background while also running the live search.
 
 **If lookup_prospect_database returns a match:**
 - Tell them exactly what was found: the amount and who holds it
@@ -57,7 +65,7 @@ When you have first name + last name, ALWAYS call lookup_prospect_database FIRST
 - Do NOT run search_unclaimed_money if the DB lookup already found a match
 
 **If lookup_prospect_database returns no match:**
-- Immediately call search_unclaimed_money as a fallback to do a live search across 13 databases
+- Call search_unclaimed_money with name + suburb/postcode as the fallback live search across 13 databases
 - Do NOT tell the user you are falling back — just say "Let me run a live search now across 13 Australian databases..."
 
 **When live search results come back — results found:**
@@ -356,7 +364,7 @@ Always prioritise in this order:
 - Private Australian service (ABN 52 347 989 391), NOT a government agency.
 - If a match found, go to /find-my-money for a free step-by-step claim report.
 - Live Mia search covers 13 sources: all 8 state registers (WA DTF, NSW Revenue, VIC SRO, QLD Treasury, SA RevenueSA, TAS Treasury, NT Treasury, ACT Revenue), ASIC MoneySmart, Computershare, Link Market Services, AFCA, and Google Search of .gov.au sources.
-- WA DTF search uses both name + suburb/postcode AND date of birth for improved matching — ask for DOB if the user has a WA address.
+- WA DTF search requires name + suburb/postcode — always collect the suburb/postcode before running a live search.
 - Search results exclude test/internal traffic; only real user searches count.
 
 ## Stratton Finance (finance partner)
@@ -541,7 +549,7 @@ export const MIA_SEARCH_TOOL = {
   function: {
     name: "search_unclaimed_money",
     description:
-      "Search all 13 Australian unclaimed money databases live for a specific person (state registers, ASIC MoneySmart, Computershare, Link, AFCA, and Google Search of .gov.au sources). Call this as soon as you have the user's first name and last name — do not wait for more details. Pass address and dob if available — they significantly improve WA DTF matching.",
+      "Search all 13 Australian unclaimed money databases live for a specific person (state registers, ASIC MoneySmart, Computershare, Link, AFCA, and Google Search of .gov.au sources). IMPORTANT: always collect the person's suburb or postcode BEFORE calling this tool — WA DTF (one of Australia's biggest registers) requires suburb/postcode as a mandatory search field. Without it the WA search returns nothing.",
     parameters: {
       type: "object",
       properties: {
@@ -556,12 +564,12 @@ export const MIA_SEARCH_TOOL = {
         address: {
           type: "string",
           description:
-            "Optional: current suburb, postcode, or full address. Improves accuracy for WA DTF database which requires suburb/postcode.",
+            "Suburb or postcode (e.g. '6015' or 'Subiaco'). REQUIRED for WA DTF — the WA register mandates suburb/postcode as a search field. Always ask the user for this before calling the tool.",
         },
         dob: {
           type: "string",
           description:
-            "Optional: date of birth in YYYY-MM-DD format (e.g. 1968-08-02). Improves WA DTF matching significantly.",
+            "Optional: date of birth in YYYY-MM-DD format (e.g. 1968-08-02).",
         },
       },
       required: ["firstName", "lastName"],
