@@ -178,3 +178,28 @@ export const autoSearchResultsTable = pgTable("auto_search_results", {
 });
 
 export type AutoSearchResult = typeof autoSearchResultsTable.$inferSelect;
+
+export const miaTaskLogTable = pgTable("mia_task_log", {
+  id: serial("id").primaryKey(),
+  type: text("type").notNull(),
+  status: text("status").notNull().default("running"),
+  input: text("input"),
+  output: text("output"),
+  durationMs: integer("duration_ms"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  completedAt: timestamp("completed_at"),
+});
+
+export type MiaTaskLogEntry = typeof miaTaskLogTable.$inferSelect;
+
+export const miaReflectionsTable = pgTable("mia_reflections", {
+  id: serial("id").primaryKey(),
+  date: text("date").notNull().unique(),
+  content: text("content").notNull(),
+  tasksCompleted: integer("tasks_completed").notNull().default(0),
+  moodLabel: text("mood_label"),
+  activityScore: integer("activity_score").notNull().default(0),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export type MiaReflection = typeof miaReflectionsTable.$inferSelect;

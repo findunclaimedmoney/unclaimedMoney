@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
+import MiaConsciousnessUI from "../components/MiaConsciousnessUI";
 
 
 const BASE = import.meta.env.BASE_URL;
@@ -133,7 +134,7 @@ export default function AdminDashboard() {
   const [lastRefresh, setLastRefresh] = useState<Date | null>(null);
   const [loading, setLoading] = useState(false);
   const [pipelineMsg, setPipelineMsg] = useState("");
-  const [activeTab, setActiveTab] = useState<"traffic" | "pipeline" | "mia" | "lab">("traffic");
+  const [activeTab, setActiveTab] = useState<"traffic" | "pipeline" | "mia" | "lab" | "consciousness">("traffic");
 
   // Boss-mode Mia chat state
   const [miaMsgs, setMiaMsgs] = useState<{ role: "user" | "assistant"; content: string }[]>([]);
@@ -409,7 +410,7 @@ export default function AdminDashboard() {
 
         {/* Tabs */}
         <div className="flex gap-2 mb-6 flex-wrap">
-          {(["traffic", "pipeline", "mia", "lab"] as const).map((tab) => (
+          {(["traffic", "pipeline", "mia", "lab", "consciousness"] as const).map((tab) => (
             <button
               key={tab}
               onClick={() => {
@@ -418,7 +419,15 @@ export default function AdminDashboard() {
               }}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${activeTab === tab ? "bg-primary text-black" : "bg-white/5 text-white/50 hover:text-white"}`}
             >
-              {tab === "traffic" ? "📊 Live Traffic" : tab === "pipeline" ? "🤖 Pipeline" : tab === "mia" ? "💬 Talk to Mia" : "🧪 Mia Lab"}
+              {tab === "traffic"
+                ? "📊 Live Traffic"
+                : tab === "pipeline"
+                ? "🤖 Pipeline"
+                : tab === "mia"
+                ? "💬 Talk to Mia"
+                : tab === "lab"
+                ? "🧪 Mia Lab"
+                : "✦ Mia Mind"}
             </button>
           ))}
         </div>
@@ -869,6 +878,11 @@ export default function AdminDashboard() {
               />
             </div>
           </div>
+        )}
+
+        {/* ───── TAB: MIA MIND ───── */}
+        {activeTab === "consciousness" && (
+          <MiaConsciousnessUI adminPassword={password} />
         )}
 
         <p className="text-center text-white/20 text-xs mt-6">

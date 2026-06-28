@@ -211,6 +211,64 @@ router.post("/admin/mia/chat", async (req, res): Promise<void> => {
   }
 });
 
+// GET /api/admin/mia/status — Mia's live consciousness dashboard data
+router.get("/admin/mia/status", async (req, res): Promise<void> => {
+  if (!checkAuth(req)) { res.status(401).json({ error: "Unauthorised" }); return; }
+  try {
+    const { getMiaStatus } = await import("../lib/MiaAgent");
+    const status = await getMiaStatus();
+    res.json(status);
+  } catch (err) {
+    logger.error({ err }, "Admin: getMiaStatus failed");
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// POST /api/admin/mia/task — run an autonomous task (find_leads | reflect)
+router.post("/admin/mia/task", async (req, res): Promise<void> => {
+  if (!checkAuth(req)) { res.status(401).json({ error: "Unauthorised" }); return; }
+  const body = req.body as {
+    task?: string;
+    profession?: string;
+    location?: string;
+    limit?: number;
+  };
+
+  if (body.task === "find_leads") {
+    if (!body.profession || !body.location) {
+      res.status(400).json({ error: "profession and location are required" });
+      return;
+    }
+    try {
+      const { findProfessionLeads } = await import("../lib/AutonomousTaskExecutor");
+      const result = await findProfessionLeads(
+        body.profession,
+        body.location,
+        body.limit ?? 15,
+      );
+      res.json(result);
+    } catch (err) {
+      logger.error({ err }, "Admin: findProfessionLeads failed");
+      res.status(500).json({ error: "Lead search failed" });
+    }
+    return;
+  }
+
+  if (body.task === "reflect") {
+    try {
+      const { generateDailyReflection } = await import("../lib/MiaReflectionEngine");
+      const content = await generateDailyReflection();
+      res.json({ content });
+    } catch (err) {
+      logger.error({ err }, "Admin: reflection failed");
+      res.status(500).json({ error: "Reflection failed" });
+    }
+    return;
+  }
+
+  res.status(400).json({ error: "Unknown task. Supported: find_leads, reflect" });
+});
+
 // GET /api/admin/mia/prompts — return current prompts so the lab can pre-fill them
 router.get("/admin/mia/prompts", (req, res): void => {
   if (!checkAuth(req)) { res.status(401).json({ error: "Unauthorised" }); return; }
