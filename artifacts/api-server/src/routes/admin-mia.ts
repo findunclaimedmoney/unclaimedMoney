@@ -254,6 +254,32 @@ router.post("/admin/mia/task", async (req, res): Promise<void> => {
     return;
   }
 
+  if (body.task === "complete_goal") {
+    const goalId = Number((body as { goalId?: number }).goalId ?? 0);
+    if (!goalId) { res.status(400).json({ error: "goalId required" }); return; }
+    try {
+      const { completeGoal } = await import("../lib/MiaGoalEngine");
+      await completeGoal(goalId);
+      res.json({ ok: true });
+    } catch (err) {
+      logger.error({ err }, "Admin: completeGoal failed");
+      res.status(500).json({ error: "Failed to update goal" });
+    }
+    return;
+  }
+
+  if (body.task === "set_goals") {
+    try {
+      const { setDailyGoals } = await import("../lib/MiaGoalEngine");
+      const goals = await setDailyGoals();
+      res.json({ goals });
+    } catch (err) {
+      logger.error({ err }, "Admin: setDailyGoals failed");
+      res.status(500).json({ error: "Goal generation failed" });
+    }
+    return;
+  }
+
   if (body.task === "reflect") {
     try {
       const { generateDailyReflection } = await import("../lib/MiaReflectionEngine");

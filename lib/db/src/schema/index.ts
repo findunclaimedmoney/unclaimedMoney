@@ -203,3 +203,16 @@ export const miaReflectionsTable = pgTable("mia_reflections", {
 });
 
 export type MiaReflection = typeof miaReflectionsTable.$inferSelect;
+
+export const miaGoalsTable = pgTable("mia_goals", {
+  id: serial("id").primaryKey(),
+  date: text("date").notNull(),
+  goal: text("goal").notNull(),
+  priority: integer("priority").notNull().default(3),
+  status: text("status").notNull().default("pending"),
+  reasoning: text("reasoning"),
+  completedAt: timestamp("completed_at"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export type MiaGoal = typeof miaGoalsTable.$inferSelect;

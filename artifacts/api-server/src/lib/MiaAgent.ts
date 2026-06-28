@@ -1,11 +1,26 @@
 import { getTodayStats, getRecentTasks } from "./MiaTaskLog";
 import { getMemoryStats, getLearningRate } from "./MiaMemoryService";
-import { getCurrentMood } from "./MiaEmotionalField";
+import { getEmotionalState } from "./MiaEmotionalField";
 import { getTodayReflection } from "./MiaReflectionEngine";
+import { getTodayGoals } from "./MiaGoalEngine";
+import { getLifecycleState } from "./DailyRoutineScheduler";
 import { logger } from "./logger";
 
 export interface MiaStatus {
-  mood: {
+  lifecycle: {
+    phase: string;
+    phaseStartedAt: Date;
+    todayGoalsSet: boolean;
+  };
+  emotional: {
+    vector: {
+      valence: number;
+      arousal: number;
+      curiosity: number;
+      focus: number;
+      confidence: number;
+      concern: number;
+    };
     label: string;
     score: number;
     description: string;
@@ -23,6 +38,13 @@ export interface MiaStatus {
     recentActivity: number;
   };
   learningRate: number;
+  todayGoals: Array<{
+    id: number;
+    goal: string;
+    priority: number;
+    status: string;
+    reasoning: string | null;
+  }>;
   recentTasks: Array<{
     id: number;
     type: string;
@@ -34,31 +56,42 @@ export interface MiaStatus {
   todayReflection: string | null;
 }
 
+function unwrap<T>(r: PromiseSettledResult<T>, fallback: T): T {
+  return r.status === "fulfilled" ? r.value : fallback;
+}
+
 export async function getMiaStatus(): Promise<MiaStatus> {
-  const [mood, todayStats, memoryStats, learningRate, recentTasks, reflection] =
+  const lifecycle = getLifecycleState();
+
+  const [emotional, todayStats, memoryStats, learningRate, todayGoals, recentTasks, reflection] =
     await Promise.allSettled([
-      getCurrentMood(),
+      getEmotionalState(),
       getTodayStats(),
       getMemoryStats(),
       getLearningRate(),
+      getTodayGoals(),
       getRecentTasks(15),
       getTodayReflection(),
     ]);
 
-  const unwrap = <T>(r: PromiseSettledResult<T>, fallback: T): T =>
-    r.status === "fulfilled" ? r.value : fallback;
-
   return {
-    mood: unwrap(mood, {
+    lifecycle: {
+      phase: lifecycle.phase,
+      phaseStartedAt: lifecycle.phaseStartedAt,
+      todayGoalsSet: lifecycle.todayGoalsSet,
+    },
+    emotional: unwrap(emotional, {
+      vector: { valence: 0, arousal: 0.5, curiosity: 0.5, focus: 0.6, confidence: 0.6, concern: 0.1 },
       label: "Focused",
       score: 75,
       description: "Processing.",
       activityScore: 5.0,
     }),
-    todayStats: unwrap(todayStats, { completed: 0, failed: 0, running: 0, total: 0 }),
-    memoryStats: unwrap(memoryStats, { totalSessions: 0, totalEntries: 0, recentActivity: 0 }),
-    learningRate: unwrap(learningRate, 0),
-    recentTasks: unwrap(recentTasks, []),
+    todayStats:    unwrap(todayStats,    { completed: 0, failed: 0, running: 0, total: 0 }),
+    memoryStats:   unwrap(memoryStats,   { totalSessions: 0, totalEntries: 0, recentActivity: 0 }),
+    learningRate:  unwrap(learningRate,  0),
+    todayGoals:    unwrap(todayGoals,    []),
+    recentTasks:   unwrap(recentTasks,   []),
     todayReflection: unwrap(reflection, null)?.content ?? null,
   };
 }
