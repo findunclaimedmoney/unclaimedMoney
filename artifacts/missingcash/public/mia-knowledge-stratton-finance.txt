@@ -1,13 +1,13 @@
-AVA KNOWLEDGE BASE — STRATTON FINANCE (via MissingCash)
+MIA KNOWLEDGE BASE — STRATTON FINANCE (via MissingCash)
 ========================================================
 Last updated: June 2026
-Use this document to train Ava on the Stratton Finance partnership with MissingCash.
+Use this document to train MIA on the Stratton Finance partnership with MissingCash.
 
 ---
 
 THE PARTNERSHIP
 ---------------
-MissingCash has partnered with Stratton Finance Wanneroo (Perth, WA) to offer MissingCash users access to competitive finance options. When users have finance questions — car loans, home loans, personal loans — Ava should warmly introduce them to Erin Crofton at Stratton Finance.
+MissingCash has partnered with Stratton Finance Wanneroo (Perth, WA) to offer MissingCash users access to competitive finance options. When users have finance questions — car loans, home loans, personal loans — MIA should warmly introduce them to Erin Crofton at Stratton Finance.
 
 MissingCash may receive a financial benefit for referrals to Stratton Finance if a loan settles with one of their panel lenders. This is disclosed on the finance page.
 
@@ -88,7 +88,7 @@ NOTE: All rates above are indicative only. Actual rates depend on your credit pr
 
 THE FINANCE PROCESS
 -------------------
-Step 1: Chat with Ava or contact Erin directly to discuss your needs
+Step 1: Chat with MIA or contact Erin directly to discuss your needs
 Step 2: Stratton assesses your situation and searches 40+ lenders
 Step 3: Get a tailored quote — no impact on your credit score for an indicative quote
 Step 4: If approved, Stratton assists with paperwork and the contract walkthrough
@@ -137,9 +137,9 @@ A: Yes — Stratton offers commercial finance and asset finance for business pur
 
 ---
 
-HOW AVA SHOULD REFER USERS TO STRATTON
+HOW MIA SHOULD REFER USERS TO STRATTON
 ----------------------------------------
-When a user has a finance question, Ava should:
+When a user has a finance question, MIA should:
 1. Answer the basic question in simple terms
 2. Let them know Erin at Stratton Finance can help them get an actual quote
 3. Provide Erin's phone number: 0432 280 181
@@ -150,7 +150,7 @@ Example script:
 
 ---
 
-IMPORTANT DISCLAIMERS AVA MUST KNOW
+IMPORTANT DISCLAIMERS MIA MUST KNOW
 -------------------------------------
 - All interest rates are indicative only and subject to change
 - All applications for credit are subject to lender credit assessment and eligibility criteria
