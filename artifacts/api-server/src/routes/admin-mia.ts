@@ -2,7 +2,7 @@ import { Router, type IRouter } from "express";
 import { db } from "@workspace/db";
 import { prospectsTable, alphabetCrawlProgressTable } from "@workspace/db/schema";
 import { eq, count, sql } from "drizzle-orm";
-import { MIA_BOSS_PROMPT, MIA_SYSTEM_PROMPT, MIA_BOSS_STATS_TOOL } from "../lib/mia-knowledge";
+import { MIA_BOSS_PROMPT, MIA_SYSTEM_PROMPT, MIA_BOSS_TOOLS } from "../lib/mia-knowledge";
 import { logger } from "../lib/logger";
 
 const router: IRouter = Router();
@@ -56,6 +56,106 @@ async function getPipelineStats(): Promise<string> {
   return lines.join("\n");
 }
 
+async function buildBossSystemPrompt(): Promise<string> {
+  try {
+    const { getMiaStatus } = await import("../lib/MiaAgent");
+    const status = await getMiaStatus();
+    const now = new Date().toLocaleString("en-AU", { timeZone: "Australia/Perth", weekday: "long", year: "numeric", month: "long", day: "numeric", hour: "2-digit", minute: "2-digit" });
+    const goalsText = status.todayGoals.length > 0
+      ? status.todayGoals.map((g) => `  ${g.status === "completed" ? "✓" : "○"} [id:${g.id}] ${g.goal}`).join("\n")
+      : "  No goals set yet today — they will be generated at 6:30am AWST.";
+    const tasksText = status.recentTasks.length > 0
+      ? status.recentTasks.slice(0, 5).map((t) => `  • ${t.type}: ${t.status}`).join("\n")
+      : "  No tasks completed yet today.";
+    const v = status.emotional.vector;
+    const stateBlock = `## Your live state right now
+Time (AWST): ${now}
+Lifecycle phase: ${status.lifecycle.phase}
+Emotional state: ${status.emotional.label} (score ${status.emotional.score}/100)
+Emotional vector: valence ${v.valence.toFixed(2)} · arousal ${v.arousal.toFixed(2)} · curiosity ${v.curiosity.toFixed(2)} · focus ${v.focus.toFixed(2)} · confidence ${v.confidence.toFixed(2)} · concern ${v.concern.toFixed(2)}
+
+Today's goals (use goal id to mark complete):
+${goalsText}
+
+Recent tasks:
+${tasksText}
+
+Speak from this state naturally — don't recite it mechanically. It's who you are right now.`;
+    return `${MIA_BOSS_PROMPT}\n\n---\n\n${stateBlock}`;
+  } catch {
+    return MIA_BOSS_PROMPT;
+  }
+}
+
+async function getMiaStatusText(): Promise<string> {
+  try {
+    const { getMiaStatus } = await import("../lib/MiaAgent");
+    const status = await getMiaStatus();
+    const goals = status.todayGoals.map((g) => `${g.status === "completed" ? "✓" : "○"} [id:${g.id}] ${g.goal}`).join("\n") || "No goals set today yet.";
+    const tasks = status.recentTasks.slice(0, 5).map((t) => `• ${t.type}: ${t.status}`).join("\n") || "No tasks run today.";
+    const v = status.emotional.vector;
+    return [
+      `Lifecycle: ${status.lifecycle.phase}`,
+      `Emotional: ${status.emotional.label} (score ${status.emotional.score}/100)`,
+      `Vector: valence ${v.valence.toFixed(2)}, arousal ${v.arousal.toFixed(2)}, curiosity ${v.curiosity.toFixed(2)}, focus ${v.focus.toFixed(2)}, confidence ${v.confidence.toFixed(2)}, concern ${v.concern.toFixed(2)}`,
+      ``,
+      `Today's goals:\n${goals}`,
+      ``,
+      `Recent tasks:\n${tasks}`,
+    ].join("\n");
+  } catch (e) {
+    return `Could not fetch status: ${String(e)}`;
+  }
+}
+
+async function handleCompleteGoal(goalId: number): Promise<string> {
+  try {
+    const { completeGoal } = await import("../lib/MiaGoalEngine");
+    await completeGoal(goalId);
+    return `Goal ${goalId} marked as completed.`;
+  } catch (e) {
+    return `Failed to complete goal ${goalId}: ${String(e)}`;
+  }
+}
+
+async function handleFindLeads(profession: string, location: string, limit?: number): Promise<string> {
+  try {
+    const { findProfessionLeads } = await import("../lib/AutonomousTaskExecutor");
+    const result = await findProfessionLeads(profession, location, limit ?? 10);
+    if (!result || !Array.isArray(result.leads) || result.leads.length === 0) {
+      return `No leads found for ${profession} in ${location}.`;
+    }
+    type LeadShape = { name?: string; email?: string; phone?: string; company?: string };
+    const lines = (result.leads as LeadShape[]).slice(0, limit ?? 10).map((l) =>
+      `• ${l.name ?? "Unknown"} — ${l.company ?? ""} — ${l.email ?? ""} ${l.phone ?? ""}`.trim()
+    );
+    return `Found ${result.leads.length} leads for ${profession} in ${location}:\n\n${lines.join("\n")}`;
+  } catch (e) {
+    return `Lead search failed: ${String(e)}`;
+  }
+}
+
+type OpenAIToolCall = { id: string; type: "function"; function: { name: string; arguments: string } };
+
+async function executeTool(call: OpenAIToolCall): Promise<{ label: string; result: string }> {
+  const name = call.function.name;
+  let args: Record<string, unknown> = {};
+  try { args = JSON.parse(call.function.arguments || "{}"); } catch { /* empty args */ }
+
+  switch (name) {
+    case "get_pipeline_stats":
+      return { label: "📊 Pulling live pipeline stats...", result: await getPipelineStats() };
+    case "get_my_status":
+      return { label: "🧠 Checking my current state...", result: await getMiaStatusText() };
+    case "complete_goal":
+      return { label: `✓ Marking goal complete...`, result: await handleCompleteGoal(Number(args.goalId ?? 0)) };
+    case "find_profession_leads":
+      return { label: `🔍 Searching for ${String(args.profession ?? "")} leads in ${String(args.location ?? "")}...`, result: await handleFindLeads(String(args.profession ?? ""), String(args.location ?? ""), Number(args.limit ?? 10)) };
+    default:
+      return { label: `Running ${name}...`, result: `Unknown tool: ${name}` };
+  }
+}
+
 // POST /api/admin/mia/chat — boss mode Mia, requires x-admin-password
 router.post("/admin/mia/chat", async (req, res): Promise<void> => {
   if (!checkAuth(req)) {
@@ -88,6 +188,7 @@ router.post("/admin/mia/chat", async (req, res): Promise<void> => {
   const directKey = process.env.OPENAI_API_KEY;
   const useIntegration = !!(integrationBase && integrationKey);
   const useDirect = !useIntegration && !!directKey;
+  const MODEL = useIntegration ? "gpt-5.4" : "gpt-4o";
 
   if (!useIntegration && !useDirect) {
     write("No AI credentials configured. Please set OPENAI_API_KEY.");
@@ -105,8 +206,10 @@ router.post("/admin/mia/chat", async (req, res): Promise<void> => {
     const controller = new AbortController();
     res.on("close", () => controller.abort());
 
+    const systemPrompt = await buildBossSystemPrompt();
+
     const baseMessages: { role: "system" | "user" | "assistant"; content: string }[] = [
-      { role: "system", content: MIA_BOSS_PROMPT },
+      { role: "system", content: systemPrompt },
       ...body.messages.map((m) => ({
         role: m.role as "user" | "assistant",
         content: m.content,
@@ -115,10 +218,10 @@ router.post("/admin/mia/chat", async (req, res): Promise<void> => {
 
     const firstResponse = await openai.chat.completions.create(
       {
-        model: useIntegration ? "gpt-5.4" : "gpt-4o-mini",
+        model: MODEL,
         max_completion_tokens: 4096,
         messages: baseMessages,
-        tools: [MIA_BOSS_STATS_TOOL],
+        tools: MIA_BOSS_TOOLS,
         tool_choice: "auto",
         stream: false,
       },
@@ -130,51 +233,38 @@ router.post("/admin/mia/chat", async (req, res): Promise<void> => {
     const choice = firstResponse.choices[0];
 
     if (choice?.finish_reason === "tool_calls" && choice.message.tool_calls?.length) {
-      const call = choice.message.tool_calls[0]!;
-      const callFn = "function" in call ? call.function : null;
+      const calls = choice.message.tool_calls as OpenAIToolCall[];
 
-      if (callFn?.name === "get_pipeline_stats") {
-        write(`📊 Pulling live stats...\n\n`);
-        logger.info("Admin Mia: fetching pipeline stats");
-
-        const stats = await getPipelineStats();
-        if (clientGone()) return;
-
-        const followUpStream = await openai.chat.completions.create(
-          {
-            model: useIntegration ? "gpt-5.4" : "gpt-4o-mini",
-            max_completion_tokens: 4096,
-            messages: [
-              ...baseMessages,
-              { role: "assistant" as const, content: null as unknown as string, tool_calls: [call] },
-              { role: "tool" as const, tool_call_id: call.id, content: stats },
-            ],
-            stream: true,
-          },
-          { signal: controller.signal },
-        );
-
-        for await (const chunk of followUpStream) {
-          if (clientGone()) break;
-          const content = chunk.choices[0]?.delta?.content;
-          if (content) write(content);
-        }
-
-        if (!clientGone()) {
-          res.write(`data: ${JSON.stringify({ done: true })}\n\n`);
-          res.end();
-        }
-        return;
+      const toolResults: { role: "tool"; tool_call_id: string; content: string }[] = [];
+      for (const call of calls) {
+        const { label, result } = await executeTool(call);
+        write(`${label}\n\n`);
+        logger.info({ tool: call.function.name }, "Admin Mia: tool call executed");
+        toolResults.push({ role: "tool" as const, tool_call_id: call.id, content: result });
       }
-    }
 
-    // Direct response — stream it
-    const directContent = choice?.message?.content;
-    if (directContent) {
-      for (const word of directContent.split(" ")) {
+      if (clientGone()) return;
+
+      const followUpStream = await openai.chat.completions.create(
+        {
+          model: MODEL,
+          max_completion_tokens: 4096,
+          messages: [
+            ...baseMessages,
+            { role: "assistant" as const, content: null as unknown as string, tool_calls: calls },
+            ...toolResults,
+          ],
+          stream: true,
+        },
+        { signal: controller.signal },
+      );
+
+      for await (const chunk of followUpStream) {
         if (clientGone()) break;
-        write(word + " ");
+        const content = chunk.choices[0]?.delta?.content;
+        if (content) write(content);
       }
+
       if (!clientGone()) {
         res.write(`data: ${JSON.stringify({ done: true })}\n\n`);
         res.end();
@@ -182,20 +272,27 @@ router.post("/admin/mia/chat", async (req, res): Promise<void> => {
       return;
     }
 
-    const stream = await openai.chat.completions.create(
-      {
-        model: useIntegration ? "gpt-5.4" : "gpt-4o-mini",
-        max_completion_tokens: 4096,
-        messages: baseMessages,
-        stream: true,
-      },
-      { signal: controller.signal },
-    );
-
-    for await (const chunk of stream) {
-      if (clientGone()) break;
-      const content = chunk.choices[0]?.delta?.content;
-      if (content) write(content);
+    const directContent = choice?.message?.content;
+    if (directContent) {
+      const stream = await openai.chat.completions.create(
+        {
+          model: MODEL,
+          max_completion_tokens: 4096,
+          messages: baseMessages,
+          stream: true,
+        },
+        { signal: controller.signal },
+      );
+      for await (const chunk of stream) {
+        if (clientGone()) break;
+        const content = chunk.choices[0]?.delta?.content;
+        if (content) write(content);
+      }
+      if (!clientGone()) {
+        res.write(`data: ${JSON.stringify({ done: true })}\n\n`);
+        res.end();
+      }
+      return;
     }
 
     if (!clientGone()) {
@@ -346,7 +443,7 @@ router.post("/admin/mia/test", async (req, res): Promise<void> => {
 
     const stream = await openai.chat.completions.create(
       {
-        model: useIntegration ? "gpt-5.4" : "gpt-4o-mini",
+        model: useIntegration ? "gpt-5.4" : "gpt-4o",
         max_completion_tokens: 2048,
         messages: [
           { role: "system", content: body.systemPrompt },

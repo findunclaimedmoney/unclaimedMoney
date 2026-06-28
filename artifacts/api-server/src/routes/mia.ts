@@ -246,7 +246,7 @@ router.post("/mia/chat", rateLimit, async (req, res): Promise<void> => {
 
     const firstResponse = await openai.chat.completions.create(
       {
-        model: useIntegration ? "gpt-5.4" : "gpt-4o-mini",
+        model: useIntegration ? "gpt-5.4" : "gpt-4o",
         max_completion_tokens: 8192,
         messages: baseMessages,
         tools: [MIA_LOOKUP_TOOL, MIA_SEARCH_TOOL],
@@ -318,7 +318,7 @@ router.post("/mia/chat", rateLimit, async (req, res): Promise<void> => {
           // Re-query AI with both results
           const liveFollowUp = await openai.chat.completions.create(
             {
-              model: useIntegration ? "gpt-5.4" : "gpt-4o-mini",
+              model: useIntegration ? "gpt-5.4" : "gpt-4o",
               max_completion_tokens: 8192,
               messages: [
                 ...baseMessages,
@@ -343,7 +343,7 @@ router.post("/mia/chat", rateLimit, async (req, res): Promise<void> => {
           // Match found — let Mia present it
           const matchStream = await openai.chat.completions.create(
             {
-              model: useIntegration ? "gpt-5.4" : "gpt-4o-mini",
+              model: useIntegration ? "gpt-5.4" : "gpt-4o",
               max_completion_tokens: 8192,
               messages: [
                 ...baseMessages,
@@ -397,7 +397,7 @@ router.post("/mia/chat", rateLimit, async (req, res): Promise<void> => {
 
         const followUpStream = await openai.chat.completions.create(
           {
-            model: useIntegration ? "gpt-5.4" : "gpt-4o-mini",
+            model: useIntegration ? "gpt-5.4" : "gpt-4o",
             max_completion_tokens: 8192,
             messages: [
               ...baseMessages,
@@ -438,7 +438,7 @@ router.post("/mia/chat", rateLimit, async (req, res): Promise<void> => {
 
     const fallbackStream = await openai.chat.completions.create(
       {
-        model: useIntegration ? "gpt-5.4" : "gpt-4o-mini",
+        model: useIntegration ? "gpt-5.4" : "gpt-4o",
         max_completion_tokens: 8192,
         messages: baseMessages,
         stream: true,
