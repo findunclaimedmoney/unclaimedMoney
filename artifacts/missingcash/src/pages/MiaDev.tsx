@@ -155,15 +155,65 @@ function AiAssistPanel({ onClose }: { onClose: () => void }) {
 
 // ─── MAIN PAGE ────────────────────────────────────────────────────────────────
 
+type LoginStep = "password" | "otp-email" | "otp-code";
+
 export default function MiaDev() {
   const [authed, setAuthed] = useState(false);
   const [pw, setPw] = useState("");
   const [tab, setTab] = useState<Tab>("live");
   const [aiOpen, setAiOpen] = useState(false);
 
+  // OTP flow state
+  const [loginStep, setLoginStep] = useState<LoginStep>("password");
+  const [otpEmail, setOtpEmail] = useState("");
+  const [otpCode, setOtpCode] = useState("");
+  const [otpLoading, setOtpLoading] = useState(false);
+  const [otpError, setOtpError] = useState("");
+
   function login() {
     if (pw === PASS) setAuthed(true);
     else alert("Wrong password");
+  }
+
+  async function sendOtp() {
+    if (!otpEmail.trim()) return;
+    setOtpLoading(true);
+    setOtpError("");
+    try {
+      await fetch(`${BASE}api/admin/mia/otp/send`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: otpEmail.trim() }),
+      });
+      setLoginStep("otp-code");
+    } catch {
+      setOtpError("Failed to send. Try again.");
+    } finally {
+      setOtpLoading(false);
+    }
+  }
+
+  async function verifyOtp() {
+    if (!otpCode.trim()) return;
+    setOtpLoading(true);
+    setOtpError("");
+    try {
+      const res = await fetch(`${BASE}api/admin/mia/otp/verify`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: otpEmail.trim(), otp: otpCode.trim() }),
+      });
+      if (res.ok) {
+        setAuthed(true);
+      } else {
+        const d = await res.json() as { error?: string };
+        setOtpError(d.error ?? "Invalid code. Try again.");
+      }
+    } catch {
+      setOtpError("Something went wrong. Try again.");
+    } finally {
+      setOtpLoading(false);
+    }
   }
 
   if (!authed) {
@@ -173,23 +223,100 @@ export default function MiaDev() {
           <div className="text-center mb-8">
             <div className="text-4xl mb-3">🤖</div>
             <h1 className="text-2xl font-bold text-white">MIA-Development</h1>
-            <p className="text-white/50 text-sm mt-1">Restricted access</p>
+            <p className="text-white/50 text-sm mt-1">
+              {loginStep === "password" && "Restricted access"}
+              {loginStep === "otp-email" && "Enter your admin email"}
+              {loginStep === "otp-code" && "Check your inbox"}
+            </p>
           </div>
-          <input
-            type="password"
-            value={pw}
-            onChange={e => setPw(e.target.value)}
-            onKeyDown={e => e.key === "Enter" && login()}
-            placeholder="Enter admin password"
-            className="w-full rounded-xl border border-white/10 bg-white/5 text-white px-4 py-3 text-sm mb-4 outline-none focus:border-yellow-400"
-          />
-          <button
-            onClick={login}
-            className="w-full rounded-xl py-3 font-semibold text-sm text-black"
-            style={{ background: "#f5b942" }}
-          >
-            Enter Lab
-          </button>
+
+          {loginStep === "password" && (
+            <>
+              <input
+                type="password"
+                value={pw}
+                onChange={e => setPw(e.target.value)}
+                onKeyDown={e => e.key === "Enter" && login()}
+                placeholder="Enter admin password"
+                className="w-full rounded-xl border border-white/10 bg-white/5 text-white px-4 py-3 text-sm mb-4 outline-none focus:border-yellow-400"
+              />
+              <button
+                onClick={login}
+                className="w-full rounded-xl py-3 font-semibold text-sm text-black mb-4"
+                style={{ background: "#f5b942" }}
+              >
+                Enter Lab
+              </button>
+              <button
+                onClick={() => setLoginStep("otp-email")}
+                className="w-full text-white/40 text-xs hover:text-white/70 transition-colors"
+              >
+                Forgot password? Get a one-time code →
+              </button>
+            </>
+          )}
+
+          {loginStep === "otp-email" && (
+            <>
+              <input
+                type="email"
+                value={otpEmail}
+                onChange={e => setOtpEmail(e.target.value)}
+                onKeyDown={e => e.key === "Enter" && void sendOtp()}
+                placeholder="admin@missingcash.com.au"
+                className="w-full rounded-xl border border-white/10 bg-white/5 text-white px-4 py-3 text-sm mb-4 outline-none focus:border-yellow-400"
+              />
+              {otpError && <p className="text-red-400 text-xs mb-3">{otpError}</p>}
+              <button
+                onClick={() => void sendOtp()}
+                disabled={otpLoading || !otpEmail.trim()}
+                className="w-full rounded-xl py-3 font-semibold text-sm text-black mb-4 disabled:opacity-50"
+                style={{ background: "#f5b942" }}
+              >
+                {otpLoading ? "Sending…" : "Send Code"}
+              </button>
+              <button
+                onClick={() => { setLoginStep("password"); setOtpError(""); }}
+                className="w-full text-white/40 text-xs hover:text-white/70 transition-colors"
+              >
+                ← Back to password
+              </button>
+            </>
+          )}
+
+          {loginStep === "otp-code" && (
+            <>
+              <p className="text-white/50 text-xs text-center mb-4">
+                A 6-digit code was sent to <span className="text-white/80">{otpEmail}</span>.<br />
+                Enter it below — expires in 10 minutes.
+              </p>
+              <input
+                type="text"
+                inputMode="numeric"
+                maxLength={6}
+                value={otpCode}
+                onChange={e => setOtpCode(e.target.value.replace(/\D/g, ""))}
+                onKeyDown={e => e.key === "Enter" && void verifyOtp()}
+                placeholder="_ _ _ _ _ _"
+                className="w-full rounded-xl border border-white/10 bg-white/5 text-white px-4 py-3 text-sm mb-4 outline-none focus:border-yellow-400 text-center text-xl tracking-[0.5em] font-bold"
+              />
+              {otpError && <p className="text-red-400 text-xs mb-3 text-center">{otpError}</p>}
+              <button
+                onClick={() => void verifyOtp()}
+                disabled={otpLoading || otpCode.length !== 6}
+                className="w-full rounded-xl py-3 font-semibold text-sm text-black mb-4 disabled:opacity-50"
+                style={{ background: "#f5b942" }}
+              >
+                {otpLoading ? "Verifying…" : "Verify Code"}
+              </button>
+              <button
+                onClick={() => { setLoginStep("otp-email"); setOtpCode(""); setOtpError(""); }}
+                className="w-full text-white/40 text-xs hover:text-white/70 transition-colors"
+              >
+                ← Resend to a different email
+              </button>
+            </>
+          )}
         </div>
       </div>
     );

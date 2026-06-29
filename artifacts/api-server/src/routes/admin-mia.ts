@@ -1,9 +1,18 @@
 import { Router, type IRouter } from "express";
+import { Resend } from "resend";
 import { db } from "@workspace/db";
 import { prospectsTable, alphabetCrawlProgressTable, miaConfigTable, miaDevTasksTable } from "@workspace/db/schema";
 import { eq, count, sql, desc } from "drizzle-orm";
 import { MIA_BOSS_PROMPT, MIA_SYSTEM_PROMPT, MIA_BOSS_TOOLS } from "../lib/mia-knowledge";
 import { logger } from "../lib/logger";
+
+// ─── OTP store (in-memory, 10-min expiry) ─────────────────────────────────────
+const ADMIN_EMAIL = "admin@missingcash.com.au";
+const otpStore = new Map<string, { otp: string; expires: number }>();
+
+function generateOtp(): string {
+  return String(Math.floor(100000 + Math.random() * 900000));
+}
 
 const router: IRouter = Router();
 
@@ -673,6 +682,73 @@ router.delete("/admin/mia/tasks/:id", async (req, res): Promise<void> => {
   if (!checkAuth(req)) { res.status(401).json({ error: "Unauthorised" }); return; }
   const id = Number(req.params["id"]);
   await db.delete(miaDevTasksTable).where(eq(miaDevTasksTable.id, id));
+  res.json({ ok: true });
+});
+
+// ─── OTP: send ────────────────────────────────────────────────────────────────
+// POST /api/admin/mia/otp/send  { email }
+router.post("/admin/mia/otp/send", async (req, res): Promise<void> => {
+  const email = ((req.body as Record<string, unknown>)["email"] as string ?? "").toLowerCase().trim();
+  if (email !== ADMIN_EMAIL.toLowerCase()) {
+    // Don't reveal which emails are valid — always return 200
+    res.json({ ok: true });
+    return;
+  }
+
+  const otp = generateOtp();
+  otpStore.set(email, { otp, expires: Date.now() + 10 * 60 * 1000 });
+
+  const resendKey = process.env.RESEND_API_KEY;
+  if (!resendKey) {
+    logger.error("RESEND_API_KEY not set — cannot send OTP");
+    res.status(500).json({ error: "Email service not configured" });
+    return;
+  }
+
+  try {
+    const resend = new Resend(resendKey);
+    await resend.emails.send({
+      from: "MissingCash <leads@lensflow.com.au>",
+      to: email,
+      subject: `🔐 Your MIA-Dev access code: ${otp}`,
+      html: `
+        <div style="font-family:sans-serif;max-width:480px;margin:0 auto;background:#061826;padding:40px;border-radius:12px;color:#ffffff;">
+          <h1 style="color:#f5b942;font-size:22px;margin:0 0 8px;">MIA-Development Lab</h1>
+          <p style="color:#94a3b8;font-size:13px;margin:0 0 32px;">One-time access code</p>
+          <div style="background:#0a2236;border:1px solid rgba(245,185,66,0.3);border-radius:12px;padding:28px;text-align:center;margin-bottom:24px;">
+            <p style="color:#94a3b8;font-size:12px;margin:0 0 12px;text-transform:uppercase;letter-spacing:2px;">Your code</p>
+            <p style="color:#f5b942;font-size:42px;font-weight:900;letter-spacing:10px;margin:0;">${otp}</p>
+            <p style="color:#94a3b8;font-size:11px;margin:12px 0 0;">Expires in 10 minutes</p>
+          </div>
+          <p style="color:#64748b;font-size:11px;margin:0;">If you didn't request this, ignore this email.</p>
+        </div>
+      `,
+    });
+    logger.info({ email }, "OTP sent for MIA-Dev access");
+  } catch (err) {
+    logger.error({ err }, "Failed to send OTP email");
+    res.status(500).json({ error: "Failed to send email. Try again." });
+    return;
+  }
+
+  res.json({ ok: true });
+});
+
+// ─── OTP: verify ─────────────────────────────────────────────────────────────
+// POST /api/admin/mia/otp/verify  { email, otp }
+router.post("/admin/mia/otp/verify", (req, res): void => {
+  const body = req.body as Record<string, unknown>;
+  const email = ((body["email"] as string) ?? "").toLowerCase().trim();
+  const otp = ((body["otp"] as string) ?? "").trim();
+
+  const stored = otpStore.get(email);
+  if (!stored || stored.otp !== otp || Date.now() > stored.expires) {
+    res.status(401).json({ error: "Invalid or expired code. Try again." });
+    return;
+  }
+
+  otpStore.delete(email);
+  logger.info({ email }, "OTP verified — MIA-Dev access granted");
   res.json({ ok: true });
 });
 
