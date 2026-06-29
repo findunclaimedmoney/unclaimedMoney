@@ -1,7 +1,7 @@
 import { Router, type IRouter } from "express";
 import { db } from "@workspace/db";
-import { prospectsTable, alphabetCrawlProgressTable } from "@workspace/db/schema";
-import { eq, count, sql } from "drizzle-orm";
+import { prospectsTable, alphabetCrawlProgressTable, miaConfigTable, miaDevTasksTable } from "@workspace/db/schema";
+import { eq, count, sql, desc } from "drizzle-orm";
 import { MIA_BOSS_PROMPT, MIA_SYSTEM_PROMPT, MIA_BOSS_TOOLS } from "../lib/mia-knowledge";
 import { logger } from "../lib/logger";
 
@@ -471,6 +471,209 @@ router.post("/admin/mia/test", async (req, res): Promise<void> => {
     res.write(`data: ${JSON.stringify({ done: true })}\n\n`);
     res.end();
   }
+});
+
+// ─── KNOWLEDGE CONFIG ──────────────────────────────────────────────────────
+
+async function getConfig(key: string): Promise<string | null> {
+  const rows = await db.select().from(miaConfigTable).where(eq(miaConfigTable.key, key));
+  return rows[0]?.value ?? null;
+}
+
+async function setConfig(key: string, value: string): Promise<void> {
+  await db
+    .insert(miaConfigTable)
+    .values({ key, value, updatedAt: new Date() })
+    .onConflictDoUpdate({ target: miaConfigTable.key, set: { value, updatedAt: new Date() } });
+}
+
+// GET /api/admin/mia/knowledge
+router.get("/admin/mia/knowledge", async (req, res): Promise<void> => {
+  if (!checkAuth(req)) { res.status(401).json({ error: "Unauthorised" }); return; }
+  const addendum = await getConfig("knowledge_addendum") ?? "";
+  res.json({ addendum });
+});
+
+// POST /api/admin/mia/knowledge — body: { text: string } or multipart file
+router.post("/admin/mia/knowledge", async (req, res): Promise<void> => {
+  if (!checkAuth(req)) { res.status(401).json({ error: "Unauthorised" }); return; }
+  const body = req.body as { text?: string; replace?: boolean };
+  if (!body.text) { res.status(400).json({ error: "text required" }); return; }
+  const existing = await getConfig("knowledge_addendum") ?? "";
+  const updated = body.replace ? body.text : (existing ? existing + "\n\n---\n\n" + body.text : body.text);
+  await setConfig("knowledge_addendum", updated);
+  res.json({ ok: true, length: updated.length });
+});
+
+// DELETE /api/admin/mia/knowledge — clear addendum
+router.delete("/admin/mia/knowledge", async (req, res): Promise<void> => {
+  if (!checkAuth(req)) { res.status(401).json({ error: "Unauthorised" }); return; }
+  await setConfig("knowledge_addendum", "");
+  res.json({ ok: true });
+});
+
+// ─── SCRIPT DOWNLOAD ────────────────────────────────────────────────────────
+
+// GET /api/admin/mia/script — download full system prompt
+router.get("/admin/mia/script", async (req, res): Promise<void> => {
+  if (!checkAuth(req)) { res.status(401).json({ error: "Unauthorised" }); return; }
+  const addendum = await getConfig("knowledge_addendum") ?? "";
+  const full = addendum
+    ? `${MIA_SYSTEM_PROMPT}\n\n---\n\n## KNOWLEDGE ADDENDUM\n${addendum}`
+    : MIA_SYSTEM_PROMPT;
+  res.setHeader("Content-Type", "text/plain");
+  res.setHeader("Content-Disposition", `attachment; filename="mia-system-prompt-${new Date().toISOString().slice(0, 10)}.txt"`);
+  res.send(full);
+});
+
+// ─── VOICE CONFIG ───────────────────────────────────────────────────────────
+
+// GET /api/admin/mia/voice
+router.get("/admin/mia/voice", async (req, res): Promise<void> => {
+  if (!checkAuth(req)) { res.status(401).json({ error: "Unauthorised" }); return; }
+  const voiceId = await getConfig("voice_id") ?? (process.env["ELEVENLABS_VOICE_ID"] ?? "x3PfG9wL6FOEApZ1VJ9H");
+  const model = await getConfig("voice_model") ?? "eleven_turbo_v2_5";
+  const avatarId = await getConfig("avatar_id") ?? "05f1da4dc12744c087dace9e0651a6e0";
+  res.json({ voiceId, model, avatarId });
+});
+
+// POST /api/admin/mia/voice
+router.post("/admin/mia/voice", async (req, res): Promise<void> => {
+  if (!checkAuth(req)) { res.status(401).json({ error: "Unauthorised" }); return; }
+  const body = req.body as { voiceId?: string; model?: string; avatarId?: string };
+  if (body.voiceId) await setConfig("voice_id", body.voiceId);
+  if (body.model) await setConfig("voice_model", body.model);
+  if (body.avatarId) await setConfig("avatar_id", body.avatarId);
+  res.json({ ok: true });
+});
+
+// ─── HEYGEN STREAMING PROXY ─────────────────────────────────────────────────
+
+const HEYGEN_BASE = "https://api.heygen.com";
+
+async function heygenPost(path: string, body: unknown): Promise<unknown> {
+  const key = process.env["HEYGEN_API_KEY"];
+  if (!key) throw new Error("HEYGEN_API_KEY not set");
+  const r = await fetch(`${HEYGEN_BASE}${path}`, {
+    method: "POST",
+    headers: { "x-api-key": key, "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  return r.json();
+}
+
+// POST /api/admin/mia/heygen/session — create streaming session
+router.post("/admin/mia/heygen/session", async (req, res): Promise<void> => {
+  if (!checkAuth(req)) { res.status(401).json({ error: "Unauthorised" }); return; }
+  const avatarId = await getConfig("avatar_id") ?? "05f1da4dc12744c087dace9e0651a6e0";
+  try {
+    const data = await heygenPost("/v1/streaming.new", {
+      quality: "high",
+      avatar_id: avatarId,
+      voice: { voice_id: await getConfig("voice_id") ?? "x3PfG9wL6FOEApZ1VJ9H" },
+      version: "v2",
+    });
+    res.json(data);
+  } catch (err) {
+    logger.error({ err }, "HeyGen session creation failed");
+    res.status(500).json({ error: "HeyGen session failed" });
+  }
+});
+
+// POST /api/admin/mia/heygen/start — send WebRTC answer
+router.post("/admin/mia/heygen/start", async (req, res): Promise<void> => {
+  if (!checkAuth(req)) { res.status(401).json({ error: "Unauthorised" }); return; }
+  const body = req.body as { session_id: string; sdp: { sdp: string; type: string } };
+  try {
+    const data = await heygenPost("/v1/streaming.start", body);
+    res.json(data);
+  } catch (err) {
+    logger.error({ err }, "HeyGen start failed");
+    res.status(500).json({ error: "HeyGen start failed" });
+  }
+});
+
+// POST /api/admin/mia/heygen/ice — relay ICE candidate
+router.post("/admin/mia/heygen/ice", async (req, res): Promise<void> => {
+  if (!checkAuth(req)) { res.status(401).json({ error: "Unauthorised" }); return; }
+  const body = req.body as { session_id: string; candidate: unknown };
+  try {
+    const data = await heygenPost("/v1/streaming.ice", body);
+    res.json(data);
+  } catch (err) {
+    logger.error({ err }, "HeyGen ICE failed");
+    res.status(500).json({ error: "HeyGen ICE failed" });
+  }
+});
+
+// POST /api/admin/mia/heygen/speak — send text for avatar to say
+router.post("/admin/mia/heygen/speak", async (req, res): Promise<void> => {
+  if (!checkAuth(req)) { res.status(401).json({ error: "Unauthorised" }); return; }
+  const body = req.body as { session_id: string; text: string };
+  try {
+    const data = await heygenPost("/v1/streaming.task", { session_id: body.session_id, text: body.text });
+    res.json(data);
+  } catch (err) {
+    logger.error({ err }, "HeyGen speak failed");
+    res.status(500).json({ error: "HeyGen speak failed" });
+  }
+});
+
+// POST /api/admin/mia/heygen/stop — close session
+router.post("/admin/mia/heygen/stop", async (req, res): Promise<void> => {
+  if (!checkAuth(req)) { res.status(401).json({ error: "Unauthorised" }); return; }
+  const body = req.body as { session_id: string };
+  try {
+    const data = await heygenPost("/v1/streaming.stop", { session_id: body.session_id });
+    res.json(data);
+  } catch (err) {
+    logger.error({ err }, "HeyGen stop failed");
+    res.status(500).json({ error: "HeyGen stop failed" });
+  }
+});
+
+// ─── DEV TASKS ──────────────────────────────────────────────────────────────
+
+// GET /api/admin/mia/tasks
+router.get("/admin/mia/tasks", async (req, res): Promise<void> => {
+  if (!checkAuth(req)) { res.status(401).json({ error: "Unauthorised" }); return; }
+  const tasks = await db.select().from(miaDevTasksTable).orderBy(desc(miaDevTasksTable.createdAt));
+  res.json({ tasks });
+});
+
+// POST /api/admin/mia/tasks
+router.post("/admin/mia/tasks", async (req, res): Promise<void> => {
+  if (!checkAuth(req)) { res.status(401).json({ error: "Unauthorised" }); return; }
+  const body = req.body as { title: string; description?: string; priority?: string };
+  if (!body.title) { res.status(400).json({ error: "title required" }); return; }
+  const [task] = await db.insert(miaDevTasksTable).values({
+    title: body.title,
+    description: body.description ?? null,
+    priority: body.priority ?? "normal",
+  }).returning();
+  res.json({ task });
+});
+
+// PATCH /api/admin/mia/tasks/:id — update status
+router.patch("/admin/mia/tasks/:id", async (req, res): Promise<void> => {
+  if (!checkAuth(req)) { res.status(401).json({ error: "Unauthorised" }); return; }
+  const id = Number(req.params["id"]);
+  const body = req.body as { status?: string; title?: string; description?: string };
+  const updates: Record<string, unknown> = {};
+  if (body.status) updates["status"] = body.status;
+  if (body.title) updates["title"] = body.title;
+  if (body.description !== undefined) updates["description"] = body.description;
+  if (body.status === "done") updates["completedAt"] = new Date();
+  await db.update(miaDevTasksTable).set(updates).where(eq(miaDevTasksTable.id, id));
+  res.json({ ok: true });
+});
+
+// DELETE /api/admin/mia/tasks/:id
+router.delete("/admin/mia/tasks/:id", async (req, res): Promise<void> => {
+  if (!checkAuth(req)) { res.status(401).json({ error: "Unauthorised" }); return; }
+  const id = Number(req.params["id"]);
+  await db.delete(miaDevTasksTable).where(eq(miaDevTasksTable.id, id));
+  res.json({ ok: true });
 });
 
 export default router;

@@ -216,3 +216,23 @@ export const miaGoalsTable = pgTable("mia_goals", {
 });
 
 export type MiaGoal = typeof miaGoalsTable.$inferSelect;
+
+export const miaConfigTable = pgTable("mia_config", {
+  key: text("key").primaryKey(),
+  value: text("value").notNull(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export type MiaConfig = typeof miaConfigTable.$inferSelect;
+
+export const miaDevTasksTable = pgTable("mia_dev_tasks", {
+  id: serial("id").primaryKey(),
+  title: text("title").notNull(),
+  description: text("description"),
+  status: text("status").notNull().default("pending"),
+  priority: text("priority").notNull().default("normal"),
+  completedAt: timestamp("completed_at"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export type MiaDevTask = typeof miaDevTasksTable.$inferSelect;
