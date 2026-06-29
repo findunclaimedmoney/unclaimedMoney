@@ -72,8 +72,18 @@ router.post("/mia/tts", rateLimit, async (req, res): Promise<void> => {
 
     res.setHeader("Content-Type", "audio/mpeg");
     res.setHeader("Cache-Control", "no-store");
-    const buffer = Buffer.from(await upstream.arrayBuffer());
-    res.send(buffer);
+    res.setHeader("Transfer-Encoding", "chunked");
+
+    const reader = upstream.body.getReader();
+    const writeChunk = async (): Promise<void> => {
+      const { done, value } = await reader.read();
+      if (done) { res.end(); return; }
+      const ok = res.write(Buffer.from(value));
+      if (ok) return writeChunk();
+      await new Promise<void>((resolve) => res.once("drain", resolve));
+      return writeChunk();
+    };
+    await writeChunk();
   } catch (err) {
     req.log.error({ err }, "Mia TTS request errored");
     res.status(502).json({ error: "Voice generation failed." });

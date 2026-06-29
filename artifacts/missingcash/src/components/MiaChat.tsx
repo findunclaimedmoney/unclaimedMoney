@@ -295,10 +295,18 @@ export default function MiaChat() {
     }
 
     try {
+      const MAX_TTS_CHARS = 1500;
+      let ttsText = clean;
+      if (ttsText.length > MAX_TTS_CHARS) {
+        const cut = ttsText.slice(0, MAX_TTS_CHARS);
+        const lastSentence = cut.search(/[.!?][^.!?]*$/);
+        ttsText = lastSentence > 200 ? cut.slice(0, lastSentence + 1) : cut;
+      }
+
       const res = await fetch(`${BASE}/api/mia/tts`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text: clean.slice(0, 5000) }),
+        body: JSON.stringify({ text: ttsText }),
       });
       if (myId !== speechIdRef.current) return;
       if (!res.ok) return;
