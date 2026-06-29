@@ -11,10 +11,155 @@ type Tab = "live" | "knowledge" | "script" | "voice" | "tasks";
 type Msg = { role: "user" | "assistant"; content: string };
 type Task = { id: number; title: string; description: string | null; status: string; priority: string; created_at: string };
 
+// ─── AI ASSISTANCE PANEL ──────────────────────────────────────────────────────
+
+type AiMsg = { role: "user" | "assistant"; content: string };
+
+function AiAssistPanel({ onClose }: { onClose: () => void }) {
+  const [messages, setMessages] = useState<AiMsg[]>([
+    { role: "assistant", content: "Hi! I'm Mia. How can I help you with the lab today?" },
+  ]);
+  const [input, setInput] = useState("");
+  const [streaming, setStreaming] = useState(false);
+  const endRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    endRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  async function send() {
+    const text = input.trim();
+    if (!text || streaming) return;
+    setInput("");
+    const userMsg: AiMsg = { role: "user", content: text };
+    const history = [...messages, userMsg];
+    setMessages(history);
+    setStreaming(true);
+
+    const assistantMsg: AiMsg = { role: "assistant", content: "" };
+    setMessages([...history, assistantMsg]);
+
+    try {
+      const res = await fetch(`${BASE}api/mia/chat`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          messages: history.map(m => ({ role: m.role, content: m.content })),
+        }),
+      });
+
+      const reader = res.body?.getReader();
+      const decoder = new TextDecoder();
+      if (!reader) throw new Error("No stream");
+
+      let buf = "";
+      let done = false;
+      while (!done) {
+        const { value, done: d } = await reader.read();
+        done = d;
+        buf += decoder.decode(value ?? new Uint8Array(), { stream: !d });
+        const parts = buf.split("\n\n");
+        buf = parts.pop() ?? "";
+        for (const part of parts) {
+          if (!part.startsWith("data:")) continue;
+          const json = part.slice(5).trim();
+          if (!json || json === "[DONE]") continue;
+          try {
+            const evt = JSON.parse(json) as { content?: string; done?: boolean };
+            if (evt.done) { done = true; break; }
+            if (evt.content) {
+              setMessages(prev => {
+                const copy = [...prev];
+                const last = copy[copy.length - 1];
+                if (last?.role === "assistant") last.content += evt.content;
+                return copy;
+              });
+            }
+          } catch { /* ignore */ }
+        }
+      }
+    } catch {
+      setMessages(prev => {
+        const copy = [...prev];
+        const last = copy[copy.length - 1];
+        if (last?.role === "assistant") last.content = "Something went wrong. Try again.";
+        return copy;
+      });
+    } finally {
+      setStreaming(false);
+    }
+  }
+
+  return (
+    <div
+      className="fixed top-0 right-0 h-full flex flex-col z-50 shadow-2xl"
+      style={{ width: 380, background: "#0a2236", borderLeft: "1px solid rgba(255,255,255,0.1)" }}
+    >
+      {/* Panel header */}
+      <div className="flex items-center gap-3 px-4 py-4 border-b border-white/10" style={{ background: "#061826" }}>
+        <img src={`${BASE}mia-poster.jpg`} alt="Mia" className="w-9 h-9 rounded-full object-cover" />
+        <div className="flex-1">
+          <p className="text-white font-semibold text-sm leading-none">AI Assistance</p>
+          <p className="text-green-400 text-xs mt-0.5">Mia · Online</p>
+        </div>
+        <button
+          onClick={onClose}
+          className="text-white/40 hover:text-white text-xl leading-none transition-colors"
+        >
+          ×
+        </button>
+      </div>
+
+      {/* Messages */}
+      <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3">
+        {messages.map((m, i) => (
+          <div key={i} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
+            <div
+              className="rounded-2xl px-4 py-2.5 text-sm max-w-[85%] leading-relaxed"
+              style={{
+                background: m.role === "user" ? "#f5b942" : "rgba(255,255,255,0.07)",
+                color: m.role === "user" ? "#061826" : "rgba(255,255,255,0.9)",
+              }}
+            >
+              {m.content || (streaming && m.role === "assistant" ? <span className="animate-pulse">▋</span> : "")}
+            </div>
+          </div>
+        ))}
+        <div ref={endRef} />
+      </div>
+
+      {/* Input */}
+      <div className="px-4 py-4 border-t border-white/10">
+        <div className="flex gap-2">
+          <input
+            value={input}
+            onChange={e => setInput(e.target.value)}
+            onKeyDown={e => e.key === "Enter" && !e.shiftKey && void send()}
+            placeholder="Ask Mia anything..."
+            disabled={streaming}
+            className="flex-1 rounded-xl border border-white/10 bg-white/5 text-white text-sm px-4 py-2.5 outline-none focus:border-yellow-400 disabled:opacity-50"
+          />
+          <button
+            onClick={() => void send()}
+            disabled={streaming || !input.trim()}
+            className="rounded-xl px-4 py-2.5 text-sm font-semibold text-black disabled:opacity-40 transition-opacity"
+            style={{ background: "#f5b942" }}
+          >
+            {streaming ? "..." : "Send"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── MAIN PAGE ────────────────────────────────────────────────────────────────
+
 export default function MiaDev() {
   const [authed, setAuthed] = useState(false);
   const [pw, setPw] = useState("");
   const [tab, setTab] = useState<Tab>("live");
+  const [aiOpen, setAiOpen] = useState(false);
 
   function login() {
     if (pw === PASS) setAuthed(true);
@@ -67,9 +212,23 @@ export default function MiaDev() {
           <h1 className="text-white font-bold text-lg leading-none">MIA-Development Lab</h1>
           <p className="text-white/40 text-xs mt-0.5">missingcash.com.au — internal</p>
         </div>
-        <div className="ml-auto flex items-center gap-2">
-          <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-          <span className="text-green-400 text-xs font-medium">Mia Online</span>
+        <div className="ml-auto flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+            <span className="text-green-400 text-xs font-medium">Mia Online</span>
+          </div>
+          <button
+            onClick={() => setAiOpen(o => !o)}
+            className="flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold transition-all"
+            style={{
+              background: aiOpen ? "#f5b942" : "rgba(245,185,66,0.15)",
+              color: aiOpen ? "#061826" : "#f5b942",
+              border: "1px solid rgba(245,185,66,0.4)",
+            }}
+          >
+            <span>🤖</span>
+            AI Assistance
+          </button>
         </div>
       </div>
 
@@ -96,13 +255,16 @@ export default function MiaDev() {
       </div>
 
       {/* Tab content */}
-      <div className="flex-1 overflow-auto">
+      <div className="flex-1 overflow-auto" style={{ marginRight: aiOpen ? 380 : 0, transition: "margin-right 0.3s ease" }}>
         {tab === "live" && <LiveSession />}
         {tab === "knowledge" && <KnowledgeTab />}
         {tab === "script" && <ScriptTab />}
         {tab === "voice" && <VoiceAvatarTab />}
         {tab === "tasks" && <TasksTab />}
       </div>
+
+      {/* AI Assistance slide-in panel */}
+      {aiOpen && <AiAssistPanel onClose={() => setAiOpen(false)} />}
     </div>
   );
 }
