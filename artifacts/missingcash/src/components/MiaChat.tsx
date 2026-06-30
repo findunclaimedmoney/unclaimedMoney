@@ -1,11 +1,140 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Send, Volume2, VolumeX, FileText } from "lucide-react";
+import { X, Send, Volume2, VolumeX, FileText, Lock, ShoppingCart } from "lucide-react";
+
+const ALL_PACKAGES = [
+  {
+    emoji: "⚡",
+    name: "Mia Speed Research",
+    desc: "Personalised AI-powered unclaimed money report delivered in minutes.",
+    price: "$99",
+    url: "https://buy.stripe.com/5kQdR82TWdc9eMR2rS4c80i",
+    badge: "Most popular",
+  },
+  {
+    emoji: "💰",
+    name: "MissingCash Premium Guide",
+    desc: "Step-by-step PDF guide to finding and claiming unclaimed money in Australia.",
+    price: "$4.99",
+    url: "https://buy.stripe.com/6oUbJ0eCE4FDbAFaYo4c800",
+  },
+  {
+    emoji: "₿",
+    name: "Crypto Recovery Guide",
+    desc: "How to recover lost or inaccessible cryptocurrency — wallet recovery & exchanges.",
+    price: "$29.90",
+    url: "https://buy.stripe.com/9B600iamo3Bz48d6I84c801",
+  },
+  {
+    emoji: "📱",
+    name: "Cyber Security Guide",
+    desc: "Protect yourself online — scam prevention, account security & privacy.",
+    price: "$4.99",
+    url: "https://buy.stripe.com/5kQbJ0eCEgolgUZ6I84c80d",
+  },
+  {
+    emoji: "🪪",
+    name: "Identity Theft Recovery",
+    desc: "What to do if your identity has been stolen — step-by-step recovery guide.",
+    price: "$4.99",
+    url: "https://buy.stripe.com/28EcN46686NLdIN8Qg4c80e",
+  },
+  {
+    emoji: "🏆",
+    name: "All 4 Guides Bundle",
+    desc: "Every PDF guide included — unclaimed money, crypto, cyber security & identity theft.",
+    price: "$39.90",
+    url: "https://buy.stripe.com/cNi14m9ikdc93492rS4c80g",
+    badge: "Best value",
+  },
+];
+
+const BLURRY_ROWS = [
+  { name: "J●●● S●●●●", amount: "$●,●●●", source: "ATO Register" },
+  { name: "J●●● S●●●●", amount: "$●●●", source: "ASIC MoneySmart" },
+  { name: "J●●● S●●●●", amount: "$●,●●●", source: "NSW Government" },
+];
+
+function ResultsTeaserCard({ firstName, lastName }: { firstName?: string; lastName?: string }) {
+  const seed = ((firstName?.charCodeAt(0) ?? 65) + (lastName?.charCodeAt(0) ?? 65)) % ALL_PACKAGES.length;
+  const packages = [
+    ALL_PACKAGES[seed % ALL_PACKAGES.length],
+    ALL_PACKAGES[(seed + 1) % ALL_PACKAGES.length],
+    ALL_PACKAGES[(seed + 2) % ALL_PACKAGES.length],
+  ];
+
+  return (
+    <motion.div
+      className="w-full"
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+    >
+      <div className="rounded-2xl border border-primary/30 bg-secondary overflow-hidden">
+        <div className="px-3.5 py-2.5 bg-primary/10 border-b border-primary/20 flex items-center gap-2">
+          <Lock className="w-3.5 h-3.5 text-primary shrink-0" />
+          <span className="text-xs font-semibold text-primary">
+            {firstName ? `Potential matches found for ${firstName} ${lastName ?? ""}` : "Potential matches found"}
+          </span>
+        </div>
+
+        <div className="px-3.5 py-2 space-y-1.5 border-b border-border/50">
+          {BLURRY_ROWS.map((row, i) => (
+            <div key={i} className="flex items-center justify-between gap-2 py-1">
+              <div className="flex items-center gap-2 min-w-0">
+                <span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
+                <span className="text-xs text-foreground/80 blur-[3px] select-none font-mono">{row.name}</span>
+              </div>
+              <div className="flex items-center gap-2 shrink-0">
+                <span className="text-xs font-bold text-primary blur-[3px] select-none">{row.amount}</span>
+                <span className="text-[10px] text-muted-foreground">{row.source}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="px-3.5 py-2.5">
+          <p className="text-[11px] text-muted-foreground mb-2.5">
+            🔒 Unlock your full results — get a guide and claim what's yours:
+          </p>
+          <div className="space-y-2">
+            {packages.map((pkg) => pkg && (
+              <a
+                key={pkg.url}
+                href={pkg.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2.5 rounded-xl border border-border bg-background/40 px-3 py-2 hover:border-primary/40 hover:bg-primary/5 transition-all group"
+              >
+                <span className="text-base shrink-0">{pkg.emoji}</span>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-1.5">
+                    <p className="text-xs font-semibold text-white truncate">{pkg.name}</p>
+                    {pkg.badge && (
+                      <span className="text-[9px] font-bold bg-primary/20 text-primary px-1.5 py-0.5 rounded-full shrink-0">{pkg.badge}</span>
+                    )}
+                  </div>
+                  <p className="text-[10px] text-muted-foreground leading-tight truncate">{pkg.desc}</p>
+                </div>
+                <div className="flex items-center gap-1 shrink-0">
+                  <span className="text-xs font-bold text-primary">{pkg.price}</span>
+                  <ShoppingCart className="w-3 h-3 text-muted-foreground group-hover:text-primary transition-colors" />
+                </div>
+              </a>
+            ))}
+          </div>
+          <p className="text-[10px] text-muted-foreground/60 mt-2 text-center">🔒 Secure via Stripe · Instant PDF download</p>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
 
 interface Message {
   id: string;
   role: "user" | "assistant";
   content: string;
+  teaser?: { count: number; firstName?: string; lastName?: string };
 }
 
 const BASE = import.meta.env.BASE_URL.replace(/\/$/, "");
@@ -381,7 +510,18 @@ export default function MiaChat() {
           for (const line of lines) {
             if (!line.startsWith("data: ")) continue;
             try {
-              const payload = JSON.parse(line.slice(6)) as { content?: string; done?: boolean; error?: string };
+              const payload = JSON.parse(line.slice(6)) as { content?: string; done?: boolean; error?: string; teaser?: { count: number; firstName?: string; lastName?: string } };
+              if (payload.teaser) {
+                setMessages((prev) => [
+                  ...prev,
+                  {
+                    id: crypto.randomUUID(),
+                    role: "assistant" as const,
+                    content: "",
+                    teaser: payload.teaser,
+                  },
+                ]);
+              }
               if (payload.content) {
                 fullText += payload.content;
                 setMessages((prev) =>
@@ -536,6 +676,8 @@ export default function MiaChat() {
                       {renderMessage(m.content)}
                     </div>
                   </div>
+                ) : m.teaser ? (
+                  <ResultsTeaserCard key={m.id} firstName={m.teaser.firstName} lastName={m.teaser.lastName} />
                 ) : (
                   <div key={m.id} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
                     <div

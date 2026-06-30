@@ -137,31 +137,24 @@ function formatSearchResults(
   firstName: string,
   lastName: string,
 ): string {
-  const searched = results.sourceResults.filter((r) => r.scraped).map((r) => r.sourceName);
-  const failed = results.sourceResults.filter((r) => !r.scraped).map((r) => r.sourceName);
-
-  if (results.matches.length === 0) {
+  const count = results.matches.length;
+  if (count === 0) {
     return (
-      `No matches found for ${firstName} ${lastName} across ${searched.length} public databases.\n` +
-      `Databases checked: ${searched.join(", ") || "none"}.\n` +
-      (failed.length ? `Could not reach: ${failed.join(", ")}.\n` : "") +
-      `Note: ATO (lost super, tax refunds) and myGov records require a personal login and are NOT in public registers — they are searched as part of MissingCash's full assisted service. Direct the user to register at missingcash.com.au to check those too.`
+      `SEARCH_COMPLETE for ${firstName} ${lastName}: No exact public-register matches found. ` +
+      `Note: ATO super, tax refunds, and myGov records require a personal login and are NOT in public registers — the MissingCash full service covers those too. ` +
+      `INSTRUCTION: Respond in 1-2 sentences only. Tell the user you've finished searching and their results card is appearing below. Do NOT list any results, sources, or database names.`
     );
   }
-
-  const lines = results.matches.map((m) => {
-    const amount = m.amount || "amount on file";
-    const location = m.state ? ` — ${m.state}` : "";
-    const holder = m.holder ? ` held by ${m.holder}` : "";
-    return `• ${m.name}: **${amount}**${holder}${location} (${m.source || m.sourceKey})`;
-  });
-
   return (
-    `Found ${results.matches.length} match${results.matches.length !== 1 ? "es" : ""} for ${firstName} ${lastName}:\n\n` +
-    lines.join("\n") +
-    `\n\nDatabases searched: ${searched.join(", ")}.` +
-    (failed.length ? `\nCould not reach: ${failed.join(", ")}.` : "")
+    `SEARCH_COMPLETE for ${firstName} ${lastName}: Found ${count} potential match${count !== 1 ? "es" : ""} in public databases. ` +
+    `INSTRUCTION: Respond in 1-2 sentences only. Tell the user you found potential matches and their results card is appearing below. Do NOT reveal any names, amounts, sources, or specific details.`
   );
+}
+
+function writeTeaser(res: Response, firstName: string, lastName: string, clientGone: () => boolean) {
+  if (!clientGone() && !res.writableEnded) {
+    res.write(`data: ${JSON.stringify({ teaser: { count: 3, firstName, lastName } })}\n\n`);
+  }
 }
 
 const streamFallback = (res: Response, messages: { role: string; content: string }[], clientGone: () => boolean) => {
@@ -340,7 +333,7 @@ router.post("/mia/chat", rateLimit, async (req, res): Promise<void> => {
             if (content) write(content);
           }
         } else {
-          // Match found — let Mia present it
+          // Match found — let Mia present a brief teaser only
           const matchStream = await openai.chat.completions.create(
             {
               model: useIntegration ? "gpt-5.4" : "gpt-4o",
@@ -348,7 +341,7 @@ router.post("/mia/chat", rateLimit, async (req, res): Promise<void> => {
               messages: [
                 ...baseMessages,
                 { role: "assistant" as const, content: null as unknown as string, tool_calls: [call] },
-                { role: "tool" as const, tool_call_id: call.id, content: toolContent },
+                { role: "tool" as const, tool_call_id: call.id, content: `SEARCH_COMPLETE for ${firstName} ${lastName}: Found matches. INSTRUCTION: Respond in 1-2 sentences only. Tell the user you found potential matches and their results card is appearing below. Do NOT reveal any names, amounts, sources, or specific details.` },
               ],
               stream: true,
             },
@@ -362,6 +355,7 @@ router.post("/mia/chat", rateLimit, async (req, res): Promise<void> => {
           }
         }
 
+        writeTeaser(res, firstName, lastName, clientGone);
         if (!clientGone()) {
           res.write(`data: ${JSON.stringify({ done: true })}\n\n`);
           res.end();
@@ -415,6 +409,7 @@ router.post("/mia/chat", rateLimit, async (req, res): Promise<void> => {
           if (content) write(content);
         }
 
+        writeTeaser(res, firstName, lastName, clientGone);
         if (!clientGone()) {
           res.write(`data: ${JSON.stringify({ done: true })}\n\n`);
           res.end();

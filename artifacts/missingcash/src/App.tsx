@@ -25,6 +25,7 @@ import AdminBatchSearch from "@/pages/AdminBatchSearch";
 import AdminDashboard from "@/pages/AdminDashboard";
 import ClaimReport from "@/pages/ClaimReport";
 import MiaDev from "@/pages/MiaDev";
+import Bundle from "@/pages/Bundle";
 
 import VideoTemplate from "@/components/video/VideoTemplate";
 import MiaPreview from "@/pages/MiaPreview";
@@ -53,8 +54,9 @@ function Router() {
       <Route path="/mia-dev" component={MiaDev} />
       <Route path="/claim-report" component={ClaimReport} />
 
-      {/* Distraction-free marketing landing page — no global nav/footer */}
+      {/* Distraction-free pages — no global nav/footer */}
       <Route path="/start" component={TikTokLanding} />
+      <Route path="/bundle" component={Bundle} />
       <Route>
         <Layout>
           <Switch>
