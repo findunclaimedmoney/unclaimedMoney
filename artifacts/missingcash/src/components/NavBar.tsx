@@ -6,7 +6,6 @@ import TrustTicker from "@/components/TrustTicker";
 
 const navLinks = [
   { href: "/", label: "Home" },
-  { href: "/mia-search", label: "Search" },
   { href: "/find-my-money", label: "Find My Money" },
   { href: "/guides", label: "Guides" },
   { href: "/crypto", label: "Crypto" },

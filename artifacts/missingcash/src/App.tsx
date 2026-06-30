@@ -15,20 +15,11 @@ import ThankYou from "@/pages/ThankYou";
 import FindMyMoney from "@/pages/FindMyMoney";
 import AustraliaMap from "@/pages/AustraliaMap";
 import DeceasedEstate from "@/pages/DeceasedEstate";
-import LotteryChecker from "@/pages/LotteryChecker";
 import TikTokLanding from "@/pages/TikTokLanding";
-import MiaResearch from "@/pages/MiaResearch";
-import MiaSearch from "@/pages/MiaSearch";
-import MiaSearchResults from "@/pages/MiaSearchResults";
-import MiaSearchPaid from "@/pages/MiaSearchPaid";
 import AdminBatchSearch from "@/pages/AdminBatchSearch";
 import AdminDashboard from "@/pages/AdminDashboard";
 import ClaimReport from "@/pages/ClaimReport";
 import MiaDev from "@/pages/MiaDev";
-import Bundle from "@/pages/Bundle";
-
-import VideoTemplate from "@/components/video/VideoTemplate";
-import MiaPreview from "@/pages/MiaPreview";
 
 const BASE = import.meta.env.BASE_URL;
 
@@ -47,8 +38,6 @@ function PageViewBeacon() {
 function Router() {
   return (
     <Switch>
-      <Route path="/video" component={VideoTemplate} />
-      <Route path="/mia-preview" component={MiaPreview} />
       <Route path="/admin/batch" component={AdminBatchSearch} />
       <Route path="/admin" component={AdminDashboard} />
       <Route path="/mia-dev" component={MiaDev} />
@@ -56,7 +45,6 @@ function Router() {
 
       {/* Distraction-free pages — no global nav/footer */}
       <Route path="/start" component={TikTokLanding} />
-      <Route path="/bundle" component={Bundle} />
       <Route>
         <Layout>
           <Switch>
@@ -67,13 +55,8 @@ function Router() {
             <Route path="/privacy" component={Privacy} />
             <Route path="/guides" component={Guides} />
             <Route path="/find-my-money" component={FindMyMoney} />
-            <Route path="/mia-research" component={MiaResearch} />
-            <Route path="/mia-search/results" component={MiaSearchResults} />
-            <Route path="/mia-search/paid" component={MiaSearchPaid} />
-            <Route path="/mia-search" component={MiaSearch} />
             <Route path="/unclaimed-money-map" component={AustraliaMap} />
             <Route path="/deceased-estate" component={DeceasedEstate} />
-            <Route path="/lottery-checker" component={LotteryChecker} />
             <Route path="/thank-you/:guide" component={ThankYou} />
             <Route component={NotFound} />
           </Switch>

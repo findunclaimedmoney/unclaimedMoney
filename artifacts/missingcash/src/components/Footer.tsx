@@ -6,7 +6,6 @@ const footerLinks = [
   { href: "/guides", label: "Guides" },
   { href: "/crypto", label: "Crypto Recovery" },
   { href: "/deceased-estate", label: "Deceased Estate" },
-  { href: "/lottery-checker", label: "Lottery Checker" },
   { href: "/finance", label: "Finance" },
   { href: "/map", label: "Australia Map" },
   { href: "/contact", label: "Contact" },
