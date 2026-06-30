@@ -134,6 +134,22 @@ export const unsubscribesTable = pgTable("unsubscribes", {
 
 export type Unsubscribe = typeof unsubscribesTable.$inferSelect;
 
+export const paidSearchesTable = pgTable("paid_searches", {
+  id: serial("id").primaryKey(),
+  firstName: text("first_name").notNull(),
+  lastName: text("last_name").notNull(),
+  email: text("email").notNull(),
+  state: text("state"),
+  stripeSessionId: text("stripe_session_id").unique(),
+  status: text("status").notNull().default("pending"),
+  resultsFound: integer("results_found"),
+  searchedAt: timestamp("searched_at"),
+  emailedAt: timestamp("emailed_at"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export type PaidSearch = typeof paidSearchesTable.$inferSelect;
+
 export const alphabetCrawlProgressTable = pgTable("alphabet_crawl_progress", {
   letter: text("letter").primaryKey(),
   status: text("status").notNull().default("pending"),

@@ -16,6 +16,7 @@ import FindMyMoney from "@/pages/FindMyMoney";
 import AustraliaMap from "@/pages/AustraliaMap";
 import DeceasedEstate from "@/pages/DeceasedEstate";
 import TikTokLanding from "@/pages/TikTokLanding";
+import SearchPage from "@/pages/SearchPage";
 import AdminBatchSearch from "@/pages/AdminBatchSearch";
 import AdminDashboard from "@/pages/AdminDashboard";
 import ClaimReport from "@/pages/ClaimReport";
@@ -45,6 +46,7 @@ function Router() {
 
       {/* Distraction-free pages — no global nav/footer */}
       <Route path="/start" component={TikTokLanding} />
+      <Route path="/search" component={SearchPage} />
       <Route>
         <Layout>
           <Switch>

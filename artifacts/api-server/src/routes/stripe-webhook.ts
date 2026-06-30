@@ -5,6 +5,7 @@ import { db, miaResearchRequestsTable, miaFreeSearchesTable } from "@workspace/d
 import { prospectsTable } from "@workspace/db/schema";
 import { eq } from "drizzle-orm";
 import { callOpenAIReport, generateResearchReport } from "../lib/mia-report";
+import { runPaidSearch } from "./paid-search";
 import type { MoneySmartResults } from "../lib/moneysmart-scraper";
 import { generateGuide } from "../lib/guides-pdf";
 import { buildClaimInstructions } from "./claim-report";
@@ -71,6 +72,18 @@ router.post("/stripe/webhook", async (req, res) => {
 
   if (!email) {
     req.log.warn({ sessionId: session.id }, "Stripe webhook: no customer email in session");
+    return;
+  }
+
+  // ── $9.99 Paid name search ────────────────────────────────────────────────
+  if (session.metadata?.["product"] === "paid-search") {
+    const searchId = parseInt(session.metadata?.["searchId"] ?? "", 10);
+    if (!isNaN(searchId)) {
+      req.log.info({ searchId, email }, "paid-search: payment received — running search");
+      runPaidSearch(searchId).catch((err) =>
+        req.log.error({ err, searchId }, "paid-search: runPaidSearch failed"),
+      );
+    }
     return;
   }
 

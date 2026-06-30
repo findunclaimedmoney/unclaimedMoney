@@ -14,6 +14,7 @@ import prospectsRouter from "./prospects";
 import unsubscribeRouter from "./unsubscribe";
 import adminMiaRouter from "./admin-mia";
 import claimReportRouter from "./claim-report";
+import paidSearchRouter from "./paid-search";
 
 const router: IRouter = Router();
 
@@ -32,5 +33,6 @@ router.use(prospectsRouter);
 router.use(unsubscribeRouter);
 router.use(adminMiaRouter);
 router.use(claimReportRouter);
+router.use(paidSearchRouter);
 
 export default router;
