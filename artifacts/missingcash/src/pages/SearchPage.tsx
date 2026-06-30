@@ -11,6 +11,7 @@ export default function SearchPage() {
     description: "Pay $9.99 and Mia searches every major Australian unclaimed money register for your name. Results emailed within minutes — guaranteed.",
   });
 
+  const source = new URLSearchParams(window.location.search).get("v") ?? undefined;
   const [form, setForm] = useState({ firstName: "", lastName: "", email: "", state: "" });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -25,7 +26,7 @@ export default function SearchPage() {
       const res = await fetch(`${BASE}api/paid-search/initiate`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, source }),
       });
       const data = await res.json() as { checkoutUrl?: string; error?: string };
       if (!res.ok || !data.checkoutUrl) {

@@ -140,6 +140,7 @@ export const paidSearchesTable = pgTable("paid_searches", {
   lastName: text("last_name").notNull(),
   email: text("email").notNull(),
   state: text("state"),
+  source: text("source"),
   stripeSessionId: text("stripe_session_id").unique(),
   status: text("status").notNull().default("pending"),
   resultsFound: integer("results_found"),

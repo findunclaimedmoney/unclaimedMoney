@@ -19,6 +19,7 @@ router.post("/paid-search/initiate", async (req, res): Promise<void> => {
   const lastName = typeof body["lastName"] === "string" ? body["lastName"].trim().slice(0, 60) : "";
   const email = typeof body["email"] === "string" ? body["email"].trim().slice(0, 200) : "";
   const state = typeof body["state"] === "string" ? body["state"].trim().slice(0, 10) : undefined;
+  const source = typeof body["source"] === "string" ? body["source"].trim().slice(0, 100) : undefined;
 
   if (!firstName || !lastName || !email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     res.status(400).json({ error: "Invalid request" });
@@ -32,7 +33,7 @@ router.post("/paid-search/initiate", async (req, res): Promise<void> => {
 
   const [record] = await db
     .insert(paidSearchesTable)
-    .values({ firstName, lastName, email, state: state ?? null, status: "pending" })
+    .values({ firstName, lastName, email, state: state ?? null, source: source ?? null, status: "pending" })
     .returning({ id: paidSearchesTable.id });
 
   if (!record) {
