@@ -230,10 +230,15 @@ function parseAmountDollars(amount: string): number {
   return parseFloat(m[1].replace(/,/g, "")) || 0;
 }
 
-function calcFee(dollars: number): { pct: number; cents: number; str: string } {
-  const pct = dollars <= 1000 ? 5 : dollars <= 5000 ? 10 : dollars <= 30000 ? 15 : dollars <= 100000 ? 20 : 33;
-  const cents = Math.max(Math.round(dollars * pct), 100);
-  return { pct, cents, str: `$${(cents / 100).toLocaleString("en-AU", { maximumFractionDigits: 0 })}` };
+function calcFee(dollars: number): { flat: boolean; pct: number; cents: number; str: string } {
+  if (dollars >= 20000) {
+    // High-value: flat $500 concierge fee
+    return { flat: true, pct: 0, cents: 50000, str: "$500" };
+  }
+  // Lower amounts: simple percentage
+  const pct = dollars <= 1000 ? 10 : 15;
+  const cents = Math.max(Math.round(dollars * 100 * pct / 100), 999);
+  return { flat: false, pct, cents, str: `$${(cents / 100).toFixed(2)}` };
 }
 
 async function sendOutreachEmail(
@@ -256,11 +261,20 @@ async function sendOutreachEmail(
 
   const parsed = parseName(name);
   const firstName = parsed?.firstName ?? name.split(" ")[0] ?? name;
+  const lastName = parsed?.lastName ?? "";
   const dollars = parseAmountDollars(amount);
-  const { pct, cents, str: feeStr } = calcFee(dollars);
+  const { flat, pct, cents, str: feeStr } = calcFee(dollars);
   const holderName = holder || "an Australian government register";
+  const isHighValue = dollars >= 20000;
 
-  // Create Stripe checkout — fee paid BEFORE claim details are revealed
+  const productName = isHighValue
+    ? "MissingCash Claim Concierge"
+    : "MissingCash Claim Guide";
+  const productDesc = isHighValue
+    ? `We prepare your personalised claim dossier for ${amount} held by ${holderName} — exact forms, reference numbers, and step-by-step instructions delivered within 24 hours.`
+    : `Step-by-step instructions to claim ${amount} held by ${holderName}.`;
+
+  // Create Stripe checkout
   let checkoutUrl: string;
   let stripeSessionId: string;
   try {
@@ -272,15 +286,12 @@ async function sendOutreachEmail(
         price_data: {
           currency: "aud",
           unit_amount: cents,
-          product_data: {
-            name: `MissingCash Claim Report — ${pct}% success fee`,
-            description: `Mia found ${amount} held by ${holderName}. Pay ${feeStr} to unlock your personalised step-by-step claim instructions.`,
-          },
+          product_data: { name: productName, description: productDesc },
         },
         quantity: 1,
       }],
       metadata: { product: "prospect-outreach", prospectId: String(prospectId) },
-      success_url: `${SITE_BASE}/mia-search/paid?prospect=${prospectId}`,
+      success_url: `${SITE_BASE}/contact?concierge=1&prospect=${prospectId}`,
       cancel_url: `${SITE_BASE}/`,
     });
     checkoutUrl = session.url!;
@@ -290,8 +301,16 @@ async function sendOutreachEmail(
     return { sent: false };
   }
 
-  const subject = `⚡ We found ${amount} in your name — unlock your claim report`;
+  const subject = isHighValue
+    ? `${firstName}, we found ${amount} registered in your name`
+    : `We found ${amount} in your name — here's how to claim it`;
+
   const unsubscribeUrl = `${SITE_BASE}/api/unsubscribe?e=${encodeURIComponent(email)}&pid=${prospectId}`;
+  const financeUrl = `${SITE_BASE}/finance?fn=${encodeURIComponent(firstName)}&ln=${encodeURIComponent(lastName)}&email=${encodeURIComponent(email)}&amount=${encodeURIComponent(amount)}&source=prospect-concierge`;
+
+  const feeNote = flat
+    ? `Flat fee of ${feeStr} — we prepare everything, you submit the form.`
+    : `${pct}% service fee · ${feeStr} total`;
 
   // Plain-text version stored for audit trail
   const bodyText = [
@@ -303,65 +322,94 @@ async function sendOutreachEmail(
     ``,
     `Hi ${firstName},`,
     ``,
-    `We searched the national unclaimed money registers and found money that appears to belong to you.`,
+    isHighValue
+      ? `My name is Mia. I work with MissingCash — an Australian service that searches the national unclaimed money registers on behalf of Australians who may not know money is being held for them.`
+      : `We searched the national unclaimed money registers and found money that appears to belong to you.`,
     ``,
-    `Amount found in your name: ${amount}`,
+    `Amount found: ${amount}`,
     `Held by: ${holderName}`,
+    `Source: WA Unclaimed Monies register`,
     ``,
-    `Data source: WA Unclaimed Monies register (https://www.wa.gov.au/organisation/department-of-treasury/unclaimed-monies)`,
-    `Fee: ${pct}% of ${amount} = ${feeStr} (paid before claim instructions are released)`,
+    isHighValue
+      ? `For an amount like this, we offer a Claim Concierge service — we prepare your complete personalised claim dossier: the exact forms, account reference numbers, supporting documents required, and a step-by-step submission guide specific to your situation. You receive it by email within 24 hours and submit the claim yourself directly to the government — no middleman.`
+      : `Your claim guide includes step-by-step instructions to recover this amount directly from the register.`,
     ``,
-    `Claim instructions are locked — the exact account references, claim forms, and step-by-step process are in your paid report.`,
+    `Service fee: ${feeNote}`,
     ``,
-    `Checkout URL: ${checkoutUrl}`,
+    `Get started: ${checkoutUrl}`,
     ``,
-    `${dollars > 20000 ? `Stratton Finance option included (amount > $20,000). ACL 364340. Subject to credit assessment.` : ""}`,
+    isHighValue ? `If you'd prefer to discuss this first, simply reply to this email.` : "",
     ``,
     `© MissingCash | ABN 52 347 989 391 | support@missingcash.com.au`,
     `To unsubscribe: ${unsubscribeUrl}`,
-  ].join("\n");
+  ].filter(Boolean).join("\n");
 
   const html = `
-<div style="font-family:sans-serif;max-width:600px;margin:0 auto;background:#061826;padding:0;border-radius:12px;overflow:hidden;">
-  <div style="background:#061826;padding:28px 32px 16px;text-align:center;">
-    <h1 style="color:#f5b942;font-size:22px;margin:0;letter-spacing:2px;">MissingCash</h1>
-    <p style="color:#94a3b8;font-size:12px;margin:4px 0 0;">Australia's Unclaimed Money Service</p>
+<div style="font-family:Georgia,serif;max-width:600px;margin:0 auto;background:#ffffff;padding:0;border:1px solid #e5e7eb;">
+  <div style="background:#061826;padding:24px 32px;text-align:center;">
+    <span style="color:#f5b942;font-size:20px;font-weight:bold;letter-spacing:2px;">MissingCash</span>
+    <p style="color:#94a3b8;font-size:11px;margin:4px 0 0;font-family:sans-serif;">Australia's Unclaimed Money Service · ABN 52 347 989 391</p>
   </div>
-  <div style="background:#0f2233;padding:28px 32px;border-top:3px solid #f5b942;">
-    <h2 style="color:#ffffff;font-size:20px;margin:0 0 6px;">Hi ${firstName},</h2>
-    <p style="color:#94a3b8;font-size:14px;margin:0 0 20px;">
-      We searched the national unclaimed money registers and found money that appears to belong to you.
+
+  <div style="padding:36px 40px;background:#ffffff;">
+    <p style="font-size:15px;color:#111827;margin:0 0 20px;">Hi ${firstName},</p>
+
+    <p style="font-size:15px;color:#374151;line-height:1.7;margin:0 0 20px;">
+      ${isHighValue
+        ? `My name is Mia. I work with <strong>MissingCash</strong> — an Australian service that searches the national unclaimed money registers on behalf of people who may not know money is being held for them.`
+        : `We searched the national unclaimed money registers and found money that appears to belong to you.`}
     </p>
-    <div style="background:#061826;border:1px solid #f5b942;border-radius:10px;padding:20px;text-align:center;margin-bottom:24px;">
-      <p style="color:#94a3b8;font-size:12px;margin:0 0 4px;text-transform:uppercase;letter-spacing:1px;">Amount found in your name</p>
-      <p style="color:#f5b942;font-size:36px;font-weight:900;margin:0;">${amount}</p>
-      <p style="color:#6b7a8d;font-size:12px;margin:6px 0 0;">Held by ${holderName}</p>
+
+    <div style="background:#fefce8;border-left:4px solid #f5b942;padding:20px 24px;margin:0 0 24px;">
+      <p style="font-size:12px;color:#92400e;margin:0 0 4px;text-transform:uppercase;letter-spacing:1px;font-family:sans-serif;">Amount found in your name</p>
+      <p style="font-size:32px;font-weight:bold;color:#111827;margin:0;">${amount}</p>
+      <p style="font-size:13px;color:#6b7280;margin:6px 0 0;font-family:sans-serif;">Held by ${holderName} · WA Unclaimed Monies Register</p>
     </div>
-    <div style="background:#0a1f30;border:1px solid #1a2a3a;border-radius:8px;padding:14px;margin-bottom:24px;">
-      <p style="color:#94a3b8;font-size:13px;margin:0;">
-        🔒 <strong style="color:#fff;">Claim instructions are locked</strong> — the exact account references, claim forms, and step-by-step process are in your paid report. Pay once, get everything you need to claim your ${amount}.
-      </p>
-    </div>
+
+    ${isHighValue ? `
+    <p style="font-size:15px;color:#374151;line-height:1.7;margin:0 0 16px;">
+      For an amount like this, we offer a <strong>Claim Concierge service</strong>. We prepare your complete, personalised claim dossier:
+    </p>
+    <ul style="font-size:14px;color:#374151;line-height:2;margin:0 0 20px;padding-left:20px;">
+      <li>The exact government claim forms for your register</li>
+      <li>Your account reference numbers</li>
+      <li>Supporting documents you'll need to provide</li>
+      <li>A step-by-step submission guide written for your specific situation</li>
+    </ul>
+    <p style="font-size:14px;color:#374151;line-height:1.7;margin:0 0 24px;">
+      You receive everything by email <strong>within 24 hours</strong> and submit directly to the government yourself — no middleman holds your money.
+    </p>` : `
+    <p style="font-size:15px;color:#374151;line-height:1.7;margin:0 0 24px;">
+      Your personalised claim guide includes the exact steps to recover this amount directly from the register.
+    </p>`}
+
     <div style="text-align:center;margin:28px 0;">
-      <a href="${checkoutUrl}" style="background:#f5b942;color:#061826;padding:18px 40px;border-radius:10px;text-decoration:none;font-weight:bold;font-size:17px;display:inline-block;letter-spacing:1px;">
-        🔓 Unlock My Claim Report — ${feeStr}
+      <a href="${checkoutUrl}" style="background:#f5b942;color:#061826;padding:16px 36px;border-radius:6px;text-decoration:none;font-weight:bold;font-size:16px;display:inline-block;font-family:sans-serif;">
+        ${isHighValue ? `Get My Claim Dossier — ${feeStr}` : `Get My Claim Guide — ${feeStr}`}
       </a>
-      <p style="color:#6b7a8d;font-size:11px;margin:12px 0 0;">${pct}% of ${amount} · Secure Stripe payment · Report delivered instantly after payment</p>
+      <p style="color:#9ca3af;font-size:11px;margin:10px 0 0;font-family:sans-serif;">${feeNote} · Secure payment via Stripe</p>
     </div>
-    ${dollars > 20000 ? `
-    <div style="margin-top:20px;padding-top:20px;border-top:1px solid #1a2a3a;text-align:center;">
-      <p style="color:#94a3b8;font-size:13px;margin:0 0 12px;">💡 <strong style="color:#fff;">Can't cover the fee upfront?</strong></p>
-      <p style="color:#6b7a8d;font-size:12px;margin:0 0 14px;">Stratton Finance can fund your claim fee using your ${amount} as collateral — you pay nothing until the money is in your account.</p>
-      <a href="${SITE_BASE}/finance?fn=${encodeURIComponent(firstName)}&ln=${encodeURIComponent(parsed?.lastName ?? "")}&email=${encodeURIComponent(email)}&amount=${encodeURIComponent(amount)}&source=prospect-finance" style="background:#0f2233;color:#f5b942;padding:12px 28px;border-radius:8px;text-decoration:none;font-weight:bold;font-size:14px;display:inline-block;border:1px solid #f5b942/30;">
-        Apply for Fee Finance via Stratton →
-      </a>
-      <p style="color:#6b7a8d;font-size:10px;margin:10px 0 0;">Stratton Finance ACL 364340 · Subject to credit assessment</p>
+
+    ${isHighValue ? `
+    <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:6px;padding:18px 24px;margin:0 0 24px;">
+      <p style="font-size:13px;color:#374151;margin:0 0 12px;font-family:sans-serif;">💡 <strong>Need help covering the fee first?</strong></p>
+      <p style="font-size:13px;color:#6b7280;margin:0 0 14px;font-family:sans-serif;">Stratton Finance can help fund your claim — you pay nothing upfront.</p>
+      <a href="${financeUrl}" style="color:#061826;font-weight:bold;font-size:13px;font-family:sans-serif;">Apply via Stratton Finance →</a>
+      <p style="color:#9ca3af;font-size:10px;margin:8px 0 0;font-family:sans-serif;">Stratton Finance ACL 364340 · Subject to credit assessment</p>
     </div>` : ""}
-    <p style="color:#6b7a8d;font-size:11px;text-align:center;margin-top:16px;">Questions? Reply to this email or contact support@missingcash.com.au</p>
+
+    <p style="font-size:14px;color:#374151;line-height:1.7;margin:0;">
+      If you have any questions before proceeding, simply reply to this email — I'm happy to help.
+    </p>
+    <p style="font-size:14px;color:#374151;margin:8px 0 0;">Warm regards,<br><strong>Mia</strong><br><span style="color:#9ca3af;font-size:12px;font-family:sans-serif;">MissingCash · support@missingcash.com.au</span></p>
   </div>
-  <div style="background:#061826;padding:16px 32px;text-align:center;border-top:1px solid #1a2a3a;">
-    <p style="color:#6b7a8d;font-size:11px;margin:0;">© MissingCash | ABN 52 347 989 391 | support@missingcash.com.au</p>
-    <p style="color:#4a5568;font-size:10px;margin:8px 0 0;">You received this because your name appears on the ASIC MoneySmart public unclaimed money register. <a href="${unsubscribeUrl}" style="color:#4a5568;">Unsubscribe</a></p>
+
+  <div style="background:#f9fafb;padding:16px 32px;text-align:center;border-top:1px solid #e5e7eb;">
+    <p style="color:#9ca3af;font-size:10px;margin:0;font-family:sans-serif;">
+      You received this email because your name appears on the WA Unclaimed Monies public register.
+      <a href="${unsubscribeUrl}" style="color:#9ca3af;">Unsubscribe</a>
+    </p>
+    <p style="color:#9ca3af;font-size:10px;margin:4px 0 0;font-family:sans-serif;">© MissingCash | ABN 52 347 989 391 | This is not financial or legal advice.</p>
   </div>
 </div>`;
 
