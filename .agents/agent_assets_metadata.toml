@@ -478,16 +478,16 @@ title = "Handover — 29 June 2026"
 id = "t_fPP3kz1DJx8akKsJNww"
 uri = "file://missingcash_export.sql.gz"
 type = "unspecified"
-title = "MissingCash Database Export"
+title = "1. Database Export (restore to Render)"
 
 [[outputs]]
 id = "16pRInbEs8F_ShcMIgn--"
 uri = "file://missingcash_full_source.tar.gz"
 type = "unspecified"
-title = "Full Source — API Server + Mia + DB"
+title = "2. Full Source — API Server + Mia + DB"
 
 [[outputs]]
 id = "GGYp7xP-53gJ9j7RkVDI0"
 uri = "file://handover-2026-07-02.md"
 type = "text"
-title = "Session Handover — 2 July 2026"
+title = "3. Session Handover — Migration Instructions"
