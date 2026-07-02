@@ -16,10 +16,14 @@ import adminMiaRouter from "./admin-mia";
 import claimReportRouter from "./claim-report";
 import paidSearchRouter from "./paid-search";
 import companionRouter from "./companion";
+import companionSubscribeRouter from "./companion-subscribe";
+import companionVideoRouter from "./companion-video";
 
 const router: IRouter = Router();
 
 router.use(companionRouter);
+router.use(companionSubscribeRouter);
+router.use(companionVideoRouter);
 router.use(healthRouter);
 router.use(miaRouter);
 router.use(miaTtsRouter);

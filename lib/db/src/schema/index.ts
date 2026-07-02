@@ -234,6 +234,21 @@ export const miaGoalsTable = pgTable("mia_goals", {
 
 export type MiaGoal = typeof miaGoalsTable.$inferSelect;
 
+export const companionSubscribersTable = pgTable("companion_subscribers", {
+  id: serial("id").primaryKey(),
+  email: text("email").notNull().unique(),
+  stripeCustomerId: text("stripe_customer_id"),
+  stripeSubscriptionId: text("stripe_subscription_id").unique(),
+  tier: text("tier").notNull().default("spark"),
+  active: boolean("active").notNull().default(true),
+  voiceMessagesThisMonth: integer("voice_messages_this_month").notNull().default(0),
+  voiceMonthResetAt: timestamp("voice_month_reset_at"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export type CompanionSubscriber = typeof companionSubscribersTable.$inferSelect;
+
 export const companionSessionsTable = pgTable("companion_sessions", {
   sessionId: text("session_id").primaryKey(),
   persona: text("persona").notNull().default("mia"),

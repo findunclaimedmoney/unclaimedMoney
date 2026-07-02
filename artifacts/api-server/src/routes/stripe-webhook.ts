@@ -64,6 +64,16 @@ router.post("/stripe/webhook", async (req, res) => {
 
   res.json({ received: true });
 
+  if (
+    event.type === "customer.subscription.created" ||
+    event.type === "customer.subscription.updated" ||
+    event.type === "customer.subscription.deleted"
+  ) {
+    const { handleCompanionSubscriptionWebhook } = await import("./companion-subscribe");
+    await handleCompanionSubscriptionWebhook(event as unknown as { type: string; data: { object: Record<string, unknown> } });
+    return;
+  }
+
   if (event.type !== "checkout.session.completed") return;
 
   const session = event.data.object as Stripe.Checkout.Session;

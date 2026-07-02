@@ -2,8 +2,9 @@ import { useState } from "react";
 import { useGetPersonas } from "@workspace/api-client-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card } from "@/components/ui/card";
-import { Sparkles, Plus } from "lucide-react";
+import { Sparkles, Plus, Lock, Crown } from "lucide-react";
 import { CreatePersona } from "@/components/CreatePersona";
+import type { useSubscription } from "@/hooks/use-subscription";
 
 const base = import.meta.env.BASE_URL;
 const PORTRAITS: Record<string, string> = {
@@ -27,10 +28,24 @@ function loadCustomPersona(): CustomPersona | null {
   }
 }
 
-export function PersonaSelect({ onSelect }: { onSelect: (personaId: string) => void }) {
+interface Props {
+  onSelect: (personaId: string) => void;
+  subscription: ReturnType<typeof useSubscription>;
+  onUpgrade: () => void;
+}
+
+export function PersonaSelect({ onSelect, subscription, onUpgrade }: Props) {
   const { data: personas, isLoading } = useGetPersonas();
   const [showCreate, setShowCreate] = useState(false);
   const [customPersona, setCustomPersona] = useState<CustomPersona | null>(loadCustomPersona);
+
+  const handleCreateClick = () => {
+    if (!subscription.canUseCustomPersona) {
+      onUpgrade();
+      return;
+    }
+    setShowCreate(true);
+  };
 
   if (showCreate) {
     return (
@@ -102,7 +117,7 @@ export function PersonaSelect({ onSelect }: { onSelect: (personaId: string) => v
                   <p className="text-primary/80 font-medium text-sm mt-1">Your companion</p>
                   <button
                     className="text-xs text-muted-foreground hover:text-white transition-colors mt-3 underline underline-offset-2"
-                    onClick={(e) => { e.stopPropagation(); setShowCreate(true); }}
+                    onClick={(e) => { e.stopPropagation(); handleCreateClick(); }}
                   >
                     Recreate
                   </button>
@@ -110,20 +125,58 @@ export function PersonaSelect({ onSelect }: { onSelect: (personaId: string) => v
               </Card>
             ) : (
               <Card
-                className="p-6 cursor-pointer hover:border-primary/50 transition-all hover-elevate bg-card/50 flex flex-col items-center text-center space-y-4 border-white/5 border-dashed"
-                onClick={() => setShowCreate(true)}
+                className={`p-6 cursor-pointer transition-all hover-elevate bg-card/50 flex flex-col items-center text-center space-y-4 border-dashed relative ${
+                  subscription.canUseCustomPersona
+                    ? "hover:border-primary/50 border-white/5"
+                    : "hover:border-primary/30 border-white/5"
+                }`}
+                onClick={handleCreateClick}
               >
+                {!subscription.canUseCustomPersona && (
+                  <div className="absolute top-3 right-3 bg-primary/20 rounded-full px-2 py-0.5 flex items-center gap-1">
+                    <Crown className="w-3 h-3 text-primary" />
+                    <span className="text-primary text-xs font-medium">Spark+</span>
+                  </div>
+                )}
                 <div className="w-24 h-24 rounded-full bg-secondary/50 flex items-center justify-center">
-                  <Plus className="w-10 h-10 text-muted-foreground" />
+                  {subscription.canUseCustomPersona ? (
+                    <Plus className="w-10 h-10 text-muted-foreground" />
+                  ) : (
+                    <Lock className="w-8 h-8 text-muted-foreground/50" />
+                  )}
                 </div>
                 <div>
                   <h3 className="text-2xl font-medium text-muted-foreground">Create yours</h3>
-                  <p className="text-muted-foreground/60 font-medium text-sm mt-1">Upload a photo</p>
-                  <p className="text-muted-foreground/40 text-sm mt-3">Bring someone to life as your AI companion</p>
+                  <p className="text-muted-foreground/60 font-medium text-sm mt-1">
+                    {subscription.canUseCustomPersona ? "Upload a photo" : "Spark plan required"}
+                  </p>
+                  <p className="text-muted-foreground/40 text-sm mt-3">
+                    {subscription.canUseCustomPersona
+                      ? "Bring someone to life as your AI companion"
+                      : "Upgrade to create a companion from any photo"}
+                  </p>
                 </div>
               </Card>
             )}
           </>
+        )}
+      </div>
+
+      <div className="text-center">
+        {subscription.status.active ? (
+          <p className="text-xs text-muted-foreground">
+            {subscription.status.tier === "flame" ? "🔥 Flame" : "✨ Spark"} · {subscription.status.email} ·{" "}
+            <button className="underline hover:text-white transition-colors" onClick={subscription.openPortal}>
+              Manage subscription
+            </button>
+          </p>
+        ) : (
+          <button
+            className="text-sm text-primary hover:text-primary/80 transition-colors underline underline-offset-4"
+            onClick={onUpgrade}
+          >
+            Upgrade for voice, custom companions &amp; more ↗
+          </button>
         )}
       </div>
     </div>
