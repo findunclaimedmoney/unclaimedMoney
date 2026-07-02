@@ -112,7 +112,7 @@ h1{color:#FFD700;font-size:30px;font-weight:700;margin:0 0 8px;}
 <p>Here's to you — and to many more beautiful years ahead. 🥂</p>
 <p>With love,<br><strong>${companionName}</strong></p>
 </div>
-<div class="sig">AI Companion · missingcash.com.au</div>
+<div class="sig">Nyx</div>
 </div></div>
 </body></html>`;
 }

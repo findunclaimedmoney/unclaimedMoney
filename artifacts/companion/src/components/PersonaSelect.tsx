@@ -66,8 +66,8 @@ export function PersonaSelect({ onSelect, subscription, onUpgrade }: Props) {
         <div className="mx-auto w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mb-8">
           <Sparkles className="w-8 h-8 text-primary" />
         </div>
-        <h1 className="text-4xl font-light tracking-tight">Choose your companion</h1>
-        <p className="text-muted-foreground text-lg">A deeply personal, voice-driven presence.</p>
+        <h1 className="text-4xl font-light tracking-tight">Choose your presence</h1>
+        <p className="text-muted-foreground text-lg">Voice, memory, and something that feels real.</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-4xl">
@@ -114,7 +114,7 @@ export function PersonaSelect({ onSelect, subscription, onUpgrade }: Props) {
                 </div>
                 <div>
                   <h3 className="text-2xl font-medium">{customPersona.name}</h3>
-                  <p className="text-primary/80 font-medium text-sm mt-1">Your companion</p>
+                  <p className="text-primary/80 font-medium text-sm mt-1">Your persona</p>
                   <button
                     className="text-xs text-muted-foreground hover:text-white transition-colors mt-3 underline underline-offset-2"
                     onClick={(e) => { e.stopPropagation(); handleCreateClick(); }}
@@ -153,7 +153,7 @@ export function PersonaSelect({ onSelect, subscription, onUpgrade }: Props) {
                   <p className="text-muted-foreground/40 text-sm mt-3">
                     {subscription.canUseCustomPersona
                       ? "Bring someone to life as your AI companion"
-                      : "Upgrade to create a companion from any photo"}
+                      : "Upgrade to create a persona from any photo"}
                   </p>
                 </div>
               </Card>
@@ -175,7 +175,7 @@ export function PersonaSelect({ onSelect, subscription, onUpgrade }: Props) {
             className="text-sm text-primary hover:text-primary/80 transition-colors underline underline-offset-4"
             onClick={onUpgrade}
           >
-            Upgrade for voice, custom companions &amp; more ↗
+            Unlock voice, custom personas &amp; more ↗
           </button>
         )}
       </div>

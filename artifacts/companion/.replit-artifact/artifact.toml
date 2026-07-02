@@ -1,6 +1,6 @@
 kind = "web"
 previewPath = "/companion/"
-title = "AI Companion"
+title = "Nyx"
 version = "1.0.0"
 id = "artifacts/companion"
 router = "path"
