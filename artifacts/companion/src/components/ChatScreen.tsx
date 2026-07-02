@@ -4,14 +4,14 @@ import { useVoice } from "@/hooks/use-voice";
 import { useAudio } from "@/hooks/use-audio";
 import { Waveform } from "@/components/Waveform";
 import { Button } from "@/components/ui/button";
-import { Mic, MicOff, Send, X, Crown, Video, Loader2 } from "lucide-react";
+import { Mic, MicOff, Send, X, Crown, Video, Loader2, Gamepad2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/hooks/use-toast";
 import type { useSubscription } from "@/hooks/use-subscription";
 
 const base = import.meta.env.BASE_URL;
-const apiBase = base.replace("/companion", "");
+const apiBase = base.replace(/\/companion\/?$/, "");
 const PORTRAITS: Record<string, string> = {
   mia: `${base}mia-portrait.png`,
   alex: `${base}alex-portrait.png`,
@@ -28,11 +28,13 @@ interface Props {
   personaId: string;
   customPersona?: CustomPersona;
   subscription: ReturnType<typeof useSubscription>;
+  initialMessage?: string;
   onEnd: () => void;
   onUpgrade: () => void;
+  onActivities: () => void;
 }
 
-export function ChatScreen({ personaId, customPersona, subscription, onEnd, onUpgrade }: Props) {
+export function ChatScreen({ personaId, customPersona, subscription, initialMessage, onEnd, onUpgrade, onActivities }: Props) {
   const { data: personas } = useGetPersonas();
   const persona = personas?.find(p => p.id === personaId);
 
@@ -46,10 +48,7 @@ export function ChatScreen({ personaId, customPersona, subscription, onEnd, onUp
   const getSessionId = () => {
     const key = `companion_session_${customPersona ? "custom" : personaId}`;
     let id = localStorage.getItem(key);
-    if (!id) {
-      id = crypto.randomUUID();
-      localStorage.setItem(key, id);
-    }
+    if (!id) { id = crypto.randomUUID(); localStorage.setItem(key, id); }
     return id;
   };
 
@@ -64,25 +63,26 @@ export function ChatScreen({ personaId, customPersona, subscription, onEnd, onUp
   const [videoLoading, setVideoLoading] = useState(false);
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const initialSent = useRef(false);
 
   const { isPlaying, playBase64, initAudio } = useAudio();
-
-  const handleVoiceResult = (text: string) => {
-    if (text.trim()) handleSend(text);
-  };
-
+  const handleVoiceResult = (text: string) => { if (text.trim()) handleSend(text); };
   const { isListening, startListening, stopListening, hasSupport } = useVoice(handleVoiceResult);
 
   useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-    }
+    if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
   }, [messages]);
+
+  useEffect(() => {
+    if (initialMessage && !initialSent.current) {
+      initialSent.current = true;
+      handleSend(initialMessage);
+    }
+  }, []);
 
   const handleSend = async (text: string) => {
     if (!text.trim()) return;
     initAudio();
-
     const userMsg = { role: "user", content: text };
     const newMessages = [...messages, userMsg];
     setMessages(newMessages);
@@ -91,23 +91,11 @@ export function ChatScreen({ personaId, customPersona, subscription, onEnd, onUp
 
     try {
       const reply = await chatMutation.mutateAsync({
-        data: {
-          sessionId,
-          persona: personaId,
-          messages: newMessages,
-          voice: subscription.canUseVoice,
-        }
+        data: { sessionId, persona: personaId, messages: newMessages, voice: subscription.canUseVoice }
       });
-
       setMessages([...newMessages, { role: "assistant", content: reply.responseText }]);
-
-      if (reply.audioBase64 && subscription.canUseVoice) {
-        playBase64(reply.audioBase64);
-      }
-
-      if (newMessages.length >= 10 && newMessages.length % 5 === 0) {
-        triggerSaveMemory(newMessages);
-      }
+      if (reply.audioBase64 && subscription.canUseVoice) playBase64(reply.audioBase64);
+      if (newMessages.length >= 10 && newMessages.length % 5 === 0) triggerSaveMemory(newMessages);
     } catch {
       toast({ title: "Error", description: "Failed to send message.", variant: "destructive" });
     }
@@ -123,38 +111,26 @@ export function ChatScreen({ personaId, customPersona, subscription, onEnd, onUp
   };
 
   const handleMicClick = () => {
-    if (!subscription.canUseVoice) {
-      setShowPaywall(true);
-      return;
-    }
-    if (isListening) stopListening();
-    else startListening();
+    if (!subscription.canUseVoice) { setShowPaywall(true); return; }
+    if (isListening) stopListening(); else startListening();
   };
 
   const handleVideoCall = async () => {
-    if (!subscription.canUseVideoCall) {
-      setShowPaywall(true);
-      return;
-    }
+    if (!subscription.canUseVideoCall) { setShowPaywall(true); return; }
     const lastAssistant = [...messages].reverse().find(m => m.role === "assistant");
     const text = lastAssistant?.content ?? `Hi, I'm ${displayName}. It's so good to see you.`;
-
-    setVideoLoading(true);
-    setVideoUrl(null);
+    setVideoLoading(true); setVideoUrl(null);
     try {
       const res = await fetch(`${apiBase}/api/companion/video`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text, personaId }),
       });
-      if (!res.ok) throw new Error("Video failed");
+      if (!res.ok) throw new Error();
       const data = await res.json() as { videoUrl: string };
       setVideoUrl(data.videoUrl);
     } catch {
       toast({ title: "Video unavailable", description: "Could not generate video. Try again.", variant: "destructive" });
-    } finally {
-      setVideoLoading(false);
-    }
+    } finally { setVideoLoading(false); }
   };
 
   return (
@@ -174,16 +150,12 @@ export function ChatScreen({ personaId, customPersona, subscription, onEnd, onUp
             )}
           </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1">
+          <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary" onClick={onActivities} title="Activities">
+            <Gamepad2 className="w-5 h-5" />
+          </Button>
           {subscription.canUseVideoCall && (
-            <Button
-              variant="ghost"
-              size="icon"
-              className="text-muted-foreground hover:text-primary"
-              onClick={handleVideoCall}
-              disabled={videoLoading}
-              title="Video call"
-            >
+            <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary" onClick={handleVideoCall} disabled={videoLoading} title="Video call">
               {videoLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Video className="w-5 h-5" />}
             </Button>
           )}
@@ -193,16 +165,11 @@ export function ChatScreen({ personaId, customPersona, subscription, onEnd, onUp
         </div>
       </div>
 
-      {/* Video call overlay */}
+      {/* Video overlay */}
       {videoUrl && (
         <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-6">
           <div className="relative max-w-sm w-full">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="absolute -top-12 right-0 text-white"
-              onClick={() => setVideoUrl(null)}
-            >
+            <Button variant="ghost" size="icon" className="absolute -top-12 right-0 text-white" onClick={() => setVideoUrl(null)}>
               <X className="w-5 h-5" />
             </Button>
             <div className="rounded-2xl overflow-hidden border border-white/10 aspect-square">
@@ -231,12 +198,8 @@ export function ChatScreen({ personaId, customPersona, subscription, onEnd, onUp
               </p>
             </div>
             <div className="space-y-2">
-              <Button className="w-full" onClick={() => { setShowPaywall(false); onUpgrade(); }}>
-                View plans
-              </Button>
-              <Button variant="ghost" className="w-full text-muted-foreground" onClick={() => setShowPaywall(false)}>
-                Continue with text only
-              </Button>
+              <Button className="w-full" onClick={() => { setShowPaywall(false); onUpgrade(); }}>View plans</Button>
+              <Button variant="ghost" className="w-full text-muted-foreground" onClick={() => setShowPaywall(false)}>Continue with text only</Button>
             </div>
           </div>
         </div>
@@ -245,23 +208,19 @@ export function ChatScreen({ personaId, customPersona, subscription, onEnd, onUp
       {/* Messages */}
       <ScrollArea className="flex-1 py-6 pr-4" ref={scrollRef}>
         <div className="space-y-6">
-          {messages.length === 0 && (
+          {messages.length === 0 && !chatMutation.isPending && (
             <div className="h-full flex flex-col items-center justify-center text-muted-foreground mt-20 space-y-4">
               <div className="w-24 h-24 rounded-full bg-secondary/50 flex items-center justify-center pulse-animation">
                 <Mic className="w-8 h-8 text-primary/50" />
               </div>
               <p>Say hello to {displayName}...</p>
               {!subscription.canUseVoice && (
-                <button
-                  className="text-xs text-primary hover:text-primary/80 underline underline-offset-4 transition-colors"
-                  onClick={() => setShowPaywall(true)}
-                >
+                <button className="text-xs text-primary hover:text-primary/80 underline underline-offset-4 transition-colors" onClick={() => setShowPaywall(true)}>
                   Upgrade for voice replies ↗
                 </button>
               )}
             </div>
           )}
-
           {messages.map((msg, i) => (
             <div key={i} className={`flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'}`}>
               <div className={`px-4 py-3 rounded-2xl max-w-[85%] ${
@@ -273,7 +232,6 @@ export function ChatScreen({ personaId, customPersona, subscription, onEnd, onUp
               </div>
             </div>
           ))}
-
           {chatMutation.isPending && (
             <div className="flex items-start">
               <div className="px-4 py-3 rounded-2xl max-w-[85%] bg-secondary text-secondary-foreground rounded-bl-sm flex items-center space-x-2">
@@ -305,13 +263,9 @@ export function ChatScreen({ personaId, customPersona, subscription, onEnd, onUp
                 onClick={handleMicClick}
                 disabled={(!hasSupport && subscription.canUseVoice) || chatMutation.isPending}
               >
-                {isListening ? (
-                  <MicOff className="w-8 h-8 text-white" />
-                ) : subscription.canUseVoice ? (
-                  <Mic className="w-8 h-8 text-primary-foreground" />
-                ) : (
-                  <Crown className="w-6 h-6 text-primary/50" />
-                )}
+                {isListening ? <MicOff className="w-8 h-8 text-white" /> :
+                  subscription.canUseVoice ? <Mic className="w-8 h-8 text-primary-foreground" /> :
+                  <Crown className="w-6 h-6 text-primary/50" />}
               </Button>
               {!subscription.canUseVoice && (
                 <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 whitespace-nowrap">
@@ -321,11 +275,7 @@ export function ChatScreen({ personaId, customPersona, subscription, onEnd, onUp
             </div>
           )}
         </div>
-
-        <form
-          onSubmit={(e) => { e.preventDefault(); handleSend(inputText); }}
-          className="flex items-center space-x-2"
-        >
+        <form onSubmit={(e) => { e.preventDefault(); handleSend(inputText); }} className="flex items-center space-x-2">
           <Input
             value={inputText}
             onChange={e => setInputText(e.target.value)}
@@ -333,16 +283,10 @@ export function ChatScreen({ personaId, customPersona, subscription, onEnd, onUp
             className="flex-1 bg-secondary/50 border-white/5 rounded-full px-6 py-6 h-14"
             disabled={isListening || chatMutation.isPending}
           />
-          <Button
-            type="submit"
-            size="icon"
-            disabled={!inputText.trim() || chatMutation.isPending}
-            className="w-14 h-14 rounded-full"
-          >
+          <Button type="submit" size="icon" disabled={!inputText.trim() || chatMutation.isPending} className="w-14 h-14 rounded-full">
             <Send className="w-5 h-5" />
           </Button>
         </form>
-
         {subscription.status.active && subscription.status.voiceRemaining !== null && (
           <p className="text-center text-[10px] text-muted-foreground/40 mt-3">
             {subscription.status.voiceRemaining} voice messages remaining this month
