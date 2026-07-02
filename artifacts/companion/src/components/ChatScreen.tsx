@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/hooks/use-toast";
 import type { useSubscription } from "@/hooks/use-subscription";
+import { BirthdayCard } from "@/components/BirthdayCard";
 
 const base = import.meta.env.BASE_URL;
 const apiBase = base.replace(/\/companion\/?$/, "");
@@ -62,6 +63,8 @@ export function ChatScreen({ personaId, customPersona, subscription, initialMess
   const [showPaywall, setShowPaywall] = useState(false);
   const [videoLoading, setVideoLoading] = useState(false);
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
+  const [birthdayInfo, setBirthdayInfo] = useState<{ name: string | null; email: string | null } | null>(null);
+  const [showBirthdayCard, setShowBirthdayCard] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const initialSent = useRef(false);
 
@@ -72,6 +75,21 @@ export function ChatScreen({ personaId, customPersona, subscription, initialMess
   useEffect(() => {
     if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
   }, [messages]);
+
+  useEffect(() => {
+    async function checkBirthday() {
+      try {
+        const r = await fetch(`${apiBase}/api/companion/birthday-check/${sessionId}`);
+        if (!r.ok) return;
+        const d = await r.json() as { isBirthday: boolean; name: string | null; email: string | null };
+        if (d.isBirthday) {
+          setBirthdayInfo({ name: d.name, email: d.email });
+          setShowBirthdayCard(true);
+        }
+      } catch { /* ignore */ }
+    }
+    checkBirthday();
+  }, [sessionId]);
 
   useEffect(() => {
     if (initialMessage && !initialSent.current) {
@@ -178,6 +196,22 @@ export function ChatScreen({ personaId, customPersona, subscription, initialMess
             <p className="text-center text-sm text-muted-foreground mt-3">{displayName} · Live</p>
           </div>
         </div>
+      )}
+
+      {/* Birthday card */}
+      {showBirthdayCard && birthdayInfo && (
+        <BirthdayCard
+          name={birthdayInfo.name}
+          email={birthdayInfo.email}
+          personaId={personaId}
+          personaName={displayName}
+          sessionId={sessionId}
+          onDismiss={() => setShowBirthdayCard(false)}
+          onBirthdayChat={() => {
+            setShowBirthdayCard(false);
+            handleSend("It's my birthday today! 🎉");
+          }}
+        />
       )}
 
       {/* Paywall modal */}

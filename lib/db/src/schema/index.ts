@@ -1,4 +1,4 @@
-import { pgTable, serial, text, boolean, timestamp, integer } from "drizzle-orm/pg-core";
+import { pgTable, serial, text, boolean, timestamp, integer, primaryKey } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod/v4";
 
@@ -279,3 +279,14 @@ export const miaDevTasksTable = pgTable("mia_dev_tasks", {
 });
 
 export type MiaDevTask = typeof miaDevTasksTable.$inferSelect;
+
+export const companionFactsTable = pgTable("companion_facts", {
+  sessionId: text("session_id").notNull(),
+  factKey: text("fact_key").notNull(),
+  factValue: text("fact_value").notNull(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+}, (table) => ({
+  pk: primaryKey({ columns: [table.sessionId, table.factKey] }),
+}));
+
+export type CompanionFact = typeof companionFactsTable.$inferSelect;

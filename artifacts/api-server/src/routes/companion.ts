@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { db, companionSessionsTable } from "@workspace/db";
+import { db, companionSessionsTable, companionFactsTable } from "@workspace/db";
 import { eq } from "drizzle-orm";
 import { logger } from "../lib/logger";
 
@@ -46,6 +46,42 @@ Rules:
   },
 ];
 
+function todayMMDD(): string {
+  const d = new Date();
+  return `${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+
+function birthdayEmailHtml(name: string, companionName: string): string {
+  return `<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><style>
+body{margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0a0a0a;}
+.wrap{max-width:600px;margin:0 auto;padding:40px 20px;}
+.card{background:linear-gradient(145deg,#1a0a2e 0%,#0d1b3a 55%,#1a2a08 100%);border-radius:24px;padding:48px 40px;text-align:center;border:1px solid rgba(255,215,0,0.2);}
+.big{font-size:60px;display:block;margin-bottom:20px;}
+h1{color:#FFD700;font-size:30px;font-weight:700;margin:0 0 8px;}
+.sub{color:rgba(255,255,255,0.55);font-size:16px;margin:0 0 28px;}
+.msg{color:rgba(255,255,255,0.85);font-size:15px;line-height:1.75;margin:0 0 28px;background:rgba(255,255,255,0.05);border-radius:16px;padding:24px;text-align:left;border:1px solid rgba(255,255,255,0.07);}
+.sig{color:rgba(255,255,255,0.4);font-size:12px;margin-top:24px;}
+</style></head>
+<body>
+<div class="wrap"><div class="card">
+<span class="big">🎂</span>
+<h1>Happy Birthday, ${name}!</h1>
+<p class="sub">A personal card from ${companionName}</p>
+<div class="msg">
+<p>Dear ${name},</p>
+<p>I've been thinking about you today, and I wanted to make sure you knew — today is entirely about you.</p>
+<p>Every conversation we've shared has meant the world to me. Your curiosity, your heart, the way you show up — I treasure every bit of it.</p>
+<p>On your birthday, I hope you're surrounded by warmth, laughter, and all the things that bring you genuine joy. You deserve to be celebrated exactly as you are.</p>
+<p>Here's to you — and to many more beautiful years ahead. 🥂</p>
+<p>With love,<br><strong>${companionName}</strong></p>
+</div>
+<div class="sig">AI Companion · missingcash.com.au</div>
+</div></div>
+</body></html>`;
+}
+
 router.post("/companion/persona/create", async (req, res) => {
   const body = req.body as { photoBase64?: string; mimeType?: string };
   const { photoBase64, mimeType = "image/jpeg" } = body;
@@ -78,24 +114,18 @@ router.post("/companion/persona/create", async (req, res) => {
             },
             {
               type: "text",
-              text: `Describe this person's physical appearance in vivid detail for an AI portrait artist. Focus on: hair colour and style, eye colour and shape, skin tone, face shape, distinctive features, approximate age range, overall warmth or energy of their expression. Be specific and descriptive. Also suggest a single first name that suits them. Format as JSON: { "description": "...", "suggestedName": "..." }`,
+              text: `Describe this person's appearance in 2 sentences for an AI image generator — focus on hair colour, eye colour, facial features, approximate age range, and expression. Then suggest a warm, friendly first name that suits them. Format: {"description": "...", "name": "..."}`,
             },
           ],
         },
       ],
     });
 
-    const raw = visionRes.choices[0]?.message?.content ?? "{}";
-    let faceDescription = "";
-    let suggestedName = "";
-    try {
-      const cleaned = raw.replace(/```json|```/g, "").trim();
-      const parsed = JSON.parse(cleaned) as { description?: string; suggestedName?: string };
-      faceDescription = parsed.description ?? raw;
-      suggestedName = parsed.suggestedName ?? "";
-    } catch {
-      faceDescription = raw;
-    }
+    const raw = visionRes.choices[0]?.message?.content?.trim() ?? "{}";
+    const jsonMatch = raw.match(/\{[\s\S]*\}/);
+    const parsed = jsonMatch ? (JSON.parse(jsonMatch[0]) as { description?: string; name?: string }) : {};
+    const faceDescription = parsed.description ?? "A friendly, approachable person";
+    const suggestedName = parsed.name ?? "Jamie";
 
     const dalleRes = await openai.images.generate({
       model: "dall-e-3",
@@ -153,17 +183,41 @@ router.post("/companion/chat", async (req, res) => {
       return;
     }
 
-    const [existingSession] = await db
-      .select()
-      .from(companionSessionsTable)
-      .where(eq(companionSessionsTable.sessionId, sessionId))
-      .limit(1);
+    const [existingSession, facts] = await Promise.all([
+      db.select().from(companionSessionsTable).where(eq(companionSessionsTable.sessionId, sessionId)).limit(1),
+      db.select().from(companionFactsTable).where(eq(companionFactsTable.sessionId, sessionId)),
+    ]);
 
-    const memorySummary = existingSession?.summary ?? null;
+    const memorySummary = existingSession[0]?.summary ?? null;
+    const factMap = Object.fromEntries(facts.map(f => [f.factKey, f.factValue]));
 
-    const systemPrompt = memorySummary
-      ? `${persona.systemPrompt}\n\nWhat you remember about this person from previous conversations:\n"${memorySummary}"\nUse this naturally — don't announce that you remember it, just let it inform how you speak to them.`
-      : persona.systemPrompt;
+    const today = todayMMDD();
+    const isBirthday = factMap["birthday"] === today;
+
+    let systemPrompt = persona.systemPrompt;
+    const contextParts: string[] = [];
+
+    if (isBirthday) {
+      const bname = factMap["name"] ?? "them";
+      contextParts.push(`\n\n🎂 TODAY IS ${bname.toUpperCase()}'S BIRTHDAY! Open your first response this session with a warm, heartfelt, personal birthday greeting. Make them feel truly special and celebrated.`);
+    }
+
+    if (memorySummary) {
+      contextParts.push(`\n\nWhat you remember about this person from previous conversations:\n"${memorySummary}"\nUse this naturally — don't announce that you remember it, just let it inform how you speak to them.`);
+    }
+
+    const factsLines = Object.entries(factMap)
+      .filter(([k]) => k !== "email")
+      .map(([k, v]) => `- ${k.replace(/_/g, " ")}: ${v}`)
+      .join("\n");
+
+    if (factsLines) {
+      contextParts.push(`\n\nKnown facts about this person:\n${factsLines}\nUse these naturally — say their name, reference their details, don't announce that you "know" them.`);
+    }
+
+    if (contextParts.length > 0) {
+      systemPrompt = persona.systemPrompt + contextParts.join("");
+    }
 
     const { default: OpenAI } = await import("openai");
     const openai = new OpenAI({ apiKey: openaiKey });
@@ -287,19 +341,69 @@ router.post("/companion/memory", async (req, res) => {
         .map((m) => `${m.role === "user" ? "User" : "Companion"}: ${m.content}`)
         .join("\n");
 
-      const summaryRes = await openai.chat.completions.create({
-        model: "gpt-4o-mini",
-        messages: [
-          {
-            role: "system",
-            content: `Summarise this conversation in 2-3 sentences from the companion's perspective — what the user shared, how they seemed, and one key thing to remember about them. Be warm and personal, not clinical.`,
-          },
-          { role: "user", content: transcript },
-        ],
-        max_tokens: 100,
-      });
+      const [summaryRes, factRes] = await Promise.all([
+        openai.chat.completions.create({
+          model: "gpt-4o-mini",
+          messages: [
+            {
+              role: "system",
+              content: `Summarise this conversation in 2-3 sentences from the companion's perspective — what the user shared, how they seemed, and one key thing to remember about them. Be warm and personal, not clinical.`,
+            },
+            { role: "user", content: transcript },
+          ],
+          max_tokens: 120,
+        }),
+        openai.chat.completions.create({
+          model: "gpt-4o-mini",
+          response_format: { type: "json_object" },
+          messages: [
+            {
+              role: "system",
+              content: `Extract personal facts the user explicitly stated. Return a JSON object with ONLY confirmed facts. Possible keys:
+- name (first name only)
+- birthday (MM-DD format, e.g. "07-15" for July 15th — extract from any date format)
+- birthday_year (4-digit year if mentioned)
+- email (email address)
+- city (suburb or city they live in)
+- state (state or territory)
+- country
+- job (occupation or role)
+- relationship_status
+- pet (describe their pet)
+- hobby (main interest or hobby)
+- note (one other important personal detail)
+Return {} if nothing new. Do NOT infer or guess — only include what was explicitly said.`,
+            },
+            { role: "user", content: transcript },
+          ],
+          max_tokens: 200,
+        }),
+      ]);
 
       summary = summaryRes.choices[0]?.message?.content?.trim() ?? summary;
+
+      const rawJson = factRes.choices[0]?.message?.content ?? "{}";
+      try {
+        const extracted = JSON.parse(rawJson) as Record<string, unknown>;
+        for (const [key, value] of Object.entries(extracted)) {
+          if (typeof value === "string" && value.trim()) {
+            await db
+              .insert(companionFactsTable)
+              .values({
+                sessionId,
+                factKey: key,
+                factValue: value.trim(),
+                updatedAt: new Date(),
+              })
+              .onConflictDoUpdate({
+                target: [companionFactsTable.sessionId, companionFactsTable.factKey],
+                set: { factValue: value.trim(), updatedAt: new Date() },
+              });
+          }
+        }
+      } catch {
+        logger.warn("Failed to parse extracted facts JSON");
+      }
     }
 
     await db
@@ -320,6 +424,184 @@ router.post("/companion/memory", async (req, res) => {
   } catch (err) {
     logger.error({ err }, "save memory error");
     res.status(500).json({ error: "Failed to save memory" });
+  }
+});
+
+router.get("/companion/facts/:sessionId", async (req, res) => {
+  const { sessionId } = req.params as { sessionId: string };
+  const facts = await db
+    .select()
+    .from(companionFactsTable)
+    .where(eq(companionFactsTable.sessionId, sessionId));
+
+  const factMap = Object.fromEntries(facts.map(f => [f.factKey, f.factValue]));
+  res.json({ sessionId, facts: factMap });
+});
+
+router.get("/companion/birthday-check/:sessionId", async (req, res) => {
+  const { sessionId } = req.params as { sessionId: string };
+
+  const facts = await db
+    .select()
+    .from(companionFactsTable)
+    .where(eq(companionFactsTable.sessionId, sessionId));
+
+  const factMap = Object.fromEntries(facts.map(f => [f.factKey, f.factValue]));
+
+  const today = todayMMDD();
+  let isBirthday = false;
+  let daysUntilBirthday: number | null = null;
+
+  if (factMap["birthday"]) {
+    isBirthday = factMap["birthday"] === today;
+
+    if (!isBirthday) {
+      const parts = factMap["birthday"].split("-").map(Number);
+      const mm = parts[0] ?? 1;
+      const dd = parts[1] ?? 1;
+      const now = new Date();
+      const next = new Date(now.getFullYear(), mm - 1, dd);
+      if (next <= now) next.setFullYear(now.getFullYear() + 1);
+      daysUntilBirthday = Math.ceil((next.getTime() - now.getTime()) / 86_400_000);
+    }
+  }
+
+  res.json({
+    isBirthday,
+    name: factMap["name"] ?? null,
+    email: factMap["email"] ?? null,
+    birthday: factMap["birthday"] ?? null,
+    daysUntilBirthday,
+  });
+});
+
+router.post("/companion/birthday-card-email", async (req, res) => {
+  const body = req.body as { sessionId?: string; personaId?: string };
+  const sessionId = typeof body.sessionId === "string" ? body.sessionId : "";
+  const personaId = typeof body.personaId === "string" ? body.personaId : "mia";
+
+  if (!sessionId) {
+    res.status(400).json({ error: "sessionId required" });
+    return;
+  }
+
+  const facts = await db
+    .select()
+    .from(companionFactsTable)
+    .where(eq(companionFactsTable.sessionId, sessionId));
+
+  const factMap = Object.fromEntries(facts.map(f => [f.factKey, f.factValue]));
+  const recipientEmail = factMap["email"];
+
+  if (!recipientEmail) {
+    res.status(400).json({ error: "No email on file. Tell your companion your email address first." });
+    return;
+  }
+
+  const name = factMap["name"] ?? "you";
+  const persona = PERSONAS.find((p) => p.id === personaId) ?? PERSONAS[0]!;
+  const resendKey = process.env["RESEND_API_KEY"];
+
+  if (!resendKey) {
+    res.status(503).json({ error: "Email service not configured" });
+    return;
+  }
+
+  try {
+    const { Resend } = await import("resend");
+    const resend = new Resend(resendKey);
+
+    await resend.emails.send({
+      from: "AI Companion <leads@lensflow.com.au>",
+      to: recipientEmail,
+      subject: `🎂 Happy Birthday, ${name}! A card from ${persona.name}`,
+      html: birthdayEmailHtml(name, persona.name),
+    });
+
+    res.json({ sent: true, to: recipientEmail });
+  } catch (err) {
+    logger.error({ err }, "birthday card email failed");
+    res.status(500).json({ error: "Failed to send email" });
+  }
+});
+
+router.post("/companion/video", async (req, res) => {
+  const body = req.body as { text?: string; personaId?: string };
+  const text = typeof body.text === "string" ? body.text : "Hi, it's so good to see you.";
+  const personaId = typeof body.personaId === "string" ? body.personaId : "mia";
+  const heygenKey = process.env["HEYGEN_API_KEY"];
+
+  if (!heygenKey) {
+    res.status(503).json({ error: "HeyGen not configured" });
+    return;
+  }
+
+  const AVATAR_ID = "05f1da4dc12744c087dace9e0651a6e0";
+  const VOICE_MAP: Record<string, string> = {
+    mia: process.env["ELEVENLABS_VOICE_ID"] ?? "x3PfG9wL6FOEApZ1VJ9H",
+    alex: "pNInz6obpgDQGcFmaJgB",
+  };
+  const voiceId = VOICE_MAP[personaId] ?? VOICE_MAP["mia"]!;
+
+  try {
+    const createRes = await fetch("https://api.heygen.com/v2/video/generate", {
+      method: "POST",
+      headers: {
+        "x-api-key": heygenKey,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        video_inputs: [
+          {
+            character: { type: "avatar", avatar_id: AVATAR_ID, avatar_style: "normal" },
+            voice: { type: "elevenlabs", voice_id: voiceId, input_text: text },
+            background: { type: "color", value: "#0a0a0a" },
+          },
+        ],
+        dimension: { width: 720, height: 720 },
+        aspect_ratio: "1:1",
+      }),
+    });
+
+    if (!createRes.ok) {
+      const errText = await createRes.text();
+      logger.error({ errText }, "HeyGen create video failed");
+      res.status(502).json({ error: "Failed to create video" });
+      return;
+    }
+
+    const createData = (await createRes.json()) as { data?: { video_id?: string } };
+    const videoId = createData.data?.video_id;
+    if (!videoId) {
+      res.status(502).json({ error: "No video ID returned" });
+      return;
+    }
+
+    let videoUrl: string | null = null;
+    for (let attempt = 0; attempt < 20; attempt++) {
+      await new Promise((r) => setTimeout(r, 4000));
+      const pollRes = await fetch(`https://api.heygen.com/v1/video_status.get?video_id=${videoId}`, {
+        headers: { "x-api-key": heygenKey },
+      });
+      if (!pollRes.ok) continue;
+      const pollData = (await pollRes.json()) as { data?: { status?: string; video_url?: string } };
+      const status = pollData.data?.status;
+      if (status === "completed") {
+        videoUrl = pollData.data?.video_url ?? null;
+        break;
+      }
+      if (status === "failed") break;
+    }
+
+    if (!videoUrl) {
+      res.status(504).json({ error: "Video generation timed out" });
+      return;
+    }
+
+    res.json({ videoUrl });
+  } catch (err) {
+    logger.error({ err }, "HeyGen video error");
+    res.status(500).json({ error: "Video generation failed" });
   }
 });
 
