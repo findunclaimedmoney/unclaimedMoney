@@ -46,6 +46,82 @@ Rules:
   },
 ];
 
+router.post("/companion/persona/create", async (req, res) => {
+  const body = req.body as { photoBase64?: string; mimeType?: string };
+  const { photoBase64, mimeType = "image/jpeg" } = body;
+
+  if (!photoBase64) {
+    res.status(400).json({ error: "photoBase64 required" });
+    return;
+  }
+
+  const openaiKey = process.env["OPENAI_API_KEY"];
+  if (!openaiKey) {
+    res.status(503).json({ error: "OpenAI not configured" });
+    return;
+  }
+
+  try {
+    const { default: OpenAI } = await import("openai");
+    const openai = new OpenAI({ apiKey: openaiKey });
+
+    const visionRes = await openai.chat.completions.create({
+      model: "gpt-4o",
+      max_tokens: 300,
+      messages: [
+        {
+          role: "user",
+          content: [
+            {
+              type: "image_url",
+              image_url: { url: `data:${mimeType};base64,${photoBase64}`, detail: "low" },
+            },
+            {
+              type: "text",
+              text: `Describe this person's physical appearance in vivid detail for an AI portrait artist. Focus on: hair colour and style, eye colour and shape, skin tone, face shape, distinctive features, approximate age range, overall warmth or energy of their expression. Be specific and descriptive. Also suggest a single first name that suits them. Format as JSON: { "description": "...", "suggestedName": "..." }`,
+            },
+          ],
+        },
+      ],
+    });
+
+    const raw = visionRes.choices[0]?.message?.content ?? "{}";
+    let faceDescription = "";
+    let suggestedName = "";
+    try {
+      const cleaned = raw.replace(/```json|```/g, "").trim();
+      const parsed = JSON.parse(cleaned) as { description?: string; suggestedName?: string };
+      faceDescription = parsed.description ?? raw;
+      suggestedName = parsed.suggestedName ?? "";
+    } catch {
+      faceDescription = raw;
+    }
+
+    const dalleRes = await openai.images.generate({
+      model: "dall-e-3",
+      prompt: `Photorealistic portrait of a person matching this description exactly: ${faceDescription}. Professional headshot style. Dark moody background with soft ambient rim lighting. The subject faces slightly toward the camera with a warm, approachable expression. No text, no watermarks, no props. High quality, cinematic.`,
+      size: "1024x1024",
+      quality: "standard",
+      n: 1,
+    });
+
+    const imageUrl = dalleRes.data?.[0]?.url;
+    if (!imageUrl) {
+      res.status(500).json({ error: "Image generation failed" });
+      return;
+    }
+
+    const imgResponse = await fetch(imageUrl);
+    const imgBuffer = await imgResponse.arrayBuffer();
+    const portraitBase64 = Buffer.from(imgBuffer).toString("base64");
+
+    res.json({ portraitBase64, faceDescription, suggestedName });
+  } catch (err) {
+    logger.error({ err }, "persona create error");
+    res.status(500).json({ error: "Failed to generate companion" });
+  }
+});
+
 router.get("/companion/personas", (_req, res) => {
   res.json(PERSONAS.map(({ id, name, gender, tagline, description }) => ({ id, name, gender, tagline, description })));
 });

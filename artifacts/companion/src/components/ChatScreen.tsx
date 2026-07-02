@@ -16,13 +16,34 @@ const PORTRAITS: Record<string, string> = {
   alex: `${base}alex-portrait.png`,
 };
 
-export function ChatScreen({ personaId, onEnd }: { personaId: string, onEnd: () => void }) {
+interface CustomPersona {
+  id: "custom";
+  name: string;
+  portraitBase64: string;
+  faceDescription: string;
+}
+
+export function ChatScreen({
+  personaId,
+  customPersona,
+  onEnd,
+}: {
+  personaId: string;
+  customPersona?: CustomPersona;
+  onEnd: () => void;
+}) {
   const { data: personas } = useGetPersonas();
   const persona = personas?.find(p => p.id === personaId);
+
+  const displayName = customPersona?.name ?? persona?.name ?? "";
+  const portraitSrc = customPersona
+    ? `data:image/png;base64,${customPersona.portraitBase64}`
+    : (PORTRAITS[personaId] ?? "");
+
   const { toast } = useToast();
-  
+
   const getSessionId = () => {
-    const key = `companion_session_${personaId}`;
+    const key = `companion_session_${customPersona ? "custom" : personaId}`;
     let id = localStorage.getItem(key);
     if (!id) {
       id = crypto.randomUUID();
@@ -116,13 +137,13 @@ export function ChatScreen({ personaId, onEnd }: { personaId: string, onEnd: () 
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-full overflow-hidden bg-secondary flex-shrink-0">
             <img
-              src={PORTRAITS[personaId] ?? ""}
-              alt={persona?.name ?? ""}
+              src={portraitSrc}
+              alt={displayName}
               className="w-full h-full object-cover"
             />
           </div>
           <div>
-            <h2 className="text-xl font-medium">{persona?.name}</h2>
+            <h2 className="text-xl font-medium">{displayName}</h2>
             {memory?.summary && (
               <p className="text-xs text-muted-foreground truncate max-w-xs" title={memory.summary}>
                 Remembers: {memory.summary}
@@ -142,7 +163,7 @@ export function ChatScreen({ personaId, onEnd }: { personaId: string, onEnd: () 
               <div className="w-24 h-24 rounded-full bg-secondary/50 flex items-center justify-center pulse-animation">
                 <Mic className="w-8 h-8 text-primary/50" />
               </div>
-              <p>Say hello to {persona?.name}...</p>
+              <p>Say hello to {displayName}...</p>
             </div>
           )}
           
