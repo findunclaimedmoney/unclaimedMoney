@@ -280,6 +280,17 @@ export const miaDevTasksTable = pgTable("mia_dev_tasks", {
 
 export type MiaDevTask = typeof miaDevTasksTable.$inferSelect;
 
+export const companionOutfitsTable = pgTable("companion_outfits", {
+  sessionId: text("session_id").notNull(),
+  outfitId: text("outfit_id").notNull(),
+  portraitBase64: text("portrait_base64").notNull(),
+  generatedAt: timestamp("generated_at").notNull().defaultNow(),
+}, (table) => ({
+  pk: primaryKey({ columns: [table.sessionId, table.outfitId] }),
+}));
+
+export type CompanionOutfit = typeof companionOutfitsTable.$inferSelect;
+
 export const companionFactsTable = pgTable("companion_facts", {
   sessionId: text("session_id").notNull(),
   factKey: text("fact_key").notNull(),

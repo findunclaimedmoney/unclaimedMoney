@@ -3,6 +3,7 @@ import { PersonaSelect } from "@/components/PersonaSelect";
 import { ChatScreen } from "@/components/ChatScreen";
 import { Pricing } from "@/components/Pricing";
 import { Activities } from "@/components/Activities";
+import { OutfitPicker } from "@/components/OutfitPicker";
 import { PhotoBooth } from "@/components/activities/PhotoBooth";
 import { ChessGame } from "@/components/activities/ChessGame";
 import { TicTacToe } from "@/components/activities/TicTacToe";
@@ -42,6 +43,7 @@ type Screen =
   | "chat"
   | "pricing"
   | "activities"
+  | "wardrobe"
   | "photobooth"
   | "chess"
   | "tictactoe"
@@ -51,18 +53,25 @@ export default function Home() {
   const [screen, setScreen] = useState<Screen>("select");
   const [selectedPersonaId, setSelectedPersonaId] = useState<string | null>(null);
   const [gameStartMessage, setGameStartMessage] = useState<string | undefined>(undefined);
+  const [activeOutfitId, setActiveOutfitId] = useState<string>("default");
+  const [activeOutfitPortrait, setActiveOutfitPortrait] = useState<string | null>(null);
   const sub = useSubscription();
 
   const customPersona = selectedPersonaId === "custom" ? loadCustomPersona() : null;
   const effectivePersonaId = selectedPersonaId === "custom" ? "mia" : (selectedPersonaId ?? "mia");
   const displayName = customPersona?.name ?? (selectedPersonaId === "mia" ? "Mia" : selectedPersonaId === "alex" ? "Alex" : "Mia");
-  const portraitSrc = customPersona
+  const defaultPortraitSrc = customPersona
     ? `data:image/png;base64,${customPersona.portraitBase64}`
     : (PORTRAITS[effectivePersonaId] ?? PORTRAITS.mia!);
+  const portraitSrc = activeOutfitPortrait
+    ? `data:image/png;base64,${activeOutfitPortrait}`
+    : defaultPortraitSrc;
 
   const handlePersonaSelect = (personaId: string) => {
     setSelectedPersonaId(personaId);
     setGameStartMessage(undefined);
+    setActiveOutfitId("default");
+    setActiveOutfitPortrait(null);
     setScreen("chat");
   };
 
@@ -77,6 +86,12 @@ export default function Home() {
     }
   };
 
+  const handleOutfitSelect = (outfitId: string, portraitBase64: string | null) => {
+    setActiveOutfitId(outfitId);
+    setActiveOutfitPortrait(portraitBase64);
+    setScreen("chat");
+  };
+
   const sessionId = getSessionId(effectivePersonaId);
 
   if (screen === "pricing") {
@@ -89,6 +104,21 @@ export default function Home() {
         companionName={displayName}
         onSelect={handleActivity}
         onBack={() => setScreen("chat")}
+      />
+    );
+  }
+
+  if (screen === "wardrobe") {
+    return (
+      <OutfitPicker
+        sessionId={sessionId}
+        personaId={effectivePersonaId}
+        customPersona={customPersona}
+        activeOutfitId={activeOutfitId}
+        onSelect={handleOutfitSelect}
+        onBack={() => setScreen("chat")}
+        onUpgrade={() => setScreen("pricing")}
+        subscription={sub}
       />
     );
   }
@@ -130,9 +160,11 @@ export default function Home() {
         customPersona={customPersona ?? undefined}
         subscription={sub}
         initialMessage={gameStartMessage}
-        onEnd={() => { setSelectedPersonaId(null); setGameStartMessage(undefined); setScreen("select"); }}
+        portraitOverride={activeOutfitPortrait}
+        onEnd={() => { setSelectedPersonaId(null); setGameStartMessage(undefined); setActiveOutfitId("default"); setActiveOutfitPortrait(null); setScreen("select"); }}
         onUpgrade={() => setScreen("pricing")}
         onActivities={() => setScreen("activities")}
+        onWardrobe={() => setScreen("wardrobe")}
       />
     );
   }

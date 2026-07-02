@@ -4,7 +4,7 @@ import { useVoice } from "@/hooks/use-voice";
 import { useAudio } from "@/hooks/use-audio";
 import { Waveform } from "@/components/Waveform";
 import { Button } from "@/components/ui/button";
-import { Mic, MicOff, Send, X, Crown, Video, Loader2, Gamepad2 } from "lucide-react";
+import { Mic, MicOff, Send, X, Crown, Video, Loader2, Gamepad2, Shirt } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/hooks/use-toast";
@@ -30,19 +30,24 @@ interface Props {
   customPersona?: CustomPersona;
   subscription: ReturnType<typeof useSubscription>;
   initialMessage?: string;
+  portraitOverride?: string | null;
   onEnd: () => void;
   onUpgrade: () => void;
   onActivities: () => void;
+  onWardrobe: () => void;
 }
 
-export function ChatScreen({ personaId, customPersona, subscription, initialMessage, onEnd, onUpgrade, onActivities }: Props) {
+export function ChatScreen({ personaId, customPersona, subscription, initialMessage, portraitOverride, onEnd, onUpgrade, onActivities, onWardrobe }: Props) {
   const { data: personas } = useGetPersonas();
   const persona = personas?.find(p => p.id === personaId);
 
   const displayName = customPersona?.name ?? persona?.name ?? "";
-  const portraitSrc = customPersona
+  const defaultPortrait = customPersona
     ? `data:image/png;base64,${customPersona.portraitBase64}`
     : (PORTRAITS[personaId] ?? "");
+  const portraitSrc = portraitOverride
+    ? `data:image/png;base64,${portraitOverride}`
+    : defaultPortrait;
 
   const { toast } = useToast();
 
@@ -171,6 +176,9 @@ export function ChatScreen({ personaId, customPersona, subscription, initialMess
         <div className="flex items-center gap-1">
           <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary" onClick={onActivities} title="Activities">
             <Gamepad2 className="w-5 h-5" />
+          </Button>
+          <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary" onClick={onWardrobe} title="Wardrobe">
+            <Shirt className="w-5 h-5" />
           </Button>
           {subscription.canUseVideoCall && (
             <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary" onClick={handleVideoCall} disabled={videoLoading} title="Video call">

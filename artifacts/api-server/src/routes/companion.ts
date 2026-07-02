@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { db, companionSessionsTable, companionFactsTable } from "@workspace/db";
+import { db, companionSessionsTable, companionFactsTable, companionOutfitsTable } from "@workspace/db";
 import { eq } from "drizzle-orm";
 import { logger } from "../lib/logger";
 
@@ -522,6 +522,92 @@ router.post("/companion/birthday-card-email", async (req, res) => {
   } catch (err) {
     logger.error({ err }, "birthday card email failed");
     res.status(500).json({ error: "Failed to send email" });
+  }
+});
+
+router.post("/companion/outfit/generate", async (req, res) => {
+  const body = req.body as {
+    sessionId?: string;
+    personaId?: string;
+    outfitId?: string;
+    outfitDescription?: string;
+    faceDescription?: string;
+  };
+
+  const sessionId = typeof body.sessionId === "string" ? body.sessionId : "";
+  const outfitId = typeof body.outfitId === "string" ? body.outfitId : "";
+  const outfitDescription = typeof body.outfitDescription === "string" ? body.outfitDescription : "";
+  const faceDescription = typeof body.faceDescription === "string" ? body.faceDescription : "an attractive young person";
+
+  if (!sessionId || !outfitId || !outfitDescription) {
+    res.status(400).json({ error: "sessionId, outfitId, and outfitDescription required" });
+    return;
+  }
+
+  try {
+    const [cached] = await db
+      .select()
+      .from(companionOutfitsTable)
+      .where(eq(companionOutfitsTable.sessionId, sessionId))
+      .limit(100);
+
+    if (cached && (cached as typeof cached & { outfitId: string }).outfitId === outfitId) {
+      res.json({ portraitBase64: (cached as typeof cached & { portraitBase64: string }).portraitBase64, cached: true });
+      return;
+    }
+
+    const allCached = await db
+      .select()
+      .from(companionOutfitsTable)
+      .where(eq(companionOutfitsTable.sessionId, sessionId));
+
+    const match = allCached.find(r => r.outfitId === outfitId);
+    if (match) {
+      res.json({ portraitBase64: match.portraitBase64, cached: true });
+      return;
+    }
+
+    const openaiKey = process.env["OPENAI_API_KEY"];
+    if (!openaiKey) {
+      res.status(503).json({ error: "OpenAI not configured" });
+      return;
+    }
+
+    const { default: OpenAI } = await import("openai");
+    const openai = new OpenAI({ apiKey: openaiKey });
+
+    const prompt = `Photorealistic portrait of ${faceDescription}, ${outfitDescription}. Professional headshot style. Dark moody bokeh background with warm cinematic rim lighting. The person faces slightly toward camera with a natural engaging expression. No text, no watermarks. High quality, photorealistic.`;
+
+    const dalleRes = await openai.images.generate({
+      model: "dall-e-3",
+      prompt,
+      size: "1024x1024",
+      quality: "standard",
+      n: 1,
+    });
+
+    const imageUrl = dalleRes.data?.[0]?.url;
+    if (!imageUrl) {
+      res.status(500).json({ error: "Image generation failed" });
+      return;
+    }
+
+    const imgRes = await fetch(imageUrl);
+    const imgBuf = await imgRes.arrayBuffer();
+    const portraitBase64 = Buffer.from(imgBuf).toString("base64");
+
+    await db
+      .insert(companionOutfitsTable)
+      .values({ sessionId, outfitId, portraitBase64, generatedAt: new Date() })
+      .onConflictDoUpdate({
+        target: [companionOutfitsTable.sessionId, companionOutfitsTable.outfitId],
+        set: { portraitBase64, generatedAt: new Date() },
+      });
+
+    res.json({ portraitBase64, cached: false });
+  } catch (err) {
+    logger.error({ err }, "outfit generate error");
+    res.status(500).json({ error: "Failed to generate outfit" });
   }
 });
 
