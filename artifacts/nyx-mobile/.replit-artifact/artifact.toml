@@ -1,0 +1,27 @@
+kind = "mobile"
+previewPath = "/nyx-mobile/"
+title = "Nyx"
+version = "1.0.0"
+id = "artifacts/nyx-mobile"
+router = "expo-domain"
+
+[[integratedSkills]]
+name = "expo"
+version = "1.0.0"
+
+[[services]]
+ensurePreviewReachable = "/status"
+name = "expo"
+paths = [ "/nyx-mobile/" ]
+localPort = 23682
+
+[services.development]
+run = "pnpm --filter @workspace/nyx-mobile run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/nyx-mobile", "run", "build" ]
+run = [ "pnpm", "--filter", "@workspace/nyx-mobile", "run", "serve" ]
+
+[services.env]
+PORT = "23682"
+BASE_PATH = "/nyx-mobile/"
