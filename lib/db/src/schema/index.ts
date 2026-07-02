@@ -234,6 +234,17 @@ export const miaGoalsTable = pgTable("mia_goals", {
 
 export type MiaGoal = typeof miaGoalsTable.$inferSelect;
 
+export const companionSessionsTable = pgTable("companion_sessions", {
+  sessionId: text("session_id").primaryKey(),
+  persona: text("persona").notNull().default("mia"),
+  messageCount: integer("message_count").notNull().default(0),
+  summary: text("summary"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export type CompanionSession = typeof companionSessionsTable.$inferSelect;
+
 export const miaConfigTable = pgTable("mia_config", {
   key: text("key").primaryKey(),
   value: text("value").notNull(),

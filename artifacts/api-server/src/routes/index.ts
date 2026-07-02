@@ -15,9 +15,11 @@ import unsubscribeRouter from "./unsubscribe";
 import adminMiaRouter from "./admin-mia";
 import claimReportRouter from "./claim-report";
 import paidSearchRouter from "./paid-search";
+import companionRouter from "./companion";
 
 const router: IRouter = Router();
 
+router.use(companionRouter);
 router.use(healthRouter);
 router.use(miaRouter);
 router.use(miaTtsRouter);

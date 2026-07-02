@@ -6,6 +6,9 @@
  * OpenAPI spec version: 0.1.0
  */
 
-export interface HealthStatus {
-  status: string;
+export interface CompanionReply {
+  responseText: string;
+  sessionId: string;
+  /** @nullable */
+  audioBase64?: string | null;
 }

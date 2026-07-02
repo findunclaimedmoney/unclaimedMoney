@@ -10,6 +10,8 @@ servers:
 tags:
   - name: health
     description: Health operations
+  - name: companion
+    description: AI Companion operations
 paths:
   /healthz:
     get:
@@ -24,6 +26,79 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /companion/personas:
+    get:
+      operationId: getPersonas
+      tags: [companion]
+      summary: List available personas
+      responses:
+        "200":
+          description: List of personas
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Persona"
+
+  /companion/chat:
+    post:
+      operationId: companionChat
+      tags: [companion]
+      summary: Send a message and get a response with audio
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CompanionChatInput"
+      responses:
+        "200":
+          description: AI response with optional audio
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CompanionReply"
+
+  /companion/memory/{sessionId}:
+    get:
+      operationId: getCompanionMemory
+      tags: [companion]
+      summary: Get memory for a session
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Session memory
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CompanionMemory"
+
+  /companion/memory:
+    post:
+      operationId: saveCompanionMemory
+      tags: [companion]
+      summary: Save a memory summary for a session
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CompanionMemoryInput"
+      responses:
+        "200":
+          description: Saved memory
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CompanionMemory"
+
 components:
   schemas:
     HealthStatus:
@@ -34,3 +109,78 @@ components:
       required:
         - status
 
+    Persona:
+      type: object
+      required: [id, name, description, gender, tagline]
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        gender:
+          type: string
+        tagline:
+          type: string
+
+    CompanionMessage:
+      type: object
+      required: [role, content]
+      properties:
+        role:
+          type: string
+        content:
+          type: string
+
+    CompanionChatInput:
+      type: object
+      required: [sessionId, persona, messages]
+      properties:
+        sessionId:
+          type: string
+        persona:
+          type: string
+        messages:
+          type: array
+          items:
+            $ref: "#/components/schemas/CompanionMessage"
+        voice:
+          type: boolean
+
+    CompanionReply:
+      type: object
+      required: [responseText, sessionId]
+      properties:
+        responseText:
+          type: string
+        sessionId:
+          type: string
+        audioBase64:
+          type: ["string", "null"]
+
+    CompanionMemory:
+      type: object
+      required: [sessionId, summary]
+      properties:
+        sessionId:
+          type: string
+        summary:
+          type: string
+        messageCount:
+          type: ["integer", "null"]
+        updatedAt:
+          type: ["string", "null"]
+
+    CompanionMemoryInput:
+      type: object
+      required: [sessionId, persona, messages]
+      properties:
+        sessionId:
+          type: string
+        persona:
+          type: string
+        messages:
+          type: array
+          items:
+            $ref: "#/components/schemas/CompanionMessage"
