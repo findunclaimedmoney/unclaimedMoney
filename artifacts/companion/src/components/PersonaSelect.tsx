@@ -1,8 +1,14 @@
 import { useGetPersonas } from "@workspace/api-client-react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { User, Sparkles } from "lucide-react";
+import { Sparkles } from "lucide-react";
+
+
+const base = import.meta.env.BASE_URL;
+const PORTRAITS: Record<string, string> = {
+  mia: `${base}mia-portrait.png`,
+  alex: `${base}alex-portrait.png`,
+};
 
 export function PersonaSelect({ onSelect }: { onSelect: (personaId: string) => void }) {
   const { data: personas, isLoading } = useGetPersonas();
@@ -30,8 +36,12 @@ export function PersonaSelect({ onSelect }: { onSelect: (personaId: string) => v
               className="p-6 cursor-pointer hover:border-primary/50 transition-all hover-elevate bg-card flex flex-col items-center text-center space-y-4 border-white/5"
               onClick={() => onSelect(persona.id)}
             >
-              <div className="w-20 h-20 rounded-full bg-secondary flex items-center justify-center">
-                <User className="w-10 h-10 text-muted-foreground" />
+              <div className="w-24 h-24 rounded-full overflow-hidden bg-secondary">
+                <img
+                  src={PORTRAITS[persona.id] ?? ""}
+                  alt={persona.name}
+                  className="w-full h-full object-cover"
+                />
               </div>
               <div>
                 <h3 className="text-2xl font-medium">{persona.name}</h3>

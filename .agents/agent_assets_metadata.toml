@@ -294,6 +294,18 @@ uri = "file://attached_assets/generated_images/bp-promo-2026-story.png"
 type = "image"
 title = "BP promo 2026 modern story"
 
+[[generated]]
+id = "6oaGNRvtRlB1SnpHiOtb7"
+uri = "file://artifacts/companion/public/mia-portrait.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "gXp9gLucUkksOOUFM5qCI"
+uri = "file://artifacts/companion/public/alex-portrait.png"
+type = "image"
+title = "generated_image"
+
 [[outputs]]
 id = "7D1S3OguPzzP5KldYUnpB"
 uri = "file://artifacts/missingcash/public/ellie-email.txt"

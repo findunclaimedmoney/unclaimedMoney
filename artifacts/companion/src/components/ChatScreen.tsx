@@ -4,10 +4,17 @@ import { useVoice } from "@/hooks/use-voice";
 import { useAudio } from "@/hooks/use-audio";
 import { Waveform } from "@/components/Waveform";
 import { Button } from "@/components/ui/button";
-import { Mic, MicOff, Send, X, AlertCircle } from "lucide-react";
+import { Mic, MicOff, Send, X } from "lucide-react";
+
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/hooks/use-toast";
+
+const base = import.meta.env.BASE_URL;
+const PORTRAITS: Record<string, string> = {
+  mia: `${base}mia-portrait.png`,
+  alex: `${base}alex-portrait.png`,
+};
 
 export function ChatScreen({ personaId, onEnd }: { personaId: string, onEnd: () => void }) {
   const { data: personas } = useGetPersonas();
@@ -106,13 +113,22 @@ export function ChatScreen({ personaId, onEnd }: { personaId: string, onEnd: () 
   return (
     <div className="flex flex-col h-[100dvh] w-full max-w-2xl mx-auto p-4 md:p-8">
       <div className="flex items-center justify-between pb-6 border-b border-white/5">
-        <div>
-          <h2 className="text-xl font-medium">{persona?.name}</h2>
-          {memory?.summary && (
-            <p className="text-xs text-muted-foreground truncate max-w-xs" title={memory.summary}>
-              Remembers: {memory.summary}
-            </p>
-          )}
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full overflow-hidden bg-secondary flex-shrink-0">
+            <img
+              src={PORTRAITS[personaId] ?? ""}
+              alt={persona?.name ?? ""}
+              className="w-full h-full object-cover"
+            />
+          </div>
+          <div>
+            <h2 className="text-xl font-medium">{persona?.name}</h2>
+            {memory?.summary && (
+              <p className="text-xs text-muted-foreground truncate max-w-xs" title={memory.summary}>
+                Remembers: {memory.summary}
+              </p>
+            )}
+          </div>
         </div>
         <Button variant="ghost" size="icon" onClick={handleEndSession} className="text-muted-foreground hover:text-white">
           <X className="w-5 h-5" />

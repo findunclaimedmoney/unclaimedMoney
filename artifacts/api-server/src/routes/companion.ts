@@ -77,13 +77,25 @@ router.post("/companion/chat", async (req, res) => {
       return;
     }
 
+    const [existingSession] = await db
+      .select()
+      .from(companionSessionsTable)
+      .where(eq(companionSessionsTable.sessionId, sessionId))
+      .limit(1);
+
+    const memorySummary = existingSession?.summary ?? null;
+
+    const systemPrompt = memorySummary
+      ? `${persona.systemPrompt}\n\nWhat you remember about this person from previous conversations:\n"${memorySummary}"\nUse this naturally — don't announce that you remember it, just let it inform how you speak to them.`
+      : persona.systemPrompt;
+
     const { default: OpenAI } = await import("openai");
     const openai = new OpenAI({ apiKey: openaiKey });
 
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
-        { role: "system", content: persona.systemPrompt },
+        { role: "system", content: systemPrompt },
         ...messages.slice(-20).map((m) => ({
           role: m.role as "user" | "assistant",
           content: m.content,
