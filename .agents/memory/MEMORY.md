@@ -7,3 +7,4 @@
 - [Contact finder strategy](contact-finder-strategy.md) — 6 sources (DDG general, DDG email dork, Google email dork, White Pages, Yellow Pages, ABN Lookup); collects best phone + email independently; never stops at phone-only hit.
 - [Mia Lab](mia-lab.md) — admin /admin tab "🧪 Mia Lab": type test message → run → edit prompt → run again → compare A vs B side by side. GET /api/admin/mia/prompts + POST /api/admin/mia/test.
 - [Companion subscription model](companion-subscription.md) — email-based Stripe subscriptions; Spark $9.99 (200 voice/mo), Flame $19.99 (unlimited + HeyGen video).
+- [Nyx branding](nyx-branding.md) — app name is Nyx (confirmed), premium/mysterious vibe, gender-neutral; GitHub backup at github.com/findunclaimedmoney/nyx (origin remote).
