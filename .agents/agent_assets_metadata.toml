@@ -503,3 +503,9 @@ id = "GGYp7xP-53gJ9j7RkVDI0"
 uri = "file://handover-2026-07-02.md"
 type = "text"
 title = "3. Session Handover — Migration Instructions"
+
+[[outputs]]
+id = "6q9iA5Xd8dFFWb89EmoWa"
+uri = "file://ai-companion-source.tar.gz"
+type = "unspecified"
+title = "AI Companion — Full Source Code"
