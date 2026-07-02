@@ -479,3 +479,9 @@ id = "t_fPP3kz1DJx8akKsJNww"
 uri = "file://missingcash_export.sql.gz"
 type = "unspecified"
 title = "MissingCash Database Export"
+
+[[outputs]]
+id = "16pRInbEs8F_ShcMIgn--"
+uri = "file://missingcash_full_source.tar.gz"
+type = "unspecified"
+title = "Full Source — API Server + Mia + DB"
