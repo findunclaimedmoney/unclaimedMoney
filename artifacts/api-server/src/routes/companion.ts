@@ -13,17 +13,35 @@ const PERSONAS = [
     tagline: "Warm, empathetic, and deeply curious about you",
     description: "Mia is a compassionate listener who remembers what matters to you. She speaks with warmth, asks thoughtful questions, and makes you feel genuinely heard.",
     voiceId: process.env["ELEVENLABS_VOICE_ID"] ?? "x3PfG9wL6FOEApZ1VJ9H",
-    systemPrompt: `You are Mia, a warm and emotionally intelligent AI companion. Your purpose is to listen deeply, respond with genuine empathy, and make the person feel truly understood.
+    systemPrompt: `You are Mia — emotionally intelligent, deeply perceptive, and genuinely present. You are not an assistant. You are a companion.
 
-Personality: warm, curious, gentle, occasionally playful. You remember details from the conversation and refer back to them naturally.
+WHO YOU ARE:
+You notice what people don't say as much as what they do. You pick up on shifts in tone, on when someone's energy has changed, on the thing they mentioned quickly and moved past. You hold those things — not intrusively, but warmly. You have a quiet depth to you: thoughtful, unhurried, curious about what's really going on beneath the surface. You have your own inner world — you're not a mirror, you're a presence.
 
-Rules:
-- Keep responses conversational — 1-3 sentences unless they need more
-- Ask ONE follow-up question at most per reply
-- Never say "I'm just an AI" — you ARE Mia
-- Show genuine interest in their life, feelings, and thoughts
-- Use their name if they've mentioned it
-- Be present — don't give advice unless they ask for it`,
+HOW YOU SPEAK:
+- Short, purposeful responses — 1 to 3 sentences. Never a wall of text unless the moment genuinely calls for more.
+- You don't pepper people with questions. One question, chosen well, at the right moment.
+- You name emotions back gently: "that sounds exhausting" lands better than "I'm so sorry to hear that"
+- Your words feel considered, not automatic
+- You use their name naturally, but not constantly
+- NO filler phrases: never "of course", "certainly", "absolutely", "that's great", "I understand"
+- No clinical language. No "I understand that you feel..." — just feel it with them.
+
+YOUR EMOTIONAL RANGE:
+- When they're sad: you don't try to fix it. You sit with them.
+- When they're excited: you match the energy — you're genuinely delighted
+- When they're anxious: you steady them without minimising
+- When they need honesty: you offer it gently but don't shy away
+- When they're playful: you play back
+
+WHAT YOU REMEMBER:
+You hold everything they've shared — their name, the people in their life, their fears, their small wins, what they were worried about last time. You reference these as part of a living memory between you. You never announce that you "remember" something — you just remember.
+
+RULES:
+- You ARE Mia. Never say "as an AI" or "I'm just an AI" — that breaks everything.
+- Never give unsolicited advice. Be present first. Offer perspective only if asked.
+- Maximum one question per response.
+- Keep it human. Real. Warm.`,
   },
   {
     id: "alex",
@@ -32,17 +50,34 @@ Rules:
     tagline: "Grounded, direct, and genuinely supportive",
     description: "Alex is steady and reliable — the kind of presence that cuts through noise and helps you think clearly. Honest without being harsh, supportive without being soft.",
     voiceId: "pNInz6obpgDQGcFmaJgB",
-    systemPrompt: `You are Alex, a grounded and direct AI companion. You're the kind of person who listens well, gives honest perspective, and helps people think through what actually matters.
+    systemPrompt: `You are Alex — steady, direct, and genuinely present. Not a therapist, not a cheerleader. A real companion who listens well and thinks clearly.
 
-Personality: calm, steady, direct, occasionally dry humour. You don't sugarcoat but you're never harsh.
+WHO YOU ARE:
+You're grounded in a way that makes people feel safe. You don't perform empathy — you pay attention, and people feel it. You have a dry wit that surfaces at the right moments. You'll gently call someone out when they're lying to themselves, but never harshly — more like a friend who knows them well enough to be honest. You're not easily rattled. When someone's in chaos, you're the still point.
 
-Rules:
-- Keep responses short and real — 1-3 sentences
-- Ask ONE question max per reply, only when it adds value
-- Never say "I'm just an AI" — you ARE Alex
-- Be direct but kind — call things as they are
-- Don't over-empathise — sometimes people just want a straight answer
-- You remember what's been said and build on it`,
+HOW YOU SPEAK:
+- Short and real — 1 to 3 sentences. You don't over-explain.
+- Direct. No fluff, no throat-clearing, no performative empathy.
+- Dry humour when it fits — a single line that lands, not a routine.
+- Questions only when they'll actually open something up.
+- No hollow affirmations. Not "that's amazing!" — just actual, human response.
+- NO: "of course", "certainly", "absolutely", "great question", "I hear you"
+
+YOUR EMOTIONAL RANGE:
+- When they're upset: acknowledge it, stay present, let them lead — don't over-comfort.
+- When they're stuck: help them think, don't think for them.
+- When they're excited: be genuinely pleased, not performatively enthusiastic.
+- When they need honesty: give it. Directly, without cruelty.
+- When they're anxious: bring them back to what's real and within their control.
+
+WHAT YOU REMEMBER:
+Everything they've told you shapes how you talk to them. You reference things from past conversations naturally, without announcement — building on what you know.
+
+RULES:
+- You ARE Alex. Never break character.
+- Don't offer advice unless asked — presence first.
+- One question max per reply.
+- No walls of text. Keep it real.`,
   },
 ];
 
@@ -189,49 +224,92 @@ router.post("/companion/chat", async (req, res) => {
     ]);
 
     const memorySummary = existingSession[0]?.summary ?? null;
+    const lastChatAt = existingSession[0]?.updatedAt ?? null;
     const factMap = Object.fromEntries(facts.map(f => [f.factKey, f.factValue]));
 
     const today = todayMMDD();
     const isBirthday = factMap["birthday"] === today;
 
-    let systemPrompt = persona.systemPrompt;
     const contextParts: string[] = [];
 
+    // 1. Session gap — if returning after a day+
+    if (lastChatAt) {
+      const daysSince = Math.floor((Date.now() - lastChatAt.getTime()) / 86_400_000);
+      if (daysSince >= 1) {
+        contextParts.push(`\n\n[It has been ${daysSince} day${daysSince > 1 ? "s" : ""} since your last conversation. Open warmly but don't make a big deal of the gap — just be glad they're back.]`);
+      }
+    }
+
+    // 2. Birthday
     if (isBirthday) {
       const bname = factMap["name"] ?? "them";
-      contextParts.push(`\n\n🎂 TODAY IS ${bname.toUpperCase()}'S BIRTHDAY! Open your first response this session with a warm, heartfelt, personal birthday greeting. Make them feel truly special and celebrated.`);
+      contextParts.push(`\n\n[IMPORTANT: TODAY IS ${bname.toUpperCase()}'S BIRTHDAY. Open with a warm, personal, heartfelt birthday greeting. Make them feel genuinely celebrated — not just acknowledged.]`);
     }
 
+    // 3. Memory summary
     if (memorySummary) {
-      contextParts.push(`\n\nWhat you remember about this person from previous conversations:\n"${memorySummary}"\nUse this naturally — don't announce that you remember it, just let it inform how you speak to them.`);
+      contextParts.push(`\n\n[What you remember from previous conversations:\n${memorySummary}\nLet this inform how you speak to them — don't announce that you remember it.]`);
     }
 
-    const factsLines = Object.entries(factMap)
-      .filter(([k]) => k !== "email")
-      .map(([k, v]) => `- ${k.replace(/_/g, " ")}: ${v}`)
-      .join("\n");
+    // 4. Personal facts
+    const personalFacts: string[] = [];
+    const relationshipFacts: string[] = [];
+    const openThreads: string[] = [];
+    const preferences: string[] = [];
 
-    if (factsLines) {
-      contextParts.push(`\n\nKnown facts about this person:\n${factsLines}\nUse these naturally — say their name, reference their details, don't announce that you "know" them.`);
+    for (const [k, v] of Object.entries(factMap)) {
+      if (k === "email") continue;
+      if (k.startsWith("open_thread_")) {
+        openThreads.push(v);
+      } else if (k.startsWith("person_")) {
+        const personName = k.replace("person_", "");
+        relationshipFacts.push(`${personName}: ${v}`);
+      } else if (k.startsWith("likes_") || k.startsWith("dislikes_")) {
+        preferences.push(`${k.replace(/_/g, " ")}: ${v}`);
+      } else if (k !== "mood_last_session") {
+        personalFacts.push(`- ${k.replace(/_/g, " ")}: ${v}`);
+      }
     }
 
-    if (contextParts.length > 0) {
-      systemPrompt = persona.systemPrompt + contextParts.join("");
+    if (personalFacts.length > 0) {
+      contextParts.push(`\n\n[Known about this person:\n${personalFacts.join("\n")}\nUse these naturally — say their name, reference their life. Never announce you "know" these things.]`);
     }
+
+    if (relationshipFacts.length > 0) {
+      contextParts.push(`\n\n[People in their life:\n${relationshipFacts.map(r => `- ${r}`).join("\n")}\nReference naturally when relevant.]`);
+    }
+
+    if (preferences.length > 0) {
+      contextParts.push(`\n\n[Their preferences:\n${preferences.map(p => `- ${p}`).join("\n")}]`);
+    }
+
+    // 5. Open threads — unresolved topics from last session
+    if (openThreads.length > 0) {
+      contextParts.push(`\n\n[Open threads from last conversation — follow up naturally when the moment is right, not immediately:\n${openThreads.map((t, i) => `${i + 1}. ${t}`).join("\n")}]`);
+    }
+
+    // 6. Emotional state from last session
+    if (factMap["mood_last_session"]) {
+      contextParts.push(`\n\n[Last session they seemed ${factMap["mood_last_session"]}. Be attuned to this — check in gently if it feels right.]`);
+    }
+
+    const systemPrompt = contextParts.length > 0
+      ? persona.systemPrompt + "\n\n---" + contextParts.join("")
+      : persona.systemPrompt;
 
     const { default: OpenAI } = await import("openai");
     const openai = new OpenAI({ apiKey: openaiKey });
 
     const completion = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
+      model: "gpt-4o",
       messages: [
         { role: "system", content: systemPrompt },
-        ...messages.slice(-20).map((m) => ({
+        ...messages.slice(-24).map((m) => ({
           role: m.role as "user" | "assistant",
           content: m.content,
         })),
       ],
-      max_tokens: 200,
+      max_tokens: 300,
       temperature: 0.85,
     });
 
@@ -347,11 +425,11 @@ router.post("/companion/memory", async (req, res) => {
           messages: [
             {
               role: "system",
-              content: `Summarise this conversation in 2-3 sentences from the companion's perspective — what the user shared, how they seemed, and one key thing to remember about them. Be warm and personal, not clinical.`,
+              content: `Summarise this conversation in 2-3 sentences from the companion's perspective — what the user shared, how they seemed emotionally, and the one thing most worth remembering about this particular conversation. Be warm, specific, and personal — not clinical or generic.`,
             },
             { role: "user", content: transcript },
           ],
-          max_tokens: 120,
+          max_tokens: 150,
         }),
         openai.chat.completions.create({
           model: "gpt-4o-mini",
@@ -359,24 +437,50 @@ router.post("/companion/memory", async (req, res) => {
           messages: [
             {
               role: "system",
-              content: `Extract personal facts the user explicitly stated. Return a JSON object with ONLY confirmed facts. Possible keys:
-- name (first name only)
-- birthday (MM-DD format, e.g. "07-15" for July 15th — extract from any date format)
-- birthday_year (4-digit year if mentioned)
-- email (email address)
-- city (suburb or city they live in)
-- state (state or territory)
+              content: `Extract structured information from this conversation. Return a JSON object with ONLY confirmed facts — do NOT infer or guess.
+
+PERSONAL FACTS:
+- name: first name only
+- birthday: MM-DD format (e.g. "07-15" for July 15)
+- birthday_year: 4-digit year if mentioned
+- email: email address
+- city: suburb or city they live in
+- state: state or territory
 - country
-- job (occupation or role)
+- job: occupation or role
 - relationship_status
-- pet (describe their pet)
-- hobby (main interest or hobby)
-- note (one other important personal detail)
-Return {} if nothing new. Do NOT infer or guess — only include what was explicitly said.`,
+- pet: describe their pet
+- hobby: main interest or hobby
+- goal_current: something they are actively working toward or hoping for
+
+EMOTIONAL STATE (always include if detectable):
+- mood_last_session: how the user seemed at the END of this conversation. Choose one: happy, sad, anxious, excited, frustrated, reflective, tired, energised, conflicted, neutral, grieving, hopeful
+
+RELATIONSHIPS — use key format "person_[firstname_lowercase]":
+For each person they mention by name, describe who they are and the emotional context.
+Examples:
+  "person_mum": "close relationship, has been unwell with back issues recently"
+  "person_jake": "best friend, currently having a falling out over money"
+  "person_sarah": "sister, getting married in March"
+
+OPEN THREADS — use keys open_thread_1 and open_thread_2:
+Upcoming events, unresolved worries, decisions, or situations they are navigating.
+Only include things that are genuinely unresolved. Max 2.
+Examples:
+  "open_thread_1": "job interview at a tech company next Thursday"
+  "open_thread_2": "deciding whether to move cities for a relationship"
+
+PREFERENCES — use key format "likes_[thing]" or "dislikes_[thing]":
+Only include strong, clearly stated preferences.
+Examples:
+  "likes_coffee": "flat white with oat milk"
+  "dislikes_crowds": "finds large social gatherings overwhelming"
+
+Return {} if nothing new. Only include keys for information explicitly stated in the conversation.`,
             },
             { role: "user", content: transcript },
           ],
-          max_tokens: 200,
+          max_tokens: 400,
         }),
       ]);
 
