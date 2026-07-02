@@ -1,6 +1,5 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 
-// Extend window for SpeechRecognition
 declare global {
   interface Window {
     SpeechRecognition: any;
@@ -11,33 +10,38 @@ declare global {
 export function useVoice(onResult: (text: string) => void) {
   const [isListening, setIsListening] = useState(false);
   const [recognition, setRecognition] = useState<any>(null);
+  const onResultRef = useRef(onResult);
+
+  useEffect(() => {
+    onResultRef.current = onResult;
+  });
 
   useEffect(() => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (SpeechRecognition) {
-      const rec = new SpeechRecognition();
-      rec.continuous = false;
-      rec.interimResults = false;
-      rec.lang = 'en-US';
+    if (!SpeechRecognition) return;
 
-      rec.onresult = (event: any) => {
-        const transcript = event.results[0][0].transcript;
-        onResult(transcript);
-        setIsListening(false);
-      };
+    const rec = new SpeechRecognition();
+    rec.continuous = false;
+    rec.interimResults = false;
+    rec.lang = 'en-US';
 
-      rec.onerror = (event: any) => {
-        console.error('Speech recognition error', event.error);
-        setIsListening(false);
-      };
+    rec.onresult = (event: any) => {
+      const transcript = event.results[0][0].transcript;
+      onResultRef.current(transcript);
+      setIsListening(false);
+    };
 
-      rec.onend = () => {
-        setIsListening(false);
-      };
+    rec.onerror = (event: any) => {
+      console.error('Speech recognition error', event.error);
+      setIsListening(false);
+    };
 
-      setRecognition(rec);
-    }
-  }, [onResult]);
+    rec.onend = () => {
+      setIsListening(false);
+    };
+
+    setRecognition(rec);
+  }, []);
 
   const startListening = useCallback(() => {
     if (recognition) {
@@ -47,8 +51,6 @@ export function useVoice(onResult: (text: string) => void) {
       } catch (e) {
         console.error(e);
       }
-    } else {
-      console.warn("Speech recognition not supported in this browser.");
     }
   }, [recognition]);
 
