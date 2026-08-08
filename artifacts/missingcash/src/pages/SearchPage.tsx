@@ -7,8 +7,8 @@ const BASE = import.meta.env.BASE_URL;
 
 export default function SearchPage() {
   usePageSEO({
-    title: "Search Your Name — $9.99 | MissingCash",
-    description: "Pay $9.99 and Mia searches every major Australian unclaimed money register for your name. Results emailed within minutes — guaranteed.",
+    title: "Search Your Name — $24.99 | MissingCash",
+    description: "Pay $24.99 and Mia searches every major Australian unclaimed money register for your name. Results emailed within minutes — guaranteed.",
   });
 
   const source = new URLSearchParams(window.location.search).get("v") ?? undefined;
@@ -83,7 +83,7 @@ export default function SearchPage() {
                 <p className="text-xs text-muted-foreground">Results emailed within minutes</p>
               </div>
               <div className="text-right">
-                <p className="text-2xl font-bold text-primary">$9.99</p>
+                <p className="text-2xl font-bold text-primary">$24.99</p>
                 <p className="text-xs text-muted-foreground">one-time · AUD</p>
               </div>
             </div>
@@ -147,7 +147,7 @@ export default function SearchPage() {
                 disabled={loading}
                 className="w-full h-11 rounded-xl bg-primary text-primary-foreground font-bold text-sm hover:bg-primary/90 transition-colors disabled:opacity-60 shadow-[0_0_20px_rgba(245,185,66,0.25)]"
               >
-                {loading ? "Setting up payment…" : "Search My Name — $9.99"}
+                {loading ? "Setting up payment…" : "Search My Name — $24.99"}
               </button>
             </form>
 
