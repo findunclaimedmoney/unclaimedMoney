@@ -49,7 +49,7 @@ router.post("/paid-search/initiate", async (req, res): Promise<void> => {
       line_items: [{
         price_data: {
           currency: "aud",
-          unit_amount: 249,
+          unit_amount: 2499,
           product_data: {
             name: "Mia Name Search",
             description: `Full search of Australian unclaimed money registers for ${firstName} ${lastName}. Results emailed within minutes.`,
