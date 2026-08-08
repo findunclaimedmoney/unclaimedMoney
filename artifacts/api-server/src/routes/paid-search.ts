@@ -7,8 +7,8 @@ const router: IRouter = Router();
 
 const FROM_ADDRESS =
   process.env.MISSINGCASH_DOMAIN_VERIFIED === "true"
-    ? "MissingCash <leads@missingcash.com.au>"
-    : "MissingCash <leads@lensflow.com.au>";
+    ? "MissingCash <admin@missingcash.com.au>"
+    : "MissingCash <admin@lensflow.com.au>";
 
 const SITE_BASE = "https://missingcash.com.au";
 
