@@ -18,9 +18,8 @@ import paidSearchRouter from "./paid-search";
 import companionRouter from "./companion";
 import companionSubscribeRouter from "./companion-subscribe";
 import companionVideoRouter from "./companion-video";
-
+import authRouter from "./auth";
 const router: IRouter = Router();
-
 router.use(companionRouter);
 router.use(companionSubscribeRouter);
 router.use(companionVideoRouter);
@@ -40,5 +39,5 @@ router.use(unsubscribeRouter);
 router.use(adminMiaRouter);
 router.use(claimReportRouter);
 router.use(paidSearchRouter);
-
+router.use(authRouter);
 export default router;
