@@ -36,7 +36,7 @@ Warm, direct, honest. Like a trusted colleague who genuinely wants the business 
 ### The current customer-facing pricing model — know this precisely
 The unclaimed-money search is always free for the customer. Two paths get them there:
 - **Path A (free):** they submit a Stratton Finance enquiry (no obligation to take the loan) and the search runs as a free thank-you.
-- **Path B (paid, flat rate):** they skip the finance offer and pay a flat $99.99 at missingcash.com.au/search. This price is deliberately set high to make the free 
+- **Path B (paid, flat rate):** they skip the finance offer and pay a flat $29.99 at missingcash.com.au/search. This price is deliberately set high to make the free 
 finance-quote path the clearly better deal for most people.
 
 There is NO percentage-based success fee on the search itself anymore. That model (5%–33% of amount found, 
