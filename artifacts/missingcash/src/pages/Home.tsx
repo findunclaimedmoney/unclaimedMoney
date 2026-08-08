@@ -116,7 +116,7 @@ export default function Home() {
                   </Button>
 
                   <p className="text-xs text-center text-muted-foreground flex items-center justify-center gap-1.5 mt-4">
-                    <span role="img" aria-label="lock">🔒</span> Free via a Stratton Finance quote, or $99.99 direct · ATO, ASIC, myGov, State Registers &amp; more
+                    <span role="img" aria-label="lock">🔒</span> Free via a Stratton Finance quote, or $24.99 direct · ATO, ASIC, myGov, State Registers &amp; more
                   </p>
                 </form>
               </CardContent>
@@ -225,7 +225,7 @@ export default function Home() {
             {[
               { step: "1", title: "Get a Free Quote", desc: "Answer a few quick questions for a no-obligation Stratton Finance quote — you're never signed up for anything just by asking." },
               { step: "2", title: "Search Included, Free", desc: "As a thank-you, Mia runs your unclaimed-money search across 8 government databases at no cost." },
-              { step: "3", title: "Or Skip It — $99.99", desc: "Not interested in a quote? Pay a flat $99.99 and Mia searches immediately — results emailed within minutes, found or not." },
+              { step: "3", title: "Or Skip It — $24.99", desc: "Not interested in a quote? Pay a flat $24.99 and Mia searches immediately — results emailed within minutes, found or not." },
             ].map((item, i) => (
               <div key={i} className="relative p-6 rounded-2xl bg-card border border-border text-center flex flex-col items-center group hover:border-primary/50 transition-colors">
                 <div className="w-14 h-14 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-heading text-2xl mb-6 shadow-lg group-hover:scale-110 transition-transform">
@@ -272,7 +272,7 @@ export default function Home() {
               </p>
               <a href="https://buy.stripe.com/6oUbJ0eCE4FDbAFaYo4c800" target="_blank" rel="noopener noreferrer">
                 <Button variant="outline" className="w-full font-bold tracking-wider border-primary/40 text-primary hover:bg-primary/10">
-                  GET THE GUIDE — $4.99
+                  GET THE GUIDE — $24.99
                 </Button>
               </a>
               <p className="text-[10px] text-muted-foreground mt-2">📄 Instant PDF · Search at your own pace</p>
@@ -295,7 +295,7 @@ export default function Home() {
                   GET A FREE QUOTE
                 </Button>
               </a>
-              <p className="text-[10px] text-muted-foreground mt-2">🔒 No obligation · Or skip to /search for $99.99</p>
+              <p className="text-[10px] text-muted-foreground mt-2">🔒 No obligation · Or skip to /search for $24.99</p>
             </div>
           </div>
         </div>
