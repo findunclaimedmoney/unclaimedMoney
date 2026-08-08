@@ -301,59 +301,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Referral Program */}
-<section className="py-20 bg-secondary/30 border-y border-border">
-  <div className="container mx-auto px-4">
-    <div className="text-center mb-12">
-      <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/30 rounded-full px-4 py-1.5 text-sm text-primary font-medium mb-5">
-        🎁 Refer & Earn
-      </div>
-      <h2 className="text-4xl md:text-5xl font-heading tracking-wider mb-4 text-white">
-        REFER A FRIEND, EARN 2%
-      </h2>
-      <p className="text-muted-foreground max-w-xl mx-auto">
-        Know someone who could use a car, personal, or business loan? Send
-        them your link — if their loan is approved for $5,000 or more, you
-        earn 2% of the loan amount. No cap.
-      </p>
-    </div>
-
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto mb-10">
-      {[
-        { amount: "$5,000", reward: "$100" },
-        { amount: "$10,000", reward: "$200" },
-        { amount: "$50,000", reward: "$1,000" },
-      ].map((tier) => (
-        <div
-          key={tier.amount}
-          className="rounded-2xl border border-border bg-card p-6 text-center"
-        >
-          <p className="text-xs uppercase tracking-widest text-muted-foreground mb-2">
-            Loan approved for
-          </p>
-          <p className="text-2xl font-bold text-white mb-3">{tier.amount}</p>
-          <div className="w-full h-px bg-primary/20 mb-3" />
-          <p className="text-xs uppercase tracking-widest text-muted-foreground mb-1">
-            You earn
-          </p>
-          <p className="text-3xl font-black text-primary">{tier.reward}</p>
-        </div>
-      ))}
-    </div>
-
-    <div className="text-center">
-      <a href="/refer">
-        <Button className="h-14 px-10 text-lg font-bold tracking-wider rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 shadow-[0_4px_20px_rgba(245,185,66,0.3)]">
-          <Zap className="w-5 h-5 mr-2" /> Get My Referral Link
-        </Button>
-      </a>
-      <p className="text-xs text-muted-foreground mt-3">
-        Cash or a Visa card — paid once your friend's loan is confirmed with Stratton
-      </p>
-    </div>
-  </div>
-</section>
-      
       {/* Marketing Video */}
       <section className="py-20 border-t border-border">
         <div className="container mx-auto px-4">
