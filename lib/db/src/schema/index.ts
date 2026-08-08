@@ -41,6 +41,7 @@ export const financeEnquiriesTable = pgTable("finance_enquiries", {
   phone: text("phone").notNull(),
   postcode: text("postcode").notNull(),
   message: text("message"),
+  referralCode: text("referral_code"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
@@ -301,3 +302,32 @@ export const companionFactsTable = pgTable("companion_facts", {
 }));
 
 export type CompanionFact = typeof companionFactsTable.$inferSelect;
+
+// ── Referral program ─────────────────────────────────────────────────────
+// Tracks referral rewards end-to-end. A referrer's code gets attached to a
+// finance_enquiries row via referralCode above; this table is the reward
+// record itself, moved through manually since loan approval/amount is
+// confirmed directly with Stratton, not detected automatically.
+export const referralsTable = pgTable("referrals", {
+  id: serial("id").primaryKey(),
+  referralCode: text("referral_code").notNull(),
+  referrerName: text("referrer_name"),
+  referrerEmail: text("referrer_email"),
+  referrerPhone: text("referrer_phone"),
+  financeEnquiryId: integer("finance_enquiry_id"),
+  status: text("status").notNull().default("pending"),
+  // "pending" | "approved" | "rewarded" | "declined"
+  loanApprovedAmountCents: integer("loan_approved_amount_cents"),
+  rewardEligible: boolean("reward_eligible").notNull().default(false),
+  rewardAmountCents: integer("reward_amount_cents"),
+  rewardMethod: text("reward_method"),
+  // "cash" | "visa_card"
+  rewardPaidAt: timestamp("reward_paid_at"),
+  notes: text("notes"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const insertReferralSchema = createInsertSchema(referralsTable).omit({ id: true, createdAt: true, updatedAt: true });
+export type InsertReferral = z.infer<typeof insertReferralSchema>;
+export type Referral = typeof referralsTable.$inferSelect;
