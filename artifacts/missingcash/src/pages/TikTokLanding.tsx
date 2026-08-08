@@ -132,14 +132,14 @@ export default function TikTokLanding() {
                     <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Sending…</>
                   ) : (
                     <>Get My Quote — Free Search Included
- <ArrowRight className="w-4 h-4 ml-2" /></>>
+ <ArrowRight className="w-4 h-4 ml-2" /></>
                                   )}
-                </Button>Button>
-              </form>form>
-            </>>
+                </Button>
+              </form>
+            </>
                   )}
-        </motion.div>motion.div>
-      </AnimatePresence>AnimatePresence>
-    </div>div>
-      );
+        </motion.div>
+      </AnimatePresence>
+    </div>
+  );
 }
