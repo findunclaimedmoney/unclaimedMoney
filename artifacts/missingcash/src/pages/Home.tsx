@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, ChevronRight, Bell, Zap, BookOpen } from "lucide-react";
+import { Search, ChevronRight, Bell, Zap, BookOpen, Gift } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { usePageSEO } from "@/hooks/use-page-seo";
 
@@ -26,7 +26,7 @@ export default function Home() {
     const lastName = (formData.get("lastName") as string ?? "").trim();
     if (!firstName || !lastName) return;
     const params = new URLSearchParams({ firstName, lastName });
-    window.location.href = `/mia-search?${params.toString()}`;
+    window.location.href = `/search?${params.toString()}`;
   };
 
   return (
@@ -116,11 +116,67 @@ export default function Home() {
                   </Button>
 
                   <p className="text-xs text-center text-muted-foreground flex items-center justify-center gap-1.5 mt-4">
-                    <span role="img" aria-label="lock">🔒</span> Free to search · ATO, ASIC, myGov, State Registers &amp; more
+                    <span role="img" aria-label="lock">🔒</span> Free via a Stratton Finance quote, or $99.99 direct · ATO, ASIC, myGov, State Registers &amp; more
                   </p>
                 </form>
               </CardContent>
             </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════════════ */}
+      {/* REFERRAL PROGRAM — top priority placement */}
+      {/* ══════════════════════════════════════════════════ */}
+      <section className="py-16 md:py-20 bg-gradient-to-b from-primary/10 via-primary/5 to-transparent border-y border-primary/20">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-10">
+            <div className="inline-flex items-center gap-2 bg-primary text-primary-foreground rounded-full px-5 py-2 text-sm font-bold mb-6 shadow-lg shadow-primary/30">
+              <Gift className="w-4 h-4" /> REFER & EARN — NO CAP
+            </div>
+            <h2 className="text-4xl md:text-6xl font-heading tracking-wider mb-4 text-white">
+              REFER A FRIEND<br /><span className="text-primary">EARN 2% OF THEIR LOAN</span>
+            </h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto text-lg leading-relaxed">
+              Know someone who needs a car, personal, or business loan? Send
+              them your link. If their loan is approved for $5,000 or more
+              through Stratton Finance, <strong className="text-white">you earn 2% of the loan amount</strong> —
+              cash or a Visa card. No cap. The bigger the loan, the bigger the reward.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto mb-10">
+            {[
+              { amount: "$5,000", reward: "$100" },
+              { amount: "$10,000", reward: "$200" },
+              { amount: "$50,000", reward: "$1,000" },
+            ].map((tier) => (
+              <div
+                key={tier.amount}
+                className="rounded-2xl border-2 border-primary/30 bg-card p-6 text-center shadow-lg hover:border-primary/60 transition-colors"
+              >
+                <p className="text-xs uppercase tracking-widest text-muted-foreground mb-2">
+                  Loan approved for
+                </p>
+                <p className="text-2xl font-bold text-white mb-3">{tier.amount}</p>
+                <div className="w-full h-px bg-primary/30 mb-3" />
+                <p className="text-xs uppercase tracking-widest text-muted-foreground mb-1">
+                  You earn
+                </p>
+                <p className="text-4xl font-black text-primary">{tier.reward}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="text-center">
+            <a href="/refer">
+              <Button className="h-16 px-12 text-xl font-bold tracking-wider rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 shadow-[0_8px_30px_rgba(245,185,66,0.4)] hover:-translate-y-0.5 transition-all">
+                <Gift className="w-6 h-6 mr-2" /> Get My Referral Link
+              </Button>
+            </a>
+            <p className="text-xs text-muted-foreground mt-4">
+              Free to join · No account fees · Paid once your friend's loan is confirmed with Stratton
+            </p>
           </div>
         </div>
       </section>
@@ -135,17 +191,17 @@ export default function Home() {
                   <img src="/stratton-logo.png" alt="Stratton Finance" className="h-8 w-auto" />
                 </div>
                 <div className="bg-white rounded-2xl px-8 py-5 flex flex-col items-center gap-3 shadow-xl border-2 border-primary min-w-[160px]">
-                  <span className="text-5xl">🎁</span>
-                  <span className="font-black text-primary text-5xl leading-none">$100</span>
+                  <span className="text-5xl">🔍</span>
+                  <span className="font-black text-primary text-3xl leading-none">FREE</span>
                   <div className="w-full h-px bg-primary/30" />
-                  <span className="font-bold text-primary text-xs tracking-[0.2em] uppercase">MISSING CASH</span>
+                  <span className="font-bold text-primary text-xs tracking-[0.2em] uppercase">SEARCH INCLUDED</span>
                 </div>
               </div>
               <div className="text-center sm:text-left flex-1 min-w-0">
                 <p className="text-xs font-semibold text-primary uppercase tracking-widest mb-0.5">Finance Partner</p>
                 <p className="text-white font-bold text-base leading-snug">Need a car, personal or business loan?</p>
-                <p className="text-muted-foreground text-sm">Speak to our trusted broker — fast approvals, competitive rates.</p>
-                <p className="text-xs font-semibold text-primary mt-1">⚡ Sign up before end of financial year — Receive $100 Compliments from Missing Cash.</p>
+                <p className="text-muted-foreground text-sm">Get a no-obligation quote from our trusted broker — fast approvals, competitive rates.</p>
+                <p className="text-xs font-semibold text-primary mt-1">⚡ Get a quote and your unclaimed-money search is free, as a thank-you.</p>
               </div>
               <div className="flex-shrink-0">
                 <span className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-bold px-5 py-2.5 rounded-full text-sm group-hover:bg-primary/90 transition-colors">
@@ -162,14 +218,14 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-heading tracking-wider mb-4 text-white">HOW IT WORKS</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">Mia searches every Australian database in under a minute.</p>
+            <p className="text-muted-foreground max-w-2xl mx-auto">Two simple paths — Mia searches every Australian database in under a minute either way.</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             {[
-              { step: "1", title: "Search Free", desc: "Enter your name and details. Mia searches 8 government databases in the background — no upfront cost." },
-              { step: "2", title: "Mia Finds Money", desc: "If Mia finds unclaimed money in your name, she emails you the results and a direct payment link." },
-              { step: "3", title: "Unlock & Claim", desc: "Pay the small success fee (5–33%) and Mia emails you the full claim report with step-by-step instructions." },
+              { step: "1", title: "Get a Free Quote", desc: "Answer a few quick questions for a no-obligation Stratton Finance quote — you're never signed up for anything just by asking." },
+              { step: "2", title: "Search Included, Free", desc: "As a thank-you, Mia runs your unclaimed-money search across 8 government databases at no cost." },
+              { step: "3", title: "Or Skip It — $99.99", desc: "Not interested in a quote? Pay a flat $99.99 and Mia searches immediately — results emailed within minutes, found or not." },
             ].map((item, i) => (
               <div key={i} className="relative p-6 rounded-2xl bg-card border border-border text-center flex flex-col items-center group hover:border-primary/50 transition-colors">
                 <div className="w-14 h-14 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-heading text-2xl mb-6 shadow-lg group-hover:scale-110 transition-transform">
@@ -187,12 +243,12 @@ export default function Home() {
           </div>
 
           <div className="mt-12 text-center">
-            <a href="/mia-search">
+            <a href="/finance">
               <Button className="h-14 px-10 text-lg font-bold tracking-wider rounded-xl bg-[#00C1D5] hover:bg-[#00C1D5]/90 text-white shadow-[0_4px_20px_rgba(0,193,213,0.3)]">
-                <Zap className="w-5 h-5 mr-2" /> Let Mia Search for Free
+                <Zap className="w-5 h-5 mr-2" /> Get a Free Quote — Free Search Included
               </Button>
             </a>
-            <p className="text-xs text-muted-foreground mt-3">No find, no fee — you only pay a % if Mia finds money in your name</p>
+            <p className="text-xs text-muted-foreground mt-3">No obligation to take the quote — search runs free either way</p>
           </div>
         </div>
       </section>
@@ -224,27 +280,80 @@ export default function Home() {
 
             {/* Option 2: Mia */}
             <div className="relative border-2 border-[#00C1D5]/60 rounded-2xl p-6 flex flex-col text-center bg-gradient-to-b from-[#00C1D5]/10 to-transparent overflow-hidden">
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#00C1D5] text-white text-[10px] font-bold px-3 py-1 rounded-full tracking-wider whitespace-nowrap">⭐ NO FIND, NO FEE</div>
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#00C1D5] text-white text-[10px] font-bold px-3 py-1 rounded-full tracking-wider whitespace-nowrap">⭐ FREE VIA A QUOTE</div>
               <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-[#00C1D5]/20 border border-[#00C1D5]/40 mx-auto mb-4 mt-2">
                 <Zap className="w-7 h-7 text-[#00C1D5]" />
               </div>
               <h4 className="font-heading text-lg text-white mb-2">MIA DOES THE SEARCH</h4>
               <ul className="text-left text-xs text-muted-foreground space-y-2 mb-5 flex-1">
                 <li className="flex items-start gap-2"><span className="text-[#00C1D5] mt-0.5">⚡</span><span>Searches <strong className="text-white">8 government databases</strong> automatically</span></li>
-                <li className="flex items-start gap-2"><span className="text-[#00C1D5] mt-0.5">📧</span><span>Emails you a <strong className="text-white">direct payment link</strong> if money is found</span></li>
-                <li className="flex items-start gap-2"><span className="text-[#00C1D5] mt-0.5">💰</span><span><strong className="text-white">Free to search</strong> — only pay a % if Mia finds money</span></li>
+                <li className="flex items-start gap-2"><span className="text-[#00C1D5] mt-0.5">📧</span><span>Results <strong className="text-white">emailed to you</strong> within minutes</span></li>
+                <li className="flex items-start gap-2"><span className="text-[#00C1D5] mt-0.5">💰</span><span><strong className="text-white">Free</strong> with a Stratton quote, or <strong className="text-white">$99.99</strong> direct</span></li>
               </ul>
-              <a href="/mia-search">
+              <a href="/finance">
                 <Button className="w-full font-bold tracking-wider bg-[#00C1D5] hover:bg-[#00C1D5]/90 text-white shadow-[0_4px_14px_rgba(0,193,213,0.35)]">
-                  MIA DO IT — FREE TO START
+                  GET A FREE QUOTE
                 </Button>
               </a>
-              <p className="text-[10px] text-muted-foreground mt-2">🔒 No upfront cost · Only pay if money is found</p>
+              <p className="text-[10px] text-muted-foreground mt-2">🔒 No obligation · Or skip to /search for $99.99</p>
             </div>
           </div>
         </div>
       </section>
 
+      {/* Referral Program */}
+<section className="py-20 bg-secondary/30 border-y border-border">
+  <div className="container mx-auto px-4">
+    <div className="text-center mb-12">
+      <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/30 rounded-full px-4 py-1.5 text-sm text-primary font-medium mb-5">
+        🎁 Refer & Earn
+      </div>
+      <h2 className="text-4xl md:text-5xl font-heading tracking-wider mb-4 text-white">
+        REFER A FRIEND, EARN 2%
+      </h2>
+      <p className="text-muted-foreground max-w-xl mx-auto">
+        Know someone who could use a car, personal, or business loan? Send
+        them your link — if their loan is approved for $5,000 or more, you
+        earn 2% of the loan amount. No cap.
+      </p>
+    </div>
+
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto mb-10">
+      {[
+        { amount: "$5,000", reward: "$100" },
+        { amount: "$10,000", reward: "$200" },
+        { amount: "$50,000", reward: "$1,000" },
+      ].map((tier) => (
+        <div
+          key={tier.amount}
+          className="rounded-2xl border border-border bg-card p-6 text-center"
+        >
+          <p className="text-xs uppercase tracking-widest text-muted-foreground mb-2">
+            Loan approved for
+          </p>
+          <p className="text-2xl font-bold text-white mb-3">{tier.amount}</p>
+          <div className="w-full h-px bg-primary/20 mb-3" />
+          <p className="text-xs uppercase tracking-widest text-muted-foreground mb-1">
+            You earn
+          </p>
+          <p className="text-3xl font-black text-primary">{tier.reward}</p>
+        </div>
+      ))}
+    </div>
+
+    <div className="text-center">
+      <a href="/refer">
+        <Button className="h-14 px-10 text-lg font-bold tracking-wider rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 shadow-[0_4px_20px_rgba(245,185,66,0.3)]">
+          <Zap className="w-5 h-5 mr-2" /> Get My Referral Link
+        </Button>
+      </a>
+      <p className="text-xs text-muted-foreground mt-3">
+        Cash or a Visa card — paid once your friend's loan is confirmed with Stratton
+      </p>
+    </div>
+  </div>
+</section>
+      
       {/* Marketing Video */}
       <section className="py-20 border-t border-border">
         <div className="container mx-auto px-4">
@@ -339,22 +448,28 @@ export default function Home() {
           </div>
 
           <Accordion type="single" collapsible className="w-full space-y-4">
-            <AccordionItem value="item-1" className="bg-card border border-border rounded-lg px-4">
-              <AccordionTrigger className="text-left font-medium hover:no-underline hover:text-primary">How does the free search work?</AccordionTrigger>
+            <AccordionItem value="item-referral" className="bg-card border border-primary/30 rounded-lg px-4">
+              <AccordionTrigger className="text-left font-medium hover:no-underline hover:text-primary">How does the referral program work?</AccordionTrigger>
               <AccordionContent className="text-muted-foreground leading-relaxed">
-                Enter your name, date of birth and address and Mia searches 8 Australian government databases automatically. If she finds unclaimed money in your name, she emails you a direct payment link. You only pay a small percentage (5–33%) if money is found — nothing upfront.
+                Get your referral link at <a href="/refer" className="underline text-primary">missingcash.com.au/refer</a> — it's free, just create an account with your name, mobile, and email. Share your link with friends or family. If someone you refer submits a Stratton Finance enquiry through your link and their loan is approved for $5,000 or more, you earn 2% of the loan amount — cash or a Visa card. There's no cap, so bigger loans mean bigger rewards.
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="item-1" className="bg-card border border-border rounded-lg px-4">
+              <AccordionTrigger className="text-left font-medium hover:no-underline hover:text-primary">How does the search work?</AccordionTrigger>
+              <AccordionContent className="text-muted-foreground leading-relaxed">
+                There are two ways to search. Get a free, no-obligation Stratton Finance quote and Mia runs your unclaimed-money search across 8 Australian government databases as a thank-you — completely free. Or skip the quote and pay a flat $99.99 for Mia to search immediately. Either way, results are emailed to you within minutes.
               </AccordionContent>
             </AccordionItem>
             <AccordionItem value="item-2" className="bg-card border border-border rounded-lg px-4">
               <AccordionTrigger className="text-left font-medium hover:no-underline hover:text-primary">What happens if Mia finds money?</AccordionTrigger>
               <AccordionContent className="text-muted-foreground leading-relaxed">
-                Mia emails you directly with the total found and a preview of the matches. You'll get a button to pay the success fee (5–33% depending on the amount). After payment, Mia emails your full personalised claim report instantly — with exact institution names, account references, claim form links, and step-by-step instructions.
+                Mia emails you directly with what was found and a full personalised claim report — exact institution names, account references, claim form links, and step-by-step instructions. There's no extra fee on top of your search — the $99.99 (or free-via-quote) search already covers the full report.
               </AccordionContent>
             </AccordionItem>
             <AccordionItem value="item-3" className="bg-card border border-border rounded-lg px-4">
               <AccordionTrigger className="text-left font-medium hover:no-underline hover:text-primary">Is this service really free?</AccordionTrigger>
               <AccordionContent className="text-muted-foreground leading-relaxed">
-                Yes — the search is completely free. You only pay if Mia finds money in your name. The fee is a percentage of what's found (5% on under $1,000, scaling up to 33% on very large amounts). If Mia finds nothing, you pay nothing.
+                The search is free if you get a Stratton Finance quote first — no obligation to take the loan, just answer a few questions. If you'd rather not, it's a flat $99.99 to search directly, no finance questions involved.
               </AccordionContent>
             </AccordionItem>
             <AccordionItem value="item-4" className="bg-card border border-border rounded-lg px-4">
