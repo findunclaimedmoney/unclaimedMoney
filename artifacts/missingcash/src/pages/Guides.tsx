@@ -10,7 +10,7 @@ const STRIPE = {
 const guide = {
   title: "MissingCash Premium Guide",
   subtitle: "The DIY route",
-  price: 4.99,
+  price: 24.99,
   stripeUrl: STRIPE.missingcash,
   features: [
     "Complete ATO, ASIC & bank claim instructions",
@@ -25,7 +25,7 @@ export default function Guides() {
   usePageSEO({
     title: "How It Works | MissingCash — Find & Claim Unclaimed Money",
     description:
-      "Get a free finance quote and receive a free search, or pay $9.99 and Mia searches for your money right now. Step-by-step guides available too.",
+      "Get a free finance quote and receive a free search, or pay $24.99 and Mia searches for your money right now. Step-by-step guides available too.",
     keywords: "unclaimed money guide Australia, MissingCash how it works, claim unclaimed money",
     canonical: "https://www.missingcash.com.au/guides",
   });
@@ -44,7 +44,7 @@ export default function Guides() {
           </h1>
           <p className="text-lg text-muted-foreground leading-relaxed">
             Get a free finance quote and receive a free search — or skip
-            straight to a $9.99 search and Mia looks for your money right
+            straight to a $24.99 search and Mia looks for your money right
             now.
           </p>
         </div>
