@@ -5,7 +5,7 @@ import { ArrowRight, CheckCircle2, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { getLeadSource } from "@/lib/lead-source";
+import { getLeadSource, getReferralCode } from "@/lib/lead-source";
 
 export default function TikTokLanding() {
   const [, navigate] = useLocation();
@@ -19,6 +19,7 @@ export default function TikTokLanding() {
     setError(null);
     const fd = new FormData(e.currentTarget);
     const src = getLeadSource();
+    const ref = getReferralCode();
     try {
       const res = await fetch("/api/leads/capture", {
         method: "POST",
@@ -32,6 +33,7 @@ export default function TikTokLanding() {
           consent: true,
           intent: "finance",
           ...(src ? { source: src } : {}),
+          ...(ref ? { referralCode: ref } : {}),
         }),
       });
       if (!res.ok) throw new Error("Server error");
@@ -129,33 +131,4 @@ export default function TikTokLanding() {
                   {submitting ? (
                     <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Sending…</>
                   ) : (
-                    <>Get My Quote — Free Search Included <ArrowRight className="w-4 h-4 ml-2" /></>
-                  )}
-                </Button>
-
-                <p className="text-xs text-white/25 text-center leading-relaxed">
-                  No impact to your credit score. By submitting, you agree to
-                  be contacted by a Stratton Finance broker.
-                </p>
-              </form>
-
-              <div className="flex items-center gap-3 my-6">
-                <div className="h-px bg-white/10 flex-1" />
-                <span className="text-white/30 text-xs">or</span>
-                <div className="h-px bg-white/10 flex-1" />
-              </div>
-
-              <button
-                type="button"
-                onClick={skipToPaidSearch}
-                className="w-full h-11 rounded-xl border border-white/15 text-white/70 text-sm font-medium hover:bg-white/5 transition-colors"
-              >
-                Skip the quote — pay $9.99, Mia searches now
-              </button>
-            </>
-          )}
-        </motion.div>
-      </AnimatePresence>
-    </div>
-  );
-}
+                    <>Get My Quote — Free Search Included
