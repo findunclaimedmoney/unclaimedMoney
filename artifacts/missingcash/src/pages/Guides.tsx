@@ -83,7 +83,7 @@ export default function Guides() {
               </a>
             </div>
 
-            {/* Path B — flat $9.99 */}
+            {/* Path B — flat $24.99 */}
             <div className="rounded-2xl border border-border bg-card p-7 flex flex-col">
               <div className="w-11 h-11 rounded-xl bg-white/5 flex items-center justify-center mb-5">
                 <Search className="w-5 h-5 text-white" />
@@ -93,11 +93,11 @@ export default function Guides() {
               </h2>
               <p className="text-sm text-muted-foreground leading-relaxed mb-5 flex-1">
                 Not interested in a finance quote? No problem. Pay a flat
-                $9.99 and Mia starts searching immediately — results emailed
+                $24.99 and Mia starts searching immediately — results emailed
                 to you within minutes, found or not.
               </p>
               <ul className="space-y-2 mb-6 text-sm">
-                {["No forms, no finance questions", "Flat $9.99, one time", "Results emailed within minutes"].map((f) => (
+                {["No forms, no finance questions", "Flat $24.99, one time", "Results emailed within minutes"].map((f) => (
                   <li key={f} className="flex items-start gap-2 text-muted-foreground">
                     <CheckCircle2 className="w-4 h-4 text-white/60 shrink-0 mt-0.5" />
                     {f}
@@ -106,7 +106,7 @@ export default function Guides() {
               </ul>
               <a href="/search">
                 <Button variant="outline" className="w-full h-12 rounded-xl font-bold border-white/20 text-white hover:bg-white/5">
-                  Search for $9.99 <ArrowRight className="w-4 h-4 ml-2" />
+                  Search for $24.99 <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
               </a>
             </div>
@@ -114,14 +114,119 @@ export default function Guides() {
         </div>
       </section>
 
-      {/* Mia Speed Recovery — premium tier */}
-      <section className="pb-6">
-        <div className="container mx-auto px-4 max-w-3xl">
-          <div className="relative rounded-2xl border-2 border-[#00C1D5]/50 p-8 bg-gradient-to-br from-[#00C1D5]/10 via-background to-primary/5 shadow-[0_0_60px_rgba(0,193,213,0.12)] overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#00C1D5] via-primary to-[#00C1D5]" />
-            <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#00C1D5] text-white text-xs font-bold px-5 py-1.5 rounded-full tracking-wider">
-              ⚡ WANT IT DONE FOR YOU?
-            </div>
+      from PIL import Image, ImageDraw, ImageFont
+
+# ── Canvas setup ──────────────────────────────────────────────
+W, H = 1080, 1350  # Instagram portrait ratio
+img = Image.new("RGB", (W, H), (10, 22, 40))  # navy background
+draw = ImageDraw.Draw(img)
+
+GOLD = (245, 185, 66)
+GOLD_LIGHT = (255, 214, 130)
+NAVY = (10, 22, 40)
+NAVY_CARD = (17, 33, 56)
+WHITE = (255, 255, 255)
+MUTED = (150, 170, 190)
+
+SERIF_BOLD = "/usr/share/fonts/truetype/dejavu/DejaVuSerif-Bold.ttf"
+SANS = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
+SANS_BOLD = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
+
+def font(path, size):
+    return ImageFont.truetype(path, size)
+
+def center_text(draw, cx, y, text, fnt, fill):
+    bbox = draw.textbbox((0, 0), text, font=fnt)
+    w = bbox[2] - bbox[0]
+    draw.text((cx - w / 2, y), text, font=fnt, fill=fill)
+    return bbox[3] - bbox[1]
+
+# ── Subtle radial-style glow (approximated with layered ellipses) ──
+glow = Image.new("RGB", (W, H), NAVY)
+glow_draw = ImageDraw.Draw(glow)
+for r, alpha_step in [(700, 6), (550, 8), (400, 10), (250, 14)]:
+    shade = tuple(min(255, c + alpha_step) for c in NAVY)
+    glow_draw.ellipse(
+        [W / 2 - r, 120 - r * 0.6, W / 2 + r, 120 + r * 0.6],
+        fill=shade,
+    )
+img = Image.blend(img, glow, 0.9)
+draw = ImageDraw.Draw(img)
+
+# ── Top eyebrow badge ──
+badge_text = "MISSINGCASH  ·  REFER & EARN"
+f_eyebrow = font(SANS_BOLD, 26)
+bbox = draw.textbbox((0, 0), badge_text, font=f_eyebrow)
+bw = (bbox[2] - bbox[0]) + 70
+bh = 58
+bx = W / 2 - bw / 2
+by = 90
+draw.rounded_rectangle([bx, by, bx + bw, by + bh], radius=bh / 2, outline=GOLD, width=2)
+center_text(draw, W / 2, by + 15, badge_text, f_eyebrow, GOLD)
+
+# ── Headline ──
+f_h1 = font(SERIF_BOLD, 92)
+f_h1b = font(SERIF_BOLD, 92)
+y = 210
+center_text(draw, W / 2, y, "Refer a friend.", f_h1, WHITE)
+y += 108
+center_text(draw, W / 2, y, "Earn 2%.", f_h1b, GOLD)
+
+# ── Subhead ──
+f_sub = font(SANS, 32)
+y += 130
+sub_lines = ["No cap. The bigger the loan,", "the bigger the reward."]
+for line in sub_lines:
+    center_text(draw, W / 2, y, line, f_sub, MUTED)
+    y += 44
+
+# ── Example card ──
+card_y = y + 60
+card_h = 560
+card_margin = 90
+draw.rounded_rectangle(
+    [card_margin, card_y, W - card_margin, card_y + card_h],
+    radius=28,
+    fill=NAVY_CARD,
+    outline=GOLD,
+    width=3,
+)
+
+f_label = font(SANS_BOLD, 26)
+f_amount = font(SERIF_BOLD, 64)
+f_arrow = font(SANS_BOLD, 44)
+f_reward_label = font(SANS_BOLD, 26)
+f_reward = font(SERIF_BOLD, 96)
+
+inner_y = card_y + 55
+center_text(draw, W / 2, inner_y, "FRIEND'S LOAN APPROVED FOR", f_label, MUTED)
+inner_y += 60
+center_text(draw, W / 2, inner_y, "$5,000", f_amount, WHITE)
+inner_y += 105
+
+center_text(draw, W / 2, inner_y, "↓", f_arrow, GOLD)
+inner_y += 75
+
+center_text(draw, W / 2, inner_y, "YOU EARN", f_reward_label, MUTED)
+inner_y += 55
+center_text(draw, W / 2, inner_y, "$100", f_reward, GOLD)
+inner_y += 130
+
+f_cta_label = font(SANS_BOLD, 30)
+center_text(draw, W / 2, inner_y, "Cash or a Visa card", f_cta_label, WHITE)
+
+# ── Bottom CTA ──
+cta_y = card_y + card_h + 55
+f_cta_sub = font(SANS, 28)
+center_text(draw, W / 2, cta_y, "missingcash.com.au/refer", f_cta_sub, GOLD)
+
+# ── Footer ──
+footer_y = H - 90
+f_footer = font(SANS, 20)
+center_text(draw, W / 2, footer_y, "ABN 52 347 989 391 · Terms apply", f_footer, MUTED)
+
+img.save("/home/claude/referral_poster.png")
+print("Saved")
 
             <div className="flex flex-col md:flex-row items-center gap-8 mt-2">
               <div className="text-7xl shrink-0">🤖</div>
