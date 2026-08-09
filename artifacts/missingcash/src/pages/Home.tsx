@@ -11,7 +11,7 @@ import { usePageSEO } from "@/hooks/use-page-seo";
 
 export default function Home() {
   usePageSEO({
-    title: "MissingCash | Find Your Unclaimed Money in Australia — Free Search",
+    title: "MissingCash | Find Your Unclaimed Money in Australia — One Search",
     description:
       "Search billions in unclaimed money held by the ATO, ASIC, banks and state registers. MissingCash helps Australians find and claim lost super, shares, dividends and dormant accounts.",
     keywords:
