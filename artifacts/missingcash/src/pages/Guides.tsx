@@ -243,12 +243,12 @@ print("Saved")
                 </p>
                 <div className="flex flex-col sm:flex-row items-center gap-4">
                   <div>
-                    <span className="text-4xl font-bold text-primary">$99</span>
+                    <span className="text-4xl font-bold text-primary">$24.99</span>
                     <span className="text-sm text-muted-foreground ml-2">one-time · report in minutes</span>
                   </div>
                   <a href={STRIPE.miaRecovery} target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto">
                     <Button className="w-full h-14 px-8 text-lg font-bold tracking-wider rounded-xl bg-[#00C1D5] hover:bg-[#00C1D5]/90 text-white shadow-[0_4px_20px_rgba(0,193,213,0.4)]">
-                      Get Mia Speed Recovery — $99
+                      Get Mia Speed Recovery — $24.999
                     </Button>
                   </a>
                 </div>
