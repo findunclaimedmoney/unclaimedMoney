@@ -1,5 +1,5 @@
 import { Link, useLocation } from "wouter";
-import { Shield, Menu, X, Bell } from "lucide-react";
+import { Shield, Menu, X, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 
@@ -9,6 +9,7 @@ const navLinks = [
   { href: "/guides", label: "Guides" },
   { href: "/crypto", label: "Crypto" },
   { href: "/finance", label: "Finance" },
+  { href: "/refer", label: "Refer & Earn" },
   { href: "/contact", label: "Contact" },
 ];
 
@@ -41,11 +42,11 @@ export default function Navbar() {
         </nav>
 
         <div className="flex items-center gap-2">
-          <a href="/#alerts" className="hidden md:block">
+          <Link href="/signin" className="hidden md:block">
             <Button variant="outline" className="border-primary/40 text-primary hover:bg-primary/10 font-bold tracking-wider rounded-full px-5 gap-2">
-              <Bell className="w-4 h-4" /> Sign Up
+              <LogIn className="w-4 h-4" /> Sign In
             </Button>
-          </a>
+          </Link>
           <Link href="/finance" className="hidden md:block">
             <Button className="bg-primary text-primary-foreground hover:bg-primary/90 font-bold tracking-wider rounded-full px-6">
               Get Finance
@@ -76,6 +77,14 @@ export default function Navbar() {
                 {label}
               </Link>
             ))}
+            <Link href="/signin" onClick={() => setMobileOpen(false)}>
+              <Button
+                variant="outline"
+                className="w-full mt-3 border-primary/40 text-primary hover:bg-primary/10 font-bold tracking-wider rounded-full gap-2"
+              >
+                <LogIn className="w-4 h-4" /> Sign In
+              </Button>
+            </Link>
             <Link href="/finance" onClick={() => setMobileOpen(false)}>
               <Button className="w-full mt-3 bg-primary text-primary-foreground hover:bg-primary/90 font-bold tracking-wider rounded-full">
                 Get Finance Quote
@@ -101,3 +110,4 @@ export default function Navbar() {
     </header>
   );
 }
+5tt5t66t665656y7
