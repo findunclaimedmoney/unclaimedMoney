@@ -13,6 +13,18 @@ type GuideConfig = {
 };
 
 const configs: Record<string, GuideConfig> = {
+  order: {
+    title: "Payment Confirmed — Thank You",
+    subtitle:
+      "Your payment went through and your order is confirmed. A receipt and everything you paid for are on their way to the email address you used at checkout.",
+    note: "Confirmation email sent · Check your inbox, and your spam folder just in case",
+    downloads: [],
+    steps: [
+      "Check your email for your receipt and any download links",
+      "If Mia is running your search, your results are emailed to you within minutes",
+      "Anything missing? Reply to that email or use the contact page and we will sort it out",
+    ],
+  },
   missingcash: {
     title: "Your Guide is Ready to Download",
     subtitle: "Thank you for your purchase. Your MissingCash Premium Guide is waiting — click below to download it instantly.",
@@ -84,6 +96,8 @@ const configs: Record<string, GuideConfig> = {
 };
 
 const MIA_GUIDANCE: Record<string, string> = {
+  order:
+    "Your payment is confirmed — thank you! I'm Mia. I'll make sure you get everything you paid for. Tell me your full name and which Australian state you're in, and I'll get started for you right now.",
   missingcash: "I can see you've purchased the MissingCash Premium Guide. I'm Mia and I'm here to guide you through the full claiming process right now. Tell me your full name and which state you're in — I'll walk you through every database step by step so you don't miss a dollar.",
   crypto: "Welcome! You've got the MissingCrypto Recovery Guide. I'm Mia and I'll guide you through recovering your lost crypto accounts personally. Which exchange are you trying to recover — CoinSpot, Binance, Coinbase, Swyftx, or something else?",
   cyber: "Great choice getting the Cyber Security Guide. I'm Mia — let's get your digital life locked down right now. Tell me: are you more concerned about your phone security, your bank accounts, or your email and passwords? I'll start there.",
@@ -95,9 +109,19 @@ const MIA_GUIDANCE: Record<string, string> = {
 
 export default function ThankYou() {
   const [, params] = useRoute("/thank-you/:guide");
-  const guide = params?.guide ?? "missingcash";
+  const guide = params?.guide ?? "order";
   const isMiaRecovery = guide === "mia-recovery";
   const isDoneForYou = guide === "done-for-you";
+
+  const orderRef = (() => {
+    try {
+      const q = new URLSearchParams(window.location.search);
+      const sid = q.get("session_id") ?? q.get("order") ?? "";
+      return sid ? sid.slice(-12).toUpperCase() : "";
+    } catch {
+      return "";
+    }
+  })();
 
   const config = isMiaRecovery
     ? {
@@ -150,6 +174,11 @@ export default function ThankYou() {
             {config.title}
           </h1>
           <p className="text-muted-foreground leading-relaxed">{config.subtitle}</p>
+          {orderRef ? (
+            <p className="mt-4 inline-block rounded-full border border-border bg-card px-4 py-1.5 text-xs tracking-wider text-muted-foreground">
+              Order reference: <span className="text-white font-semibold">{orderRef}</span>
+            </p>
+          ) : null}
         </div>
 
         {/* Download buttons — only for guide products */}
