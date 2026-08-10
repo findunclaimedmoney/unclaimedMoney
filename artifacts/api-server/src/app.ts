@@ -31,7 +31,10 @@ app.use(
 
 app.use(cors());
 
-app.use("/api/stripe/webhook", express.raw({ type: "application/json" }), stripeWebhookRouter);
+// Stripe needs the untouched request body to verify the webhook signature, so the raw
+// parser is scoped to that one path and must run before express.json() below.
+app.use("/api/stripe/webhook", express.raw({ type: "application/json" }));
+app.use("/api", stripeWebhookRouter);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
