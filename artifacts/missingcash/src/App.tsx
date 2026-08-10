@@ -21,6 +21,8 @@ import AdminBatchSearch from "@/pages/AdminBatchSearch";
 import AdminDashboard from "@/pages/AdminDashboard";
 import ClaimReport from "@/pages/ClaimReport";
 import MiaDev from "@/pages/MiaDev";
+import Refer from "@/pages/Refer";
+import SignIn from "@/pages/SignIn";
 
 const BASE = import.meta.env.BASE_URL;
 
@@ -59,6 +61,10 @@ function Router() {
             <Route path="/find-my-money" component={FindMyMoney} />
             <Route path="/unclaimed-money-map" component={AustraliaMap} />
             <Route path="/deceased-estate" component={DeceasedEstate} />
+            <Route path="/refer" component={Refer} />
+            <Route path="/signin" component={SignIn} />
+            <Route path="/sign-in" component={SignIn} />
+            <Route path="/thank-you" component={ThankYou} />
             <Route path="/thank-you/:guide" component={ThankYou} />
             <Route component={NotFound} />
           </Switch>
