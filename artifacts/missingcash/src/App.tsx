@@ -53,6 +53,8 @@ function Router() {
         <Layout>
           <Switch>
             <Route path="/" component={Home} />
+            <Route path="/login" component={Login} />
+            <Route path="/dashboard" component={ReferralDashboard} />
             <Route path="/crypto" component={Crypto} />
             <Route path="/finance" component={Finance} />
             <Route path="/contact" component={Contact} />
