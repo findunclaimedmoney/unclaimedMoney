@@ -4,7 +4,6 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/not-found";
 import Layout from "@/components/layout/Layout";
-
 import Home from "@/pages/Home";
 import Crypto from "@/pages/Crypto";
 import Finance from "@/pages/Finance";
@@ -26,7 +25,6 @@ import SignIn from "@/pages/SignIn";
 import Login from "@/pages/Login";
 import ReferralDashboard from "@/pages/ReferralDashboard";
 const BASE = import.meta.env.BASE_URL;
-
 function PageViewBeacon() {
   const [location] = useLocation();
   useEffect(() => {
@@ -38,7 +36,6 @@ function PageViewBeacon() {
   }, [location]);
   return null;
 }
-
 function Router() {
   return (
     <Switch>
@@ -46,8 +43,7 @@ function Router() {
       <Route path="/admin" component={AdminDashboard} />
       <Route path="/mia-dev" component={MiaDev} />
       <Route path="/claim-report" component={ClaimReport} />
-
-      {/* Distraction-free pages — no global nav/footer */}
+  {/* Distraction-free pages — no global nav/footer */}
       <Route path="/start" component={TikTokLanding} />
       <Route path="/search" component={SearchPage} />
       <Route>
