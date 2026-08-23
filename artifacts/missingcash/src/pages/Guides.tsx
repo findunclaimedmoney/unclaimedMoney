@@ -44,7 +44,7 @@ export default function Guides() {
           </h1>
           <p className="text-lg text-muted-foreground leading-relaxed">
             Get a free finance quote and receive a free search — or skip
-            straight to a $24.99 search and Mia looks for your money right
+                      straight to a $19.90 search and Mia looks for your money right
             now.
           </p>
         </div>
@@ -83,7 +83,7 @@ export default function Guides() {
               </a>
             </div>
 
-            {/* Path B — flat $24.99 */}
+            {/* Path B — flat $19.90 */}
             <div className="rounded-2xl border border-border bg-card p-7 flex flex-col">
               <div className="w-11 h-11 rounded-xl bg-white/5 flex items-center justify-center mb-5">
                 <Search className="w-5 h-5 text-white" />
@@ -93,11 +93,11 @@ export default function Guides() {
               </h2>
               <p className="text-sm text-muted-foreground leading-relaxed mb-5 flex-1">
                 Not interested in a finance quote? No problem. Pay a flat
-                $24.99 and Mia starts searching immediately — results emailed
+                              $19.90 and Mia starts searching immediately — results emailed
                 to you within minutes, found or not.
               </p>
               <ul className="space-y-2 mb-6 text-sm">
-                {["No forms, no finance questions", "Flat $24.99, one time", "Results emailed within minutes"].map((f) => (
+                {["No forms, no finance questions", "Flat $19.90, one time", "Results emailed within minutes"].map((f) => (
                   <li key={f} className="flex items-start gap-2 text-muted-foreground">
                     <CheckCircle2 className="w-4 h-4 text-white/60 shrink-0 mt-0.5" />
                     {f}
@@ -106,7 +106,7 @@ export default function Guides() {
               </ul>
               <a href="/search">
                 <Button variant="outline" className="w-full h-12 rounded-xl font-bold border-white/20 text-white hover:bg-white/5">
-                  Search for $24.99 <ArrowRight className="w-4 h-4 ml-2" />
+                  Search for $19.90 <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
               </a>
             </div>
