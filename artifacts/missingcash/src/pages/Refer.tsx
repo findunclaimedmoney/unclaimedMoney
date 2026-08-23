@@ -12,9 +12,9 @@ function makeCode(firstName: string, lastName: string): string {
 
 export default function ReferPage() {
   usePageSEO({
-    title: "Refer a Friend — Get $100 | MissingCash",
+        title: "Refer a Friend — Earn 2% of Their Loan | MissingCash",
     description:
-      "Refer a friend to Stratton Finance through MissingCash. If they're approved for over $5,000, you get $100 cash or a Visa card.",
+          "Refer a friend to Stratton Finance through MissingCash. Earn 2% of their approved loan amount — from $100 up to $1,000+, cash or a Visa card. No cap.",
   });
 
   const [form, setForm] = useState({ firstName: "", lastName: "", email: "", phone: "" });
@@ -75,8 +75,7 @@ export default function ReferPage() {
             </div>
             <h1 className="text-2xl font-bold text-white mb-2">Refer a Friend</h1>
             <p className="text-muted-foreground text-sm leading-relaxed">
-              If a friend you refer submits a finance enquiry and gets
-              approved for over $5,000, you get $100 — cash or a Visa card.
+                        If a friend you refer gets approved for a Stratton Finance loan of $5,000 or more, you earn 2% of the loan amount — from $100, up to $1,000+ on larger loans. Cash or a Visa card. No cap.
             </p>
           </div>
 
