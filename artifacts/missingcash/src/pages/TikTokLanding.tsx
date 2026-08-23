@@ -87,7 +87,7 @@ export default function TikTokLanding() {
                   Check if you have <span className="text-[#f5b942]">missing money</span>
                 </h1>
                 <p className="text-white/55 text-sm">
-                  Get a quote and receive a free search — or pay $24.99 and
+                            Get a quote and receive a free search — or pay $19.90 and
                   Mia searches for your money right now.
                 </p>
               </div>
