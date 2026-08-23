@@ -116,7 +116,7 @@ export default function Home() {
                   </Button>
 
                   <p className="text-xs text-center text-muted-foreground flex items-center justify-center gap-1.5 mt-4">
-                    <span role="img" aria-label="lock">🔒</span> Free via a Stratton Finance quote, or $24.99 direct · ATO, ASIC, myGov, State Registers &amp; more
+                    <span role="img" aria-label="lock">🔒</span> Free via a Stratton Finance quote, or $19.90 direct · ATO, ASIC, myGov, State Registers &amp; more
                   </p>
                 </form>
               </CardContent>
@@ -225,7 +225,7 @@ export default function Home() {
             {[
               { step: "1", title: "Get a Free Quote", desc: "Answer a few quick questions for a no-obligation Stratton Finance quote — you're never signed up for anything just by asking." },
               { step: "2", title: "Search Included, Free", desc: "As a thank-you, Mia runs your unclaimed-money search across 8 government databases at no cost." },
-              { step: "3", title: "Or Skip It — $24.99", desc: "Not interested in a quote? Pay a flat $24.99 and Mia searches immediately — results emailed within minutes, found or not." },
+              { step: "3", title: "Or Skip It — $19.90", desc: "Not interested in a quote? Pay a flat $19.90 and Mia searches immediately — results emailed within minutes, found or not." },
             ].map((item, i) => (
               <div key={i} className="relative p-6 rounded-2xl bg-card border border-border text-center flex flex-col items-center group hover:border-primary/50 transition-colors">
                 <div className="w-14 h-14 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-heading text-2xl mb-6 shadow-lg group-hover:scale-110 transition-transform">
@@ -288,14 +288,14 @@ export default function Home() {
               <ul className="text-left text-xs text-muted-foreground space-y-2 mb-5 flex-1">
                 <li className="flex items-start gap-2"><span className="text-[#00C1D5] mt-0.5">⚡</span><span>Searches <strong className="text-white">8 government databases</strong> automatically</span></li>
                 <li className="flex items-start gap-2"><span className="text-[#00C1D5] mt-0.5">📧</span><span>Results <strong className="text-white">emailed to you</strong> within minutes</span></li>
-                <li className="flex items-start gap-2"><span className="text-[#00C1D5] mt-0.5">💰</span><span><strong className="text-white">Free</strong> with a Stratton quote, or <strong className="text-white">$99.99</strong> direct</span></li>
+                <li className="flex items-start gap-2"><span className="text-[#00C1D5] mt-0.5">💰</span><span><strong className="text-white">Free</strong> with a Stratton quote, or <strong className="text-white">$19.90</strong> direct</span></li>
               </ul>
               <a href="/finance">
                 <Button className="w-full font-bold tracking-wider bg-[#00C1D5] hover:bg-[#00C1D5]/90 text-white shadow-[0_4px_14px_rgba(0,193,213,0.35)]">
                   GET A FREE QUOTE
                 </Button>
               </a>
-              <p className="text-[10px] text-muted-foreground mt-2">🔒 No obligation · Or skip to /search for $24.99</p>
+              <p className="text-[10px] text-muted-foreground mt-2">🔒 No obligation · Or skip to /search for $19.90</p>
             </div>
           </div>
         </div>
@@ -404,19 +404,19 @@ export default function Home() {
             <AccordionItem value="item-1" className="bg-card border border-border rounded-lg px-4">
               <AccordionTrigger className="text-left font-medium hover:no-underline hover:text-primary">How does the search work?</AccordionTrigger>
               <AccordionContent className="text-muted-foreground leading-relaxed">
-                There are two ways to search. Get a free, no-obligation Stratton Finance quote and Mia runs your unclaimed-money search across 8 Australian government databases as a thank-you — completely free. Or skip the quote and pay a flat $99.99 for Mia to search immediately. Either way, results are emailed to you within minutes.
+                There are two ways to search. Get a free, no-obligation Stratton Finance quote and Mia runs your unclaimed-money search across 8 Australian government databases as a thank-you — completely free. Or skip the quote and pay a flat $19.90 for Mia to search immediately. Either way, results are emailed to you within minutes.
               </AccordionContent>
             </AccordionItem>
             <AccordionItem value="item-2" className="bg-card border border-border rounded-lg px-4">
               <AccordionTrigger className="text-left font-medium hover:no-underline hover:text-primary">What happens if Mia finds money?</AccordionTrigger>
               <AccordionContent className="text-muted-foreground leading-relaxed">
-                Mia emails you directly with what was found and a full personalised claim report — exact institution names, account references, claim form links, and step-by-step instructions. There's no extra fee on top of your search — the $99.99 (or free-via-quote) search already covers the full report.
+                Mia emails you directly with what was found and a full personalised claim report — exact institution names, account references, claim form links, and step-by-step instructions. There's no extra fee on top of your search — the $19.90 (or free-via-quote) search already covers the full report.
               </AccordionContent>
             </AccordionItem>
             <AccordionItem value="item-3" className="bg-card border border-border rounded-lg px-4">
               <AccordionTrigger className="text-left font-medium hover:no-underline hover:text-primary">Is this service really free?</AccordionTrigger>
               <AccordionContent className="text-muted-foreground leading-relaxed">
-                The search is free if you get a Stratton Finance quote first — no obligation to take the loan, just answer a few questions. If you'd rather not, it's a flat $99.99 to search directly, no finance questions involved.
+                The search is free if you get a Stratton Finance quote first — no obligation to take the loan, just answer a few questions. If you'd rather not, it's a flat $19.90 to search directly, no finance questions involved.
               </AccordionContent>
             </AccordionItem>
             <AccordionItem value="item-4" className="bg-card border border-border rounded-lg px-4">
