@@ -22,8 +22,6 @@ import ClaimReport from "@/pages/ClaimReport";
 import MiaDev from "@/pages/MiaDev";
 import Refer from "@/pages/Refer";
 import SignIn from "@/pages/SignIn";
-import Login from "@/pages/Login";
-import ReferralDashboard from "@/pages/ReferralDashboard";
 const BASE = import.meta.env.BASE_URL;
 function PageViewBeacon() {
   const [location] = useLocation();
@@ -50,8 +48,6 @@ function Router() {
         <Layout>
           <Switch>
             <Route path="/" component={Home} />
-            <Route path="/login" component={Login} />
-            <Route path="/dashboard" component={ReferralDashboard} />
             <Route path="/crypto" component={Crypto} />
             <Route path="/finance" component={Finance} />
             <Route path="/contact" component={Contact} />
